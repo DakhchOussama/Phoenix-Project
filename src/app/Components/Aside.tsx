@@ -1,21 +1,30 @@
 "use client";
 import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setSelectedVideo } from './actions';
+
+
+interface RootState {
+    uploadedVideos: string[];
+    selectedVideo: string | null;
+}
 
 export default function Aside()
 {
-    const [uploadedVideos, setUploadedVideos] = useState<string[]>([]);
-    const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-
+    const uploadedVideos = useSelector((state : RootState) => state.uploadedVideos);
+    const selectedVideo = useSelector((state : RootState) => state.selectedVideo);
+    const dispatch = useDispatch();
 
     const handlechange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
-            setUploadedVideos(prevVideos => [...prevVideos, URL.createObjectURL(file)]);
+            const videoURL = URL.createObjectURL(file);
+            dispatch(setSelectedVideo(videoURL));
         }
     };
     const handleVideoSelect = (videoURL: string) => {
         console.log("video : ", videoURL);
-        setSelectedVideo(videoURL);
+        dispatch(setSelectedVideo(videoURL));
     };
     return (
         <div className="aside">
