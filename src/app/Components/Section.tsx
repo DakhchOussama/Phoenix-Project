@@ -11,9 +11,11 @@ export default function Section()
                 <img src="cloud-computing.png"></img>
             </div>
             <div className="user-infor">
-                <img src="userimg.JPG" width={50} height={50}></img>
-                <img src="setting.png" width={20} height={20}></img>
-                <img src="bookmark.png" width={20} height={20}></img>
+                <div className="user-infor-img">
+                    <img src="userimg.JPG" id="user" width={50} height={50}></img>
+                    <img src="setting.png" id="setting" width={20} height={20}></img>
+                    <img src="bookmark.png" id="bookmark" width={20} height={20}></img>
+                </div>
             </div>
         </div>
     )
