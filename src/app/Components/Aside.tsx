@@ -1,11 +1,15 @@
-"use client";
 import React, { useState } from "react";
+import { FaBars } from "react-icons/fa";
 
-export default function Aside()
+// Include setSelectedVideo in AsideProps
+interface AsideProps {
+    setSelectedVideo: (videoURL: string) => void;
+}
+
+const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) => 
 {
     const [uploadedVideos, setUploadedVideos] = useState<string[]>([]);
-    const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
-
+    const [selectedVideo, setSelectedVideoLocal] = useState<string | null>(null);
 
     const handlechange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -13,11 +17,14 @@ export default function Aside()
             setUploadedVideos(prevVideos => [...prevVideos, URL.createObjectURL(file)]);
         }
     };
+
     const handleVideoSelect = (videoURL: string) => {
-        console.log("video : ", videoURL);
+        setSelectedVideoLocal(videoURL);
         setSelectedVideo(videoURL);
     };
+
     return (
+        <>
         <div className="aside">
             <div className="logo">
                 <h1>Phoenix</h1>
@@ -37,5 +44,8 @@ export default function Aside()
                 <p>Upload with Other</p>
             </div>
         </div>
+        </>
     )
 }
+
+export default Aside;

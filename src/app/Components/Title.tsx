@@ -1,11 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
+import TitleAi from "./TitleAi";
 
-export default function Title()
+interface TitleProps {
+    selectedVideo: string | null;
+    onClose: () => void;
+    onAddVideo: (videoURL: string, title: string) => void;
+}
+
+const Title: React.FC<TitleProps> = ({ selectedVideo, onClose, onAddVideo }) =>
 {
+    const [showTitleAi, setShowTitleAi] = useState<boolean>(false);
+    const [title, setTitle] = useState<string>("");
+
+    const handleAddVideo = () => {
+        if (selectedVideo && title)
+        onAddVideo(selectedVideo, title);
+        onclose;
+    };
     return (
-        <div className="title-component">
+        <>
+            <div className="title-component">
             <div className="video-container">
-                <video id="title-video" src="y2mate.is - الحرب التي ستدمر الكوكب! الغزو الصيني لتايوان ليس كروسيا وأوكرانيا!-2oybt9Lvjq0-720p-1707521234.mp4"></video>
+                {selectedVideo && <video id="title-video" src={selectedVideo} autoPlay muted></video>}
                 <img id="back" src="back.png"></img>
                 <img id="next" src="next.png"></img>
                 <img id="black-circle" src="black-circle.png"></img>
@@ -14,21 +30,25 @@ export default function Title()
             </div>
             <div className="title-container">
                 <div className="title-container-close">
-                    <img src="close.png"></img>
+                    <img src="close.png" onClick={onClose}></img>
                 </div>
                 <div className="add-title">
                     <label>Add Title :</label>
-                    <input type="text"></input>
+                    <input type="text" onChange={(e) => setTitle(e.target.value)}></input>
                 </div>
                 <div className="title-icon">
                     <img src="cc.png"></img>
                     <img src="edit.png"></img>
-                    <img src="ai.png"></img>
+                    <img src="ai.png" onClick={() => setShowTitleAi(true)}></img>
                 </div>
                 <div className="title-update">
-                    <button>Update</button>
+                    <button onClick={handleAddVideo}>Add Video</button>
                 </div>
             </div>
         </div>
+        {showTitleAi && <TitleAi selectedVideo={selectedVideo} onClose={onClose}></TitleAi>}
+        </>
     )
 }
+
+export default Title;

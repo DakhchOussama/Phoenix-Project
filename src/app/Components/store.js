@@ -1,8 +1,10 @@
-import { configureStore } from '@reduxjs/toolkit';
-import rootReducer from './reducers'; // Assuming you have a rootReducer
+import { createStore, combineReducers } from 'redux';
+import videoReducer from './reducers/videoReducer';
 
-const store = configureStore({
-  reducer: rootReducer,
+const rootReducer = combineReducers({
+  video: videoReducer
 });
+
+const store = createStore(rootReducer);
 
 export default store;
