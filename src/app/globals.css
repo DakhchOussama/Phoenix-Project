@@ -319,16 +319,96 @@ div#add-title-ai {
   height: 70px;
 }
 
+.list-videos p {
+  margin: 0;
+  margin: 8px 0px;
+  font-family: cursive;
+  font-size: 16px;
+  margin-left: 5px;
+}
+
 
 @media (max-width: 594px) {
   .aside {
-      display: none; /* Hide the aside component */
+      display: none;
   }
-  
-  /* Styles for the icon container */
-  .icon-container {
+  .aside.show-aside {
     display: inline;
-    width: 20px;
-    font-size: 26px;
+    width: 5cm;
+  }
+  .logo h1 {
+    font-size: 22px;
+  }
+  .upload-video form {
+    width: 100%;
+  }
+  .upload-video {
+    width: 100%;
+  }
+  .custom-file-upload-label {
+    padding: 4px 7px;
+    margin-left: 44px;
+}
+  .upload-video form input::placeholder{
+    font-size: 10px;
+  }
+  .user-infor-img {
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .Section {
+    right: 0px;
+    width: calc(100% - 5cm);
+}
+.icon-container {
+  display: inline;
+  width: 20px;
+  font-size: 21px;
+  margin-left: 5px;
+  position: absolute;
+  top: 28px;
+  }
+  .title-component {
+    width: calc(12cm + 10px);
+    height: 8cm;
+    right: 1cm;
+}
+.title-update button {
+  width: 5cm;
+  height: 33px;
+}
+.add-title input {
+  width: calc(4cm + 17px);
+  margin-left: 24px;
+}
+#next {
+  left: calc(5cm - 13px);
+}
+#back, #next {
+  bottom: 4cm;
+  width: 24px;
+  height: 24px;
+}
+img#black-circle {
+  bottom: 40px;
+  width: 10px;
+  height: 10px;
+  left: 43px;
+}
+.title-icon img {
+  width: 20px;
+  height: 20px;
+}
+.title-icon {
+  align-items: center;
+}
+.title-icon {
+  margin-bottom: 6px;
+  margin-top: 7px;
+}
+.title-component img {
+  width: 16px;
+  height: 16px;
 }
 }
+

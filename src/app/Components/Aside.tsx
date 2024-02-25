@@ -10,6 +10,7 @@ const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) =>
 {
     const [uploadedVideos, setUploadedVideos] = useState<string[]>([]);
     const [selectedVideo, setSelectedVideoLocal] = useState<string | null>(null);
+    const [showAside, setShowAside] = useState<boolean>(false);
 
     const handlechange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -25,7 +26,7 @@ const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) =>
 
     return (
         <>
-        <div className="aside">
+         <div className={`aside ${showAside ? 'show-aside' : ''}`}>
             <div className="logo">
                 <h1>Phoenix</h1>
             </div>
@@ -43,6 +44,9 @@ const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) =>
             <div className="upload-other">
                 <p>Upload with Other</p>
             </div>
+        </div>
+        <div className="icon-container" onClick={() => setShowAside(!showAside)}>
+                <FaBars className="icon" />
         </div>
         </>
     )

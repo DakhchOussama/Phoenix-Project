@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import TitleAi from "./TitleAi";
+import { toast } from "react-hot-toast";
 
 interface TitleProps {
     selectedVideo: string | null;
@@ -13,10 +14,17 @@ const Title: React.FC<TitleProps> = ({ selectedVideo, onClose, onAddVideo }) =>
     const [title, setTitle] = useState<string>("");
 
     const handleAddVideo = () => {
-        if (selectedVideo && title)
-        onAddVideo(selectedVideo, title);
-        onclose;
+        if (selectedVideo && title){
+            onAddVideo(selectedVideo, title);
+        }
     };
+
+    const handleclose = () => {
+        if (!title)
+            toast.error("Empty Title");
+        else
+            onClose();
+    }
     return (
         <>
             <div className="title-component">

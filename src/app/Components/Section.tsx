@@ -14,6 +14,7 @@ interface Video {
 const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
 
     const [selectedVideos, setSelectedVideos] = useState<Video[]>([]);
+    const [close, setclose] = useState<Boolean>(false);
 
     useEffect(() => {
         if (selectedVideo) {
@@ -21,14 +22,23 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
             ...prevSelectedVideos,
             { videoURL: selectedVideo, title: '' }
           ]);
+          setclose(false);
         }
       }, [selectedVideo]);
 
       const handleAddVideo = (videoURL: string, title: string) => {
+        const index = selectedVideos.findIndex(video => video.videoURL === videoURL);
+    if (index !== -1) {
+        const updatedVideos = [...selectedVideos];
+        updatedVideos[index] = { videoURL, title };
+        setSelectedVideos(updatedVideos);
+    } else {
         setSelectedVideos(prevSelectedVideos => [
-          ...prevSelectedVideos,
-          { videoURL, title }
+            ...prevSelectedVideos,
+            { videoURL, title }
         ]);
+    }
+        setclose(true);
       };
     return (
         <div className="Section">
@@ -38,8 +48,9 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
             <div className="Section-content">
             {selectedVideos.map((video, index) => (
                 <>
-                    {index != 0 && <Title selectedVideo={video.videoURL} onClose={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))} onAddVideo={handleAddVideo}></Title>}
+                    {(index != 0 && close === false) && <Title selectedVideo={video.videoURL} onClose={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))} onAddVideo={handleAddVideo}></Title>}
                     <div key={index} className="list-videos">
+                      {video.title && <p>{video.title}</p>}
                     <video key={index} id="videotree" src={video.videoURL} autoPlay muted></video>
                     <div className="double-arrow">
                         <img src="add.png"></img>
