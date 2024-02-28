@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Title from "./Title";
 import toast, { Toaster } from "react-hot-toast";
-import { title } from "process";
 
 
 interface SectionProps {
@@ -47,7 +46,6 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
     }
         setclose(true);
       };
-      console.log('parent : ', selectedVideos);
     return (
       <>
        <Toaster
@@ -61,7 +59,7 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
             <div className="Section-content">
             {selectedVideos.map((video, index) => (
                 <>
-                    {(index != 0 && close === false) && <Title selectedVideo={video.videoURL} onClose={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))} onAddVideo={handleAddVideo}></Title>}
+                    {(index != 0 && close === false) && <Title selectedVideo={video.videoURL} onClose={() => {setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index)); setclose(true)}} onAddVideo={handleAddVideo}></Title>}
                     <div key={index} className="list-videos">
                       {video.title && <p>{video.title}</p>}
                     <video key={index} id="videotree" src={video.videoURL} autoPlay muted onClick={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))}></video>
