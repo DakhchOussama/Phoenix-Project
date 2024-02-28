@@ -1,32 +1,33 @@
 import React, { useState } from "react";
 import TitleAi from "./TitleAi";
-import { toast } from "react-hot-toast";
+import { Toaster, toast } from "react-hot-toast";
 
 interface TitleProps {
     selectedVideo: string | null;
     onClose: () => void;
-    onAddVideo: (videoURL: string, title: string) => void;
+    onAddVideo: (videoURL: string, title: string, parenttitle: string) => void;
 }
 
 const Title: React.FC<TitleProps> = ({ selectedVideo, onClose, onAddVideo }) =>
 {
     const [showTitleAi, setShowTitleAi] = useState<boolean>(false);
     const [title, setTitle] = useState<string>("");
+    const [parenttitle, setparenttitle] = useState<string>("");
 
     const handleAddVideo = () => {
-        if (selectedVideo && title){
-            onAddVideo(selectedVideo, title);
+        if (selectedVideo && title && parenttitle) {
+            onAddVideo(selectedVideo, title, parenttitle);
+            toast.success('Successfully');
         }
-    };
-
-    const handleclose = () => {
-        if (!title)
-            toast.error("Empty Title");
         else
-            onClose();
-    }
+            toast.error("Empty Title");
+    };
     return (
         <>
+        <Toaster
+  position="top-center"
+  reverseOrder={false}
+/>
             <div className="title-component">
             <div className="video-container">
                 {selectedVideo && <video id="title-video" src={selectedVideo} autoPlay muted></video>}
@@ -43,6 +44,10 @@ const Title: React.FC<TitleProps> = ({ selectedVideo, onClose, onAddVideo }) =>
                 <div className="add-title">
                     <label>Add Title :</label>
                     <input type="text" onChange={(e) => setTitle(e.target.value)}></input>
+                </div>
+                <div className="add-title">
+                    <label>Parent Title :</label>
+                    <input type="text" onChange={(e) => setparenttitle(e.target.value)}></input>
                 </div>
                 <div className="title-icon">
                     <img src="cc.png"></img>

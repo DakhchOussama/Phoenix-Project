@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Title from "./Title";
+import toast, { Toaster } from "react-hot-toast";
+import { title } from "process";
 
 
 interface SectionProps {
@@ -26,12 +28,17 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
         }
       }, [selectedVideo]);
 
-      const handleAddVideo = (videoURL: string, title: string) => {
+      const handleAddVideo = (videoURL: string, title: string, parenttitle: string) => {
         const index = selectedVideos.findIndex(video => video.videoURL === videoURL);
+        const parentindex = selectedVideos.findIndex(video => video.title == parenttitle);
     if (index !== -1) {
         const updatedVideos = [...selectedVideos];
-        updatedVideos[index] = { videoURL, title };
-        setSelectedVideos(updatedVideos);
+        if (parentindex !== -1){
+          updatedVideos[index] = { ...updatedVideos[index], title: `${parenttitle} -> ${title}` };
+        }
+        else
+          updatedVideos[index] = { videoURL, title };
+          setSelectedVideos(updatedVideos);
     } else {
         setSelectedVideos(prevSelectedVideos => [
             ...prevSelectedVideos,
@@ -40,7 +47,13 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
     }
         setclose(true);
       };
+      console.log('parent : ', selectedVideos);
     return (
+      <>
+       <Toaster
+  position="top-center"
+  reverseOrder={false}
+/>
         <div className="Section">
             <div className="Section-Title">
                 <h1>Video Tree</h1>
@@ -51,9 +64,15 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
                     {(index != 0 && close === false) && <Title selectedVideo={video.videoURL} onClose={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))} onAddVideo={handleAddVideo}></Title>}
                     <div key={index} className="list-videos">
                       {video.title && <p>{video.title}</p>}
-                    <video key={index} id="videotree" src={video.videoURL} autoPlay muted></video>
+                    <video key={index} id="videotree" src={video.videoURL} autoPlay muted onClick={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))}></video>
                     <div className="double-arrow">
-                        <img src="add.png"></img>
+                        <img src="add.png" onClick={() => toast((t) => (
+            <span>
+              <b>Upload</b> other video
+              <input id="file-upload" type="file"></input>
+              <label htmlFor="file-upload" className="toast-upload">Upload</label>
+            </span>
+          ))}></img>
                         <img src="785427-200.png"></img>
                     </div>
                     </div>
@@ -63,12 +82,13 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
             </div>
             <div className="user-infor">
                 <div className="user-infor-img">
-                    <img src="userimg.JPG" id="user" width={50} height={50}></img>
+                    <img src="user.png" id="user" width={40} height={40}></img>
                     <img src="setting.png" id="setting" width={20} height={20}></img>
                     <img src="bookmark.png" id="bookmark" width={20} height={20}></img>
                 </div>
             </div>
         </div>
+        </>
     )
 }
 

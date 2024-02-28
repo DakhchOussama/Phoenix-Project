@@ -291,6 +291,25 @@ div#add-title-ai {
   cursor: pointer;
 }
 
+#file-upload{
+  display: none;
+}
+
+.toast-upload {
+  margin-left: 6px;
+  font-size: 13px;
+  border: 1px solid red;
+  border-radius: 30px;
+  padding: 1px 7px;
+  color: red;
+  cursor: pointer;
+}
+
+.toast-upload:hover{
+  background-color: black;
+  color: white;
+}
+
 #choose:hover, #choose:focus{
   background-color: #F53E28;
   color: white;
