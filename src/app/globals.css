@@ -248,6 +248,15 @@ img#black-circle {
   left: calc(3cm - 4px);
 }
 
+#upload-icon {
+  position: absolute;
+  top: 30px;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transform: translate(-50%, -50%);
+}
+
 .title-component {
   background-color: #F6F6F6;
   position: absolute;
@@ -431,6 +440,61 @@ div#add-title-ai {
 .child {
   background-color: lightgreen;
 }
+
+
+/* NEW */
+
+.upload-progress {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 300px;
+  max-width: 80%;
+  text-align: center;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 12px;
+  background-color: #ddd;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: #007BFF;
+  border-radius: 6px;
+  transition: width 0.5s ease-in-out;
+}
+
+.upload-progress p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.cancel-button {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 14px;
+}
+
+.cancel-button:hover {
+  background-color: #c0392b;
+}
+
 
 @media (max-width: 594px) {
   .aside{

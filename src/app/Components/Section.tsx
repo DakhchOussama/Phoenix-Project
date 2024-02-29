@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Title from "./Title";
 import toast, { Toaster } from "react-hot-toast";
+import UploadProgress from "./UploadProgress";
 
 
 interface SectionProps {
@@ -16,6 +17,7 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
 
     const [selectedVideos, setSelectedVideos] = useState<Video[]>([]);
     const [close, setclose] = useState<Boolean>(false);
+    const [uploadProgressVisible, setUploadProgressVisible] = useState<Boolean>(false);
 
     useEffect(() => {
         if (selectedVideo) {
@@ -46,6 +48,10 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
         ]);
     }
         setclose(true);
+      };
+
+      const handleShowUploadProgress = () => {
+        setUploadProgressVisible(true);
       };
     return (
       <>
@@ -80,8 +86,11 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
           ))}></img>
                     </div>
                     </div>
+                  {index >= 1 && <img id="upload-icon" onClick={handleShowUploadProgress} src="download.png" />}
                 </>
             ))}
+              {uploadProgressVisible && <UploadProgress onClose={() => setUploadProgressVisible(false)} />}
+
                 {!selectedVideo && <img id="cloud-img" src="cloud-computing.png"></img>}
             </div>
         </div>
