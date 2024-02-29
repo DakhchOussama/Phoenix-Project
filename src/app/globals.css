@@ -259,6 +259,7 @@ img#black-circle {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .video-container{
@@ -432,44 +433,11 @@ div#add-title-ai {
 }
 
 @media (max-width: 594px) {
-  .aside {
-      display: none;
-  }
-  .aside.show-aside {
-    display: inline;
-    width: 5cm;
-  }
-  .logo h1 {
-    font-size: 22px;
-  }
-  .upload-video form {
-    width: 100%;
-  }
-  .upload-video {
-    width: 100%;
-  }
-  .custom-file-upload-label {
-    padding: 4px 7px;
-    margin-left: 44px;
-}
-  .upload-video form input::placeholder{
-    font-size: 10px;
-  }
-  .user-infor-img {
-    justify-content: center;
-    margin-bottom: 18px;
-  }
-  .Section {
-    right: 0px;
-    width: calc(100% - 5cm);
-}
-.icon-container {
-  display: inline;
-  width: 20px;
-  font-size: 21px;
-  margin-left: 5px;
-  position: absolute;
-  top: 28px;
+  .aside{
+    width: 200px;
+   }
+   .Section {
+    width: 56%;
   }
   .title-component {
     width: calc(12cm + 10px);
