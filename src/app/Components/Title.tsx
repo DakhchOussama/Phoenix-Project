@@ -15,7 +15,7 @@ const Title: React.FC<TitleProps> = ({ selectedVideo, onClose, onAddVideo }) =>
     const [parenttitle, setparenttitle] = useState<string>("");
 
     const handleAddVideo = () => {
-        if (selectedVideo && title && parenttitle) {
+        if (selectedVideo && title) {
             onAddVideo(selectedVideo, title, parenttitle);
             toast.success('Successfully');
         }

@@ -32,11 +32,12 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
         const parentindex = selectedVideos.findIndex(video => video.title == parenttitle);
     if (index !== -1) {
         const updatedVideos = [...selectedVideos];
-        if (parentindex !== -1){
+        if (parentindex !== -1 && parenttitle){
           updatedVideos[index] = { ...updatedVideos[index], title: `${parenttitle} -> ${title}` };
         }
-        else
+        else{
           updatedVideos[index] = { videoURL, title };
+        }
           setSelectedVideos(updatedVideos);
     } else {
         setSelectedVideos(prevSelectedVideos => [
@@ -54,13 +55,19 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
 />
         <div className="Section">
             <div className="Section-Title">
-                <h1>Video Tree</h1>
+            <div className="user-infor">
+                <div className="user-infor-img">
+                    <img src="user.png" id="user" width={40} height={40}></img>
+                    <img src="setting.png" id="setting" width={20} height={20}></img>
+                    <img src="bookmark.png" id="bookmark" width={20} height={20}></img>
+                </div>
+            </div>
             </div>
             <div className="Section-content">
             {selectedVideos.map((video, index) => (
                 <>
                     {(index != 0 && close === false) && <Title selectedVideo={video.videoURL} onClose={() => {setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index)); setclose(true)}} onAddVideo={handleAddVideo}></Title>}
-                    <div key={index} className="list-videos">
+                    <div key={index} className={`list-videos ${video.title.includes('->') ? 'child' : ''}`}>
                       {video.title && <p>{video.title}</p>}
                     <video key={index} id="videotree" src={video.videoURL} autoPlay muted onClick={() => setSelectedVideos(prevVideos => prevVideos.filter((_, i) => i !== index))}></video>
                     <div className="double-arrow">
@@ -71,19 +78,11 @@ const Section: React.FC<SectionProps> = ({ selectedVideo }) => {
               <label htmlFor="file-upload" className="toast-upload">Upload</label>
             </span>
           ))}></img>
-                        <img src="785427-200.png"></img>
                     </div>
                     </div>
                 </>
             ))}
-                {!selectedVideo && <img src="cloud-computing.png"></img>}
-            </div>
-            <div className="user-infor">
-                <div className="user-infor-img">
-                    <img src="user.png" id="user" width={40} height={40}></img>
-                    <img src="setting.png" id="setting" width={20} height={20}></img>
-                    <img src="bookmark.png" id="bookmark" width={20} height={20}></img>
-                </div>
+                {!selectedVideo && <img id="cloud-img" src="cloud-computing.png"></img>}
             </div>
         </div>
         </>
