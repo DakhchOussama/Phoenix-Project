@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaBars } from "react-icons/fa";
+import UploadOptions from "./UploadOptions";
 
 // Include setSelectedVideo in AsideProps
 interface AsideProps {
@@ -11,6 +12,7 @@ const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) =>
     const [uploadedVideos, setUploadedVideos] = useState<string[]>([]);
     const [selectedVideo, setSelectedVideoLocal] = useState<string | null>(null);
     const [showAside, setShowAside] = useState<boolean>(false);
+    const [showoption, setshowoption] = useState<Boolean>(false);
 
     const handlechange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files ? event.target.files[0] : null;
@@ -22,6 +24,10 @@ const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) =>
     const handleVideoSelect = (videoURL: string) => {
         setSelectedVideoLocal(videoURL);
         setSelectedVideo(videoURL);
+    };
+
+    const toggleUploadOptions = () => {
+        setshowoption(prevState => !prevState);
     };
 
     return (
@@ -42,12 +48,13 @@ const Aside: React.FC<AsideProps> = ({ setSelectedVideo }) =>
                 </div>
             </div>
             <div className="upload-other">
-                <p>Upload with Other</p>
+                <p onClick={toggleUploadOptions}>Upload with Other</p>
             </div>
         </div>
         <div className="icon-container" onClick={() => setShowAside(!showAside)}>
                 <FaBars className="icon" />
         </div>
+        {showoption && <UploadOptions></UploadOptions>}
         </>
     )
 }

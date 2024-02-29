@@ -496,8 +496,6 @@ div#add-title-ai {
   background-color: #c0392b;
 }
 
-/* AI */
-
 .upload-completion {
   max-width: 400px;
   margin: 0 auto;
@@ -535,7 +533,7 @@ div#add-title-ai {
   padding: 8px 27px;
   border: none;
   border-radius: 25px;
-  font-size: 18px;
+  font-size: 13px;
   font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
@@ -615,6 +613,76 @@ div#add-title-ai {
 
 .upload-progress .cancel-button:hover {
   background-color: #c82333;
+}
+
+.upload-options {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.upload-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.upload-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-icon {
+  font-size: 28px;
+  color: #555;
+}
+
+.upload-option p {
+  font-size: 14px;
+  color: #333;
+  margin-top: 10px;
+}
+
+
+/* ANA */
+
+.upload-option:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.upload-icon {
+  font-size: 28px;
+  color: #555;
+}
+
+.upload-option p {
+  font-size: 14px;
+  color: #333;
+  margin-top: 10px;
+}
+
+.upload-option:hover .upload-icon {
+  color: #F53E28;
+}
+
+.upload-option:hover p {
+  color: #F53E28;
+}
+
+.upload-option:hover {
+  background-color: #f0f0f0;
+}
+
+.upload-option:not(:last-child) {
+  margin-right: 20px;
 }
 
 
