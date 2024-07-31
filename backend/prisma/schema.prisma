@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "windows"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  UserID     Int       @id @default(autoincrement())
+  Fname      String
+  Sname      String
+  Email      String    @unique
+  Phone      String
+  Birthday   DateTime
+  Department String
+  Password   String
+  AvatarURL  String
+  Ban        Boolean?  @default(false)
+  isAdmin    Boolean?  @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  notifications Notification[]
+  friendsAsUser Friends[] @relation("UserFriends")
+  friendsAsFriend Friends[] @relation("FriendFriends")
+  postTranslates PostTranslate[]
+  posts Post[] 
+}
+
+model Notification {
+  NotificationID    Int       @id @default(autoincrement())
+  Time              DateTime
+  NotificationType  String
+  FriendID          Int
+  UserID            Int
+  isRead            Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+
+  user User @relation(fields: [UserID], references: [UserID])
+}
+
+model Post {
+  PostID     Int      @id @default(autoincrement())
+  ImgURL     String?
+  Title      String
+  Categories String
+  Likes      Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId Int
+  user User @relation(fields: [userId], references: [UserID])
+  translates PostTranslate[]
+}
+
+model PostTranslate {
+  PostTranslateID Int      @id @default(autoincrement())
+  TranslateTitle  String
+  AdminID         Int
+  PostID          Int
+
+  admin User @relation(fields: [AdminID], references: [UserID])
+  post Post @relation(fields: [PostID], references: [PostID])
+}
+
+model Friends {
+  FriendID Int @id @default(autoincrement())
+  UserId   Int
+  FriendId Int
+
+  user   User @relation(name: "UserFriends", fields: [UserId], references: [UserID])
+  friend User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
+
+  @@unique([UserId, FriendId])
+}
