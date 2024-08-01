@@ -32,7 +32,7 @@ model User {
   friendsAsUser Friends[] @relation("UserFriends")
   friendsAsFriend Friends[] @relation("FriendFriends")
   postTranslates PostTranslate[]
-  posts Post[] 
+  posts Post[]
 }
 
 model Notification {
@@ -59,6 +59,7 @@ model Post {
   userId Int
   user User @relation(fields: [userId], references: [UserID])
   translates PostTranslate[]
+  comments Comment[]
 }
 
 model PostTranslate {
@@ -80,4 +81,14 @@ model Friends {
   friend User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
 
   @@unique([UserId, FriendId])
+}
+
+model Comment {
+  CommentID  Int      @id @default(autoincrement())
+  Content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  postId Int
+  post Post @relation(fields: [postId], references: [PostID])
 }

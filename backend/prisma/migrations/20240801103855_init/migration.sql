@@ -63,6 +63,17 @@ CREATE TABLE "Friends" (
     CONSTRAINT "Friends_pkey" PRIMARY KEY ("FriendID")
 );
 
+-- CreateTable
+CREATE TABLE "Comment" (
+    "CommentID" SERIAL NOT NULL,
+    "Content" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+    "postId" INTEGER NOT NULL,
+
+    CONSTRAINT "Comment_pkey" PRIMARY KEY ("CommentID")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_Email_key" ON "User"("Email");
 
@@ -86,3 +97,6 @@ ALTER TABLE "Friends" ADD CONSTRAINT "Friends_UserId_fkey" FOREIGN KEY ("UserId"
 
 -- AddForeignKey
 ALTER TABLE "Friends" ADD CONSTRAINT "Friends_FriendId_fkey" FOREIGN KEY ("FriendId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("PostID") ON DELETE RESTRICT ON UPDATE CASCADE;
