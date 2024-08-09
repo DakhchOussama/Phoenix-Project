@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         alignItems: 'center',
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'center'
     },
     signincontainer: {
         flex: 1,
