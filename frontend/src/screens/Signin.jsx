@@ -7,6 +7,7 @@ const Signin = () => {
 
     return (
         <View style={styles.createaccount}>
+            <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.header1}>Create Account</Text>
                 <Text style={styles.header2}>Get started and unlock personalized experiences!</Text>
@@ -20,7 +21,7 @@ const Signin = () => {
                             <Text style={styles.nametext}>First Name</Text>
                             <TextInput style={styles.inputname} />
                         </View>
-                        <View style={styles.nameinput}>
+                        <View style={[styles.nameinput, {marginLeft: 30}]}>
                             <Text style={styles.nametext}>Second Name</Text>
                             <TextInput style={styles.inputname} />
                         </View>
@@ -39,7 +40,7 @@ const Signin = () => {
                         />
                         <View style={styles.birthday}>
                             <TextInput
-                                style={[styles.textInput, { flex: 2 }]}
+                                style={[styles.textInput, {flex: 2, marginBottom: 0 }]}
                                 placeholderTextColor="#434752"
                                 placeholder="Birthday"
                             />
@@ -47,21 +48,11 @@ const Signin = () => {
                         </View>
                     </View>
                 </View>
-                <View style={styles.button}>
-                <TouchableOpacity
-                    style={styles.signincontainer}
-                    onPress={() => setClick(!click)}
-                >
-                    <Text style={styles.buttonText2}>Next</Text>
-                    <Icon name="arrowright" size={20} style={styles.arrowIcon} color="white" />
-                </TouchableOpacity>
-                </View>
                 </>
             )}
-            {click && (
-                <>
-                    <View style={styles.createaccountinput}>
-                    <View style={styles.otherinput}>
+               {click && (
+                <View style={styles.createaccountinput}>
+                    <View style={[styles.otherinput, {flex: 1, justifyContent: 'space-evenly'}]}>
                         <TextInput
                             style={styles.textInput}
                             placeholderTextColor="#434752"
@@ -77,10 +68,24 @@ const Signin = () => {
                             placeholderTextColor="#434752"
                             placeholder="Confirm Password"
                         />
-                    </View>
-                    </View>
-                </>
+                    </View> 
+                </View>
             )}
+                <View style={styles.button}>
+                {!click && (<TouchableOpacity
+                    style={styles.signincontainer}
+                    onPress={() => setClick(!click)}
+                >
+                    <Text style={styles.buttonText2}>Next</Text>
+                    <Icon name="arrowright" size={20} style={styles.arrowIcon} color="white" />
+                </TouchableOpacity>)}
+                {click && (<TouchableOpacity
+                    style={styles.signincontainer}
+                >
+                    <Text style={styles.buttonText2}>Sign Up</Text>
+                </TouchableOpacity>)}
+                </View>
+            </View>
         </View>
     );
 };
@@ -88,7 +93,11 @@ const Signin = () => {
 const styles = StyleSheet.create({
     createaccount: {
         flex: 1,
-        padding: 10
+        padding: 10,
+    },
+    container: {
+        flex: 1,
+        justifyContent: 'center',
     },
     header: {
         flex: 1,
@@ -106,30 +115,31 @@ const styles = StyleSheet.create({
     },
     createaccountinput: {
         flex: 2,
-        marginTop: 30,
         justifyContent: 'center',
-        marginLeft: 10,
-        paddingTop: 10,
+        paddingTop: 20,
+        paddingLeft: 5
     },
     button: {
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         flex: 1
     },
     name: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     nameinput: {
         width: 155,
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start'
     },
     nametext: {
         fontFamily: 'Lato-Regular',
         color: '#434752'
     },
     inputname: {
-        borderColor: '#B1B6B6',
+        borderColor: '#AAADAD',
         borderWidth: 1,
         width: 155,
         marginTop: 10,
@@ -142,10 +152,11 @@ const styles = StyleSheet.create({
         borderLeftWidth: 0,
         borderRightWidth: 0,
         paddingHorizontal: 0,
-        marginBottom: 30,
+        marginBottom: 35
     },
     otherinput: {
-        marginTop: 17
+        marginTop: 17,
+        paddingRight: 5
     },
     signincontainer: {
         backgroundColor: '#E46044',
@@ -168,10 +179,12 @@ const styles = StyleSheet.create({
     },
     birthday: {
         flexDirection: 'row',
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'space-between'
     },
     icon: {
-        marginLeft: 10
+        position: 'absolute',
+        right: 0
     },
     arrowIcon: {
         marginTop: 3
