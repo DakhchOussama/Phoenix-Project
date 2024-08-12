@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Text, TextInput, View, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Text, TextInput, View, StyleSheet } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
-import EntyIcon from 'react-native-vector-icons/Entypo';
-import DatePicker from 'react-native-date-picker';
 import Toast from 'react-native-toast-message';
+import NameInput from "../components/NameInput";
+import DateInput from "../components/DateInput";
+import Button from "../components/Button";
 
 const Signin = () => {
     const [click, setClick] = useState(false);
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
-    const [input, setinput] = useState(false);
     const [fname, setfname] = useState('');
     const [sname, setsname] = useState('');
     const [email, setemail] = useState('');
@@ -36,15 +36,10 @@ const Signin = () => {
         }
       };
 
-
-    const formatDate = () => {
-        if (input)
-            return date.toLocaleDateString();
-    }
-
     return (
-        <View style={styles.createaccount}>
-            {/* <EntyIcon name="arrow-with-circle-left" onPress={() => setClick(false)} size={30} style={{position: 'absolte', top: 40}} color="#DD644A" /> */}
+        <>
+            {click && (<Icon name="arrowleft" onPress={() => setClick(false)} size={30} style={styles.icon} color="#434752" />)}
+            <View style={styles.createaccount}>
             <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.header1}>Create Account</Text>
@@ -55,14 +50,8 @@ const Signin = () => {
                 <>
                     <View style={styles.createaccountinput}>
                     <View style={styles.name}>
-                        <View style={styles.nameinput}>
-                            <Text style={styles.nametext}>First Name</Text>
-                            <TextInput style={styles.inputname} onChangeText={(text) => setfname(text)} />
-                        </View>
-                        <View style={[styles.nameinput, {marginLeft: 30}]}>
-                            <Text style={styles.nametext}>Second Name</Text>
-                            <TextInput style={styles.inputname} onChangeText={(text) => setsname(text)}/>
-                        </View>
+                        <NameInput label={'First Name'} onChangeText={setfname}></NameInput>
+                        <NameInput label={'Second Name'} onChangeText={setsname}></NameInput>
                     </View>
 
                     <View style={styles.otherinput}>
@@ -80,30 +69,7 @@ const Signin = () => {
                             onChangeText={(text) => setphonenumber(text)}
                         />
                         <View style={styles.birthday}>
-                            <TouchableOpacity onPress={() => setOpen(true)} style={[styles.textInput, {flex: 2, marginBottom: 0 }]}>
-                            <TextInput
-                                style={{color: "#434752"}}
-                                placeholderTextColor="#434752"
-                                placeholder="Birthday"
-                                value={formatDate(date)}
-                                editable={false}
-                            />
-                            </TouchableOpacity>
-                            <Icon name="calendar" size={20} style={styles.icon} color="#9A9A9A" />
-                            <DatePicker
-                                modal
-                                open={open}
-                                date={date}
-                                onConfirm={(date) => {
-                                    setOpen(false);
-                                    setDate(date);
-                                    setinput(true);
-                                }}
-                                onCancel={() => {
-                                    setOpen(false);
-                                }}
-                                mode="date"
-                            />
+                            <DateInput date={date} open={open} setOpen={setOpen} setDate={setDate} />
                         </View>
                     </View>
                 </View>
@@ -134,23 +100,13 @@ const Signin = () => {
                 </View>
             )}
                 <View style={styles.button}>
-                {!click && (<TouchableOpacity
-                    style={styles.signincontainer}
-                    onPress={() => setClick(!click)}
-                >
-                    <Text style={styles.buttonText2}>Next</Text>
-                    <Icon name="arrowright" size={20} style={styles.arrowIcon} color="white" />
-                </TouchableOpacity>)}
-                {click && (<TouchableOpacity
-                    style={styles.signincontainer}
-                    title="Show Toast" onPress={checkinput}
-                >
-                    <Text style={styles.buttonText2}>Sign Up</Text>
-                </TouchableOpacity>)}
+                {!click && (<Button text={'Next'} onPress={() => setClick(!click)} iconbutton={true}/>)}
+                {click && (<Button text={'Sign Up'} onPress={checkinput} iconbutton={false} />)}
                 </View>
                 <Toast />
             </View>
         </View>
+        </>
     );
 };
 
@@ -193,22 +149,6 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    nameinput: {
-        width: 155,
-        alignItems: 'flex-start',
-        justifyContent: 'flex-start'
-    },
-    nametext: {
-        fontFamily: 'Lato-Regular',
-        color: '#434752'
-    },
-    inputname: {
-        borderColor: '#AAADAD',
-        borderWidth: 1,
-        width: 155,
-        marginTop: 10,
-        borderRadius: 6
-    },
     textInput: {
         borderBottomWidth: 1,
         borderBottomColor: '#9A9A9A',
@@ -222,36 +162,15 @@ const styles = StyleSheet.create({
         marginTop: 17,
         paddingRight: 5
     },
-    signincontainer: {
-        backgroundColor: '#E46044',
-        marginTop: 20,
-        borderRadius: 5,
-        height: 60,
-        width: 200,
-        elevation: 3,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'row'
-    },
-    buttonText2: {
-        color: '#fff',
-        fontSize: 15,
-        textAlign: 'center',
-        fontFamily: 'Sora-SemiBold',
-        marginLeft: 5,
-        marginRight: 10
-    },
     birthday: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between'
     },
     icon: {
-        position: 'absolute',
-        right: 0
-    },
-    arrowIcon: {
-        marginTop: 3
+        position: "absolute",
+        top: 55,
+        left: 10
     }
 });
 

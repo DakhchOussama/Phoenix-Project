@@ -3,7 +3,7 @@ import { View, Text, Button, StyleSheet, Image, TextInput, TouchableOpacity } fr
 import CheckBox from '@react-native-community/checkbox';
 
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation }: { navigation: any}) => {
 
     const [isSelected, setSelection] = useState(false);
 
