@@ -5,8 +5,9 @@ import Toast from 'react-native-toast-message';
 import NameInput from "../components/NameInput";
 import DateInput from "../components/DateInput";
 import Button from "../components/Button";
+import { login } from "../services/authService";
 
-const Signin = () => {
+const Signin = ({ navigation }: {navigation: any}) => {
     const [click, setClick] = useState(false);
     const [date, setDate] = useState(new Date());
     const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ const Signin = () => {
     const [password, setpassword] = useState('');
     const [confirmpassword, setconfirmpassword] = useState('');
 
-    const checkinput = () => {
+    const checkinput = async () => {
         if (password !== confirmpassword){
             Toast.show({
                 type: 'error',
@@ -33,6 +34,17 @@ const Signin = () => {
                 text1: 'Input Required',
                 text2: 'Please enter the required information before proceeding.'
         });
+        }
+
+        const success = await login(fname, sname, email, phonenumber, date, department, password);
+
+        if (success){
+            navigation.replace('Welcome');
+        } else {
+            Toast.show({
+                type: 'error',
+                text1: 'Login failed!',
+            });
         }
       };
 
