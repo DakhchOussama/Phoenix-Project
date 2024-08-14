@@ -16,13 +16,23 @@ export class AuthService {
     }
 
 
-    async validateUser(email: string, pass: string): Promise<User | null>{
-        const user = await this.userService.findByEmail(email);
-        if (user && await bcrypt.compare(pass, user.Password)){
-            return user;
-        }
-        return null;
-    };
+    async validateUser(emailOrPhone: string, pass: string): Promise<User | null> {
+      try {
+          let user = await this.userService.findByEmail(emailOrPhone);
+  
+          if (!user) {
+              user = await this.userService.findByPhonenumber(emailOrPhone);
+          }
+  
+          if (user && await bcrypt.compare(pass, user.Password)) {
+              return user;
+          }
+      } catch (error) {
+          console.error('Error during user validation:', error);
+          throw new Error('User validation failed');
+      }
+      return null;
+  };  
 
 
     async login(user: User){

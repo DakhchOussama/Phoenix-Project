@@ -1,10 +1,10 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { BASE_URL } from '@env';
 
 
 const instance = axios.create({
-    baseURL: 'http://172.20.64.1:3000',
+    baseURL: BASE_URL,
     timeout: 10000,
   });
 
@@ -27,4 +27,18 @@ export const login = async (
             console.error('Login failed', error);
             return false;
         }
+};
+
+export const auth = async (emailorphone: string, password: string) => {
+    try {
+        const response = await instance.post('/auth/login', {emailorphone, password});
+        if (response.data.access_token){
+            await AsyncStorage.setItem('authToken', response.data.access_token);
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Login failed', error);
+        return false;
+    }
 }

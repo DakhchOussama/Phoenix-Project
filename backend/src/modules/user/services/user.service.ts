@@ -43,4 +43,10 @@ export class UserService {
     });
   };
 
+  async findByPhonenumber(Phone: string): Promise<User | null>{
+    return this.prisma.user.findUnique({
+      where: {Phone}
+    }) 
+  }
+
 }

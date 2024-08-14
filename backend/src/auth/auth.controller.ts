@@ -8,8 +8,7 @@ export class AuthController {
 
     @Post('login')
     async login(@Body() loginDto: loginDto){
-        console.log('JWT Secret:', process.env.JWT_SECRET); // Debugging line
-        const user = await this.authService.validateUser(loginDto.email, loginDto.password);
+        const user = await this.authService.validateUser(loginDto.emailorphone, loginDto.password);
         if (user)
             return this.authService.login(user);
         return { message: 'Invalid credentials'};

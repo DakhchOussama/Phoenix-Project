@@ -19,7 +19,7 @@ model User {
   Fname      String
   Sname      String
   Email      String    @unique
-  Phone      String
+  Phone      String    @unique
   Birthday   DateTime
   Department String
   Password   String

@@ -14,7 +14,6 @@ export class UserController {
       if (user){
         return this.authService.login(user);
       }
-          // return this.authService.login(user);
       return { message: 'Invalid credentials'};
   }
 }

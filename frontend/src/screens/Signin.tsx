@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Text, TextInput, View, StyleSheet } from "react-native";
+import { Text, TextInput, View, StyleSheet, TouchableOpacity } from "react-native";
 import Icon from 'react-native-vector-icons/AntDesign';
 import Toast from 'react-native-toast-message';
 import NameInput from "../components/NameInput";
 import DateInput from "../components/DateInput";
 import Button from "../components/Button";
 import { login } from "../services/authService";
+import DepartmentModal from "../components/DepartmentModal";
 
 const Signin = ({ navigation }: {navigation: any}) => {
     const [click, setClick] = useState(false);
@@ -15,9 +16,17 @@ const Signin = ({ navigation }: {navigation: any}) => {
     const [sname, setsname] = useState('');
     const [email, setemail] = useState('');
     const [phonenumber, setphonenumber] = useState('');
-    const [department, setdepartment] = useState('');
+    const [department, setdepartment] = useState("Department");
     const [password, setpassword] = useState('');
     const [confirmpassword, setconfirmpassword] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+
+
+    const departments = [
+        'EMINES', 'FMS', 'SHBM', 'GTI', 'SAP+D', 'CC', '1337',
+        'SCI', 'ESAFE', 'MAHIR', 'MSN', 'MSDA', 'Sochemib', 'IPE',
+        'DICE', 'others'
+      ];
 
     const checkinput = async () => {
         if (password !== confirmpassword){
@@ -33,7 +42,8 @@ const Signin = ({ navigation }: {navigation: any}) => {
                 type: 'error',
                 text1: 'Input Required',
                 text2: 'Please enter the required information before proceeding.'
-        });
+            });
+            return ;
         }
 
         const success = await login(fname, sname, email, phonenumber, date, department, password);
@@ -46,7 +56,12 @@ const Signin = ({ navigation }: {navigation: any}) => {
                 text1: 'Login failed!',
             });
         }
-      };
+    };
+
+    const handleSelectDepartment = (dept: string) => {
+        setdepartment(dept);
+        setModalVisible(false);
+    };
 
     return (
         <>
@@ -90,23 +105,25 @@ const Signin = ({ navigation }: {navigation: any}) => {
                {click && (
                 <View style={styles.createaccountinput}>
                     <View style={[styles.otherinput, {flex: 1, justifyContent: 'center'}]}>
-                        <TextInput
-                            style={styles.textInput}
-                            placeholderTextColor="#434752"
-                            placeholder="Department"
-                            onChangeText={(text) => setdepartment(text)}
-                        />
+                    <TouchableOpacity
+                        style={styles.textInput}
+                        onPress={() => setModalVisible(true)}
+                    >
+                        <Text style={styles.textInputText}>{department}</Text>
+                    </TouchableOpacity>
                         <TextInput
                             style={[styles.textInput, {marginTop: 25}]}
                             placeholderTextColor="#434752"
                             placeholder="Password"
                             onChangeText={(text) => setpassword(text)}
+                            secureTextEntry
                         />
                          <TextInput
                             style={[styles.textInput, {marginTop: 25}]}
                             placeholderTextColor="#434752"
                             placeholder="Confirm Password"
                             onChangeText={(text) => setconfirmpassword(text)}
+                            secureTextEntry
                         />
                     </View> 
                 </View>
@@ -115,6 +132,12 @@ const Signin = ({ navigation }: {navigation: any}) => {
                 {!click && (<Button text={'Next'} onPress={() => setClick(!click)} iconbutton={true}/>)}
                 {click && (<Button text={'Sign Up'} onPress={checkinput} iconbutton={false} />)}
                 </View>
+                <DepartmentModal
+                        visible={modalVisible}
+                        onClose={() => setModalVisible(false)}
+                        onSelect={handleSelectDepartment}
+                        departments={departments}
+                    />
                 <Toast />
             </View>
         </View>
@@ -168,7 +191,11 @@ const styles = StyleSheet.create({
         borderLeftWidth: 0,
         borderRightWidth: 0,
         paddingHorizontal: 0,
-        marginBottom: 35
+        marginBottom: 35,
+    },
+    textpicker: {
+       
+        
     },
     otherinput: {
         marginTop: 17,
@@ -183,6 +210,11 @@ const styles = StyleSheet.create({
         position: "absolute",
         top: 55,
         left: 10
+    },
+    textInputText: {
+            color: '#434752',
+            fontSize: 15,
+            marginBottom: 14
     }
 });
 

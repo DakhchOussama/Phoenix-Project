@@ -78,6 +78,9 @@ CREATE TABLE "Comment" (
 CREATE UNIQUE INDEX "User_Email_key" ON "User"("Email");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_Phone_key" ON "User"("Phone");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Friends_UserId_FriendId_key" ON "Friends"("UserId", "FriendId");
 
 -- AddForeignKey

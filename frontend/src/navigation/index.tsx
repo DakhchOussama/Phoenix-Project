@@ -7,6 +7,7 @@ import SplashScreen from '../screens/SplashScreen';
 import { StatusBar } from 'react-native';
 import Signin from '../screens/Signin';
 import WelcomePage from '../screens/WelcomePage';
+import HomePage from '../screens/HomePage';
 
 const Stack = createNativeStackNavigator();
 
@@ -20,6 +21,7 @@ function AppNavigation() {
                 <Stack.Screen name="Profile" component={ProfileScreen} />
                 <Stack.Screen name="Signin" component={Signin} options={{headerShown: false}} />
                 <Stack.Screen name="Welcome" component={WelcomePage} options={{headerShown: false}} />
+                <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
             </Stack.Navigator>
         </NavigationContainer>
     );
