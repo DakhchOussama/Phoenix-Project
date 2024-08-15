@@ -31,7 +31,7 @@ export class UserService {
     return bcrypt.hash(password, saltRound);
   }
 
-  async findById(UserID: number): Promise<User | null>{
+  async findById(UserID: string): Promise<User | null>{
     return this.prisma.user.findUnique({
       where: { UserID },
     });

@@ -36,7 +36,7 @@ export class AuthService {
 
 
     async login(user: User){
-        const payload = { sub: user.UserID, email: user.Email};
+        const payload = { userId: user.UserID, email: user.Email};
         const jwtService = new JwtService({
             secret: this.jwtSecret,
             signOptions: { expiresIn: '60m' },

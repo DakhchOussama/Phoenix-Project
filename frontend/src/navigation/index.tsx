@@ -8,6 +8,7 @@ import { StatusBar } from 'react-native';
 import Signin from '../screens/Signin';
 import WelcomePage from '../screens/WelcomePage';
 import HomePage from '../screens/HomePage';
+import RulesandTerms from '../screens/RulesandTerms';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,13 +16,14 @@ function AppNavigation() {
     return (
         <NavigationContainer>
             <StatusBar hidden={true} />
-            <Stack.Navigator initialRouteName="Splash">
+            <Stack.Navigator initialRouteName="Signin">
                 <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
                 <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}} />
                 <Stack.Screen name="Profile" component={ProfileScreen} />
                 <Stack.Screen name="Signin" component={Signin} options={{headerShown: false}} />
                 <Stack.Screen name="Welcome" component={WelcomePage} options={{headerShown: false}} />
                 <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
+                <Stack.Screen name="Rules" component={RulesandTerms} options={{headerShown: false}} />
             </Stack.Navigator>
         </NavigationContainer>
     );

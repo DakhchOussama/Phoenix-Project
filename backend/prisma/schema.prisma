@@ -15,40 +15,40 @@ datasource db {
 }
 
 model User {
-  UserID     Int       @id @default(autoincrement())
-  Fname      String
-  Sname      String
-  Email      String    @unique
-  Phone      String    @unique
-  Birthday   DateTime
-  Department String
-  Password   String
-  AvatarURL  String
-  Ban        Boolean?  @default(false)
-  isAdmin    Boolean?  @default(false)
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  notifications Notification[]
-  friendsAsUser Friends[] @relation("UserFriends")
+  UserID          String       @id @default(uuid())
+  Fname           String
+  Sname           String
+  Email           String    @unique
+  Phone           String    @unique
+  Birthday        DateTime
+  Department      String
+  Password        String
+  AvatarURL       String
+  Ban             Boolean?  @default(false)
+  isAdmin         Boolean?  @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  notifications   Notification[]
+  friendsAsUser   Friends[] @relation("UserFriends")
   friendsAsFriend Friends[] @relation("FriendFriends")
-  postTranslates PostTranslate[]
-  posts Post[]
+  postTranslates  PostTranslate[]
+  posts           Post[]
 }
 
 model Notification {
-  NotificationID    Int       @id @default(autoincrement())
+  NotificationID    String       @id @default(uuid())
   Time              DateTime
   NotificationType  String
   FriendID          Int
-  UserID            Int
+  UserID            String
   isRead            Boolean   @default(false)
   createdAt         DateTime  @default(now())
 
-  user User @relation(fields: [UserID], references: [UserID])
+  user              User @relation(fields: [UserID], references: [UserID])
 }
 
 model Post {
-  PostID     Int      @id @default(autoincrement())
+  PostID     String       @id @default(uuid())
   ImgURL     String?
   Title      String
   Categories String
@@ -56,39 +56,39 @@ model Post {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  userId Int
-  user User @relation(fields: [userId], references: [UserID])
+  userId     String
+  user       User @relation(fields: [userId], references: [UserID])
   translates PostTranslate[]
-  comments Comment[]
+  comments   Comment[]
 }
 
 model PostTranslate {
-  PostTranslateID Int      @id @default(autoincrement())
+  PostTranslateID String       @id @default(uuid())
   TranslateTitle  String
-  AdminID         Int
-  PostID          Int
+  AdminID         String
+  PostID          String
 
-  admin User @relation(fields: [AdminID], references: [UserID])
-  post Post @relation(fields: [PostID], references: [PostID])
+  admin           User @relation(fields: [AdminID], references: [UserID])
+  post            Post @relation(fields: [PostID], references: [PostID])
 }
 
 model Friends {
-  FriendID Int @id @default(autoincrement())
-  UserId   Int
-  FriendId Int
+  FriendID String       @id @default(uuid())
+  UserId   String
+  FriendId String
 
-  user   User @relation(name: "UserFriends", fields: [UserId], references: [UserID])
-  friend User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
+  user     User @relation(name: "UserFriends", fields: [UserId], references: [UserID])
+  friend   User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
 
   @@unique([UserId, FriendId])
 }
 
 model Comment {
-  CommentID  Int      @id @default(autoincrement())
+  CommentID  String       @id @default(uuid())
   Content    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  postId Int
-  post Post @relation(fields: [postId], references: [PostID])
+  postId     String
+  post       Post @relation(fields: [postId], references: [PostID])
 }

@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "User" (
-    "UserID" SERIAL NOT NULL,
+    "UserID" TEXT NOT NULL,
     "Fname" TEXT NOT NULL,
     "Sname" TEXT NOT NULL,
     "Email" TEXT NOT NULL,
@@ -19,11 +19,11 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Notification" (
-    "NotificationID" SERIAL NOT NULL,
+    "NotificationID" TEXT NOT NULL,
     "Time" TIMESTAMP(3) NOT NULL,
     "NotificationType" TEXT NOT NULL,
     "FriendID" INTEGER NOT NULL,
-    "UserID" INTEGER NOT NULL,
+    "UserID" TEXT NOT NULL,
     "isRead" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -32,44 +32,44 @@ CREATE TABLE "Notification" (
 
 -- CreateTable
 CREATE TABLE "Post" (
-    "PostID" SERIAL NOT NULL,
+    "PostID" TEXT NOT NULL,
     "ImgURL" TEXT,
     "Title" TEXT NOT NULL,
     "Categories" TEXT NOT NULL,
     "Likes" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "userId" INTEGER NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("PostID")
 );
 
 -- CreateTable
 CREATE TABLE "PostTranslate" (
-    "PostTranslateID" SERIAL NOT NULL,
+    "PostTranslateID" TEXT NOT NULL,
     "TranslateTitle" TEXT NOT NULL,
-    "AdminID" INTEGER NOT NULL,
-    "PostID" INTEGER NOT NULL,
+    "AdminID" TEXT NOT NULL,
+    "PostID" TEXT NOT NULL,
 
     CONSTRAINT "PostTranslate_pkey" PRIMARY KEY ("PostTranslateID")
 );
 
 -- CreateTable
 CREATE TABLE "Friends" (
-    "FriendID" SERIAL NOT NULL,
-    "UserId" INTEGER NOT NULL,
-    "FriendId" INTEGER NOT NULL,
+    "FriendID" TEXT NOT NULL,
+    "UserId" TEXT NOT NULL,
+    "FriendId" TEXT NOT NULL,
 
     CONSTRAINT "Friends_pkey" PRIMARY KEY ("FriendID")
 );
 
 -- CreateTable
 CREATE TABLE "Comment" (
-    "CommentID" SERIAL NOT NULL,
+    "CommentID" TEXT NOT NULL,
     "Content" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "postId" INTEGER NOT NULL,
+    "postId" TEXT NOT NULL,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("CommentID")
 );

@@ -82,7 +82,6 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
     modalContent: {
         backgroundColor: 'white',
@@ -98,23 +97,21 @@ const styles = StyleSheet.create({
     },
     modalTitle: {
         fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
+        color: '#434752',
         marginBottom: 15,
         textAlign: 'center',
+        fontFamily: 'Raleway-SemiBold'
     },
     modalItem: {
-        paddingVertical: 12,
-        paddingHorizontal: 15,
-        borderBottomWidth: 0.5,
-        borderBottomColor: '#ddd',
+        padding: 10,
         backgroundColor: '#f9f9f9',
-        marginBottom: 5,
+        marginBottom: 15,
         borderRadius: 8,
     },
     modalItemText: {
         fontSize: 16,
         color: '#333',
+        fontFamily: 'Sora-Regular'
     },
     modalCloseButton: {
         marginTop: 15,

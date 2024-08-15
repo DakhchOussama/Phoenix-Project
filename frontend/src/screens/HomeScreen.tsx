@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { auth } from '../services/authService';
+import { auth, getToken, storeToken } from '../services/authService';
 import Toast from 'react-native-toast-message';
-
-
 
 const HomeScreen = ({ navigation }: { navigation: any}) => {
 
@@ -19,10 +17,13 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
 
     const handleconnection = async () => {
         if (emailorphone && password){
-            const success = await auth(emailorphone, password);
+            const token = await auth(emailorphone, password);
 
-            if (success){
-            navigation.replace('Homepage');
+            if (token){
+                navigation.replace('Homepage');
+                if (isSelected){
+                    await storeToken(token);
+                }
             } else {
                 Toast.show({
                     type: 'error',
@@ -51,9 +52,11 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
         <View style={styles.container}>
             <Toast />
             <View style={styles.logoContainer}>
-                <Image style={styles.logo} source={require('../assets/logo2.png')} />
-                <Text style={styles.welcomeText}>Welcome Back</Text>
-                <Text style={styles.loginText}>Login to your account</Text>
+                <View style={styles.logoContainerchild}>
+                    <Image style={styles.logo} source={require('../assets/logo2.png')} />
+                    <Text style={styles.welcomeText}>Welcome Back</Text>
+                    <Text style={styles.loginText}>Login to your account</Text>
+                </View>
             </View>
 
             <View style={styles.inputContainer}>
@@ -73,7 +76,7 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
                 </View>
 
                 <View style={styles.rememberMeContainer}>
-                <CheckBox
+                    <CheckBox
                     value={isSelected}
                     onValueChange={handleRememberMeToggle}
                     style={styles.checkbox}
@@ -101,13 +104,18 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 25,
+        paddingLeft: 25,
+        paddingRight: 25,
     },
     logoContainer: {
         alignItems: 'center',
         justifyContent: 'flex-end',
         flex: 1,
         marginBottom: 40
+    },
+    logoContainerchild: {
+        alignItems: 'center',
+        marginBottom: 10
     },
     logo: {
         width: 100,
@@ -138,7 +146,8 @@ const styles = StyleSheet.create({
         borderLeftWidth: 0,
         borderRightWidth: 0,
         paddingHorizontal: 0,
-        color: '#434752'
+        color: '#434752',
+        marginBottom: 5
     },
     rememberMeContainer: {
         marginVertical: 10,
@@ -150,13 +159,14 @@ const styles = StyleSheet.create({
         color: '#434752'
     },
     checkbox: {
-        marginRight: 0,
+        marginRight: 0
     },
     signupContainer: {
         marginTop: 20,
         alignItems: 'center',
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginBottom: 10
     },
     signincontainer: {
         flex: 1,

@@ -29,6 +29,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
       ];
 
     const checkinput = async () => {
+        
         if (password !== confirmpassword){
             Toast.show({
                 type: 'error',
@@ -49,7 +50,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
         const success = await login(fname, sname, email, phonenumber, date, department, password);
 
         if (success){
-            navigation.replace('Welcome');
+            navigation.replace('Rules');
         } else {
             Toast.show({
                 type: 'error',
@@ -92,7 +93,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
                         <TextInput
                             style={styles.textInput}
                             placeholderTextColor="#434752"
-                            placeholder="Phone Number"
+                            placeholder="Phone number"
                             onChangeText={(text) => setphonenumber(text)}
                         />
                         <View style={styles.birthday}>
@@ -119,7 +120,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
                             secureTextEntry
                         />
                          <TextInput
-                            style={[styles.textInput, {marginTop: 25}]}
+                            style={[styles.textInput, {marginTop: 30}]}
                             placeholderTextColor="#434752"
                             placeholder="Confirm Password"
                             onChangeText={(text) => setconfirmpassword(text)}
@@ -191,14 +192,14 @@ const styles = StyleSheet.create({
         borderLeftWidth: 0,
         borderRightWidth: 0,
         paddingHorizontal: 0,
-        marginBottom: 35,
+        marginBottom: 37,
     },
     textpicker: {
        
         
     },
     otherinput: {
-        marginTop: 17,
+        marginTop: 20,
         paddingRight: 5
     },
     birthday: {
