@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { TextInput, TouchableOpacity, StyleSheet, GestureResponderEvent } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker';
@@ -9,15 +9,16 @@ interface DateInputInterface  {
     open: boolean;
     setOpen: (value : boolean) => void;
     setDate: (value : Date) => void;
+    already: boolean;
+    setalready: (value: boolean) => void;
 }
 
-const DateInput: React.FC<DateInputInterface> = ({ date, open, setOpen, setDate }) => {
-
-    const [input, setinput] = useState(false);
+const DateInput: React.FC<DateInputInterface> = ({ date, open, setOpen, setDate, already, setalready }) => {
 
     const formatDate = () => {
-        if (input)
+        if (already){
             return date.toLocaleDateString();
+        }
     };
 
     return (
@@ -39,7 +40,7 @@ const DateInput: React.FC<DateInputInterface> = ({ date, open, setOpen, setDate 
                     onConfirm={(date) => {
                         setOpen(false);
                         setDate(date);
-                        setinput(true);
+                        setalready(true);
                     }}
                     onCancel={() => {
                         setOpen(false);

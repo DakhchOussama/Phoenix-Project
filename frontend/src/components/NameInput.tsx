@@ -4,13 +4,14 @@ import { View, Text, TextInput, StyleSheet} from 'react-native';
 interface NameInputInterface {
     label: string;
     onChangeText: (event: string) => void;
+    value?: string
 }
 
-const NameInput : React.FC<NameInputInterface> = ({ label, onChangeText }) => {
+const NameInput : React.FC<NameInputInterface> = ({ label, onChangeText, value }) => {
     return (
         <View style={styles.nameinput}>
             <Text style={styles.nametext}>{label}</Text>
-            <TextInput style={styles.inputname} onChangeText={onChangeText} />
+            <TextInput style={styles.inputname} onChangeText={onChangeText} value={value} />
         </View>
     );
 };

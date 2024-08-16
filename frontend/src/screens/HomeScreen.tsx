@@ -14,15 +14,13 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
       setSelection(!isSelected);
     };
 
-
     const handleconnection = async () => {
         if (emailorphone && password){
-            const token = await auth(emailorphone, password);
-
-            if (token){
+            const login = await auth(emailorphone, password);
+            if (login.success){
                 navigation.replace('Homepage');
                 if (isSelected){
-                    await storeToken(token);
+                    await storeToken(String(login.token));
                 }
             } else {
                 Toast.show({
@@ -153,7 +151,9 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
+        position: 'relative',
+        right: 7
     },
     rememberme: {
         color: '#434752'

@@ -2,6 +2,13 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 
+type LoginResponse = {
+    success: boolean;
+    message: string;
+    token?: string;
+    errorCode?: string;
+};
+
 
 const instance = axios.create({
     baseURL: BASE_URL,
@@ -15,28 +22,30 @@ export const login = async (
     phonenumber: string,
     birthday: Date,
     department: string,
-    password: string) => {
+    password: string) : Promise<LoginResponse> => {
         try {
             const response = await instance.post(`/users/create`, {fname, sname, email, phonenumber, birthday, department, password});
-            if (response.data.access_token){
-                return true;
+            if (response.data.token) {
+                return { success: true, message: 'Login successful!' };
+            } else {
+                return { success: false, message: response.data.message || 'Login failed!' };
             }
-            return false;
         } catch (error: any){
-            console.error('Login failed', error);
-            return false;
+            return { success: false, message: 'An error occurred during login.' };
         }
 };
 
-export const auth = async (emailorphone: string, password: string) => {
+export const auth = async (emailorphone: string, password: string)=> {
     try {
         const response = await instance.post('/auth/login', {emailorphone, password});
-        if (response.data.access_token){
-            return response.data.access_token;
+        if  (response.data.success && response.data.token){
+            return { success: true, message: 'Login successful!', token: response.data.token };
+        }
+        else {
+            return { success: false, message: response.data.message || 'Login failed!', errorCode: response.data.errorCode };
         }
     } catch (error) {
-        console.error('Login failed', error);
-        return false;
+        return { success: false, message: 'An error occurred during login.' };
     }
 };
 
@@ -46,7 +55,6 @@ export const getToken = async () => {
         if (token !== null) {
                 return token;
         } else {
-            console.log('No token found');
             return null;
         }
     } catch (error) {
@@ -76,8 +84,9 @@ export const checkToken = async (token: string): Promise<boolean> => {
     try {
         const response = await instance.get('auth/profile', {
             headers: {
-                'Authorization': `Bearer ${token}`
-            }
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
         });
         if (response.data) {
             return true;

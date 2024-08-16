@@ -20,6 +20,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
     const [password, setpassword] = useState('');
     const [confirmpassword, setconfirmpassword] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
+    const [already, setalready] = useState(false);
 
 
     const departments = [
@@ -47,14 +48,30 @@ const Signin = ({ navigation }: {navigation: any}) => {
             return ;
         }
 
-        const success = await login(fname, sname, email, phonenumber, date, department, password);
+        const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
 
         if (success){
             navigation.replace('Rules');
         } else {
+            let toastMessage = 'Login failed!';
+            
+            switch (errorCode) {
+                case 'EMAIL_EXISTS':
+                    toastMessage = 'The email address is already in use.';
+                    break;
+                case 'INVALID_PASSWORD':
+                    toastMessage = 'Incorrect password. Please try again.';
+                    break;
+                case 'NETWORK_ERROR':
+                    toastMessage = 'Network error. Please check your connection.';
+                    break;
+                default:
+                    toastMessage = message || 'An unexpected error occurred.';
+            }
+        
             Toast.show({
                 type: 'error',
-                text1: 'Login failed!',
+                text1: toastMessage,
             });
         }
     };
@@ -78,8 +95,8 @@ const Signin = ({ navigation }: {navigation: any}) => {
                 <>
                     <View style={styles.createaccountinput}>
                     <View style={styles.name}>
-                        <NameInput label={'First Name'} onChangeText={setfname}></NameInput>
-                        <NameInput label={'Second Name'} onChangeText={setsname}></NameInput>
+                        <NameInput label={'First Name'} onChangeText={setfname} value={fname}></NameInput>
+                        <NameInput label={'Second Name'} onChangeText={setsname} value={sname}></NameInput>
                     </View>
 
                     <View style={styles.otherinput}>
@@ -89,15 +106,17 @@ const Signin = ({ navigation }: {navigation: any}) => {
                             placeholder="Email"
                             onChangeText={(text) => setemail(text)}
                             textContentType="emailAddress"
+                            value={email}
                         />
                         <TextInput
                             style={styles.textInput}
                             placeholderTextColor="#434752"
                             placeholder="Phone number"
                             onChangeText={(text) => setphonenumber(text)}
+                            value={phonenumber}
                         />
                         <View style={styles.birthday}>
-                            <DateInput date={date} open={open} setOpen={setOpen} setDate={setDate} />
+                            <DateInput date={date} open={open} setOpen={setOpen} setDate={setDate} already={already} setalready={setalready}  />
                         </View>
                     </View>
                 </View>
