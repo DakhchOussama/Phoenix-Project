@@ -10,10 +10,24 @@ export class UserController {
 
   @Post('create')
   async createUser(@Body() userdto: Userdto){
-      const user = await this.userService.CreateUser(userdto.fname, userdto.sname, userdto.email, userdto.phonenumber, new Date(`${userdto.birthday}`), userdto.department, userdto.password);
-      if (user){
-        return this.authService.login(user);
+      try {
+        const user = await this.userService.CreateUser(userdto.fname, userdto.sname, userdto.email, userdto.phonenumber, new Date(`${userdto.birthday}`), userdto.department, userdto.password);
+        if (user){
+          const token = this.authService.login(user);
+          return {
+              success: true,
+              message: 'User created successfully',
+              token: token
+          }
+        }
+      } catch (error){
+          return {
+            success: false,
+            message: error.message || 'An error occurred',
+            errorCode: error.code || 'UNKNOWN_ERROR', // Optionally include an error code
+          };
       }
-      return { message: 'Invalid credentials'};
+    return { success: false, message: 'User creation failed' };
   }
+  
 }

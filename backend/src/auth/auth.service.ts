@@ -42,9 +42,7 @@ export class AuthService {
             signOptions: { expiresIn: '60m' },
           });
         try {
-            return {
-              access_token: jwtService.sign(payload),
-            };
+            return jwtService.sign(payload);
           } catch (error) {
             console.error('Error signing token:', error);
             throw error;

@@ -11,6 +11,15 @@ export class UserService {
 
   async CreateUser(fname: string, sname: string, email: string, phonenumber: string, birthday: Date, department: string, password: string){
         const hashedPassword = await this.hashPassword(password);
+        const checkemail = await this.prisma.user.findUnique({
+          where: {
+              Email: email
+          }
+        });
+
+        if (checkemail) {
+          throw new Error('Email already in use');
+        }
         return this.prisma.user.create({
           data: {
               Fname: fname,
