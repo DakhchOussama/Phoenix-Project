@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
     nameinput: {
         width: 155,
         alignItems: 'flex-start',
-        justifyContent: 'flex-start'
+        justifyContent: 'flex-start',
     },
     nametext: {
         fontFamily: 'Lato-Regular',

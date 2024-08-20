@@ -10,13 +10,14 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
             try{
                 const token = await getToken();
                 if (!token)
-                    navigation.replace('Home');
+                    navigation.replace('Fisttime');
                 else{
                     const validtoken = await checkToken(token);
                     if (validtoken)
                         navigation.replace('Homepage');
-                    else
+                    else{
                         navigation.replace('Home');
+                    }
                 }
             } catch (error){
                 console.error("Error checking token:", error);

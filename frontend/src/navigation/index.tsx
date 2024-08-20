@@ -9,6 +9,7 @@ import Signin from '../screens/Signin';
 import WelcomePage from '../screens/WelcomePage';
 import HomePage from '../screens/HomePage';
 import RulesandTerms from '../screens/RulesandTerms';
+import FirstTime from '../screens/FirstTime';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,7 @@ function AppNavigation() {
                 <Stack.Screen name="Welcome" component={WelcomePage} options={{headerShown: false}} />
                 <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
                 <Stack.Screen name="Rules" component={RulesandTerms} options={{headerShown: false}} />
+                <Stack.Screen name="Fisttime" component={FirstTime} options={{headerShown: false}} />
             </Stack.Navigator>
         </NavigationContainer>
     );

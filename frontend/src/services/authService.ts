@@ -91,10 +91,11 @@ export const checkToken = async (token: string): Promise<boolean> => {
         if (response.data) {
             return true;
         } else {
+            await AsyncStorage.removeItem('authToken');
             return false;
         }
     } catch (error) {
-        await AsyncStorage.removeItem('jwt_token');
+        await AsyncStorage.removeItem('authToken');
         return false;
     }
 }

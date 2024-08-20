@@ -49,7 +49,6 @@ const Signin = ({ navigation }: {navigation: any}) => {
         }
 
         const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
-
         if (success){
             navigation.replace('Rules');
         } else {
@@ -66,7 +65,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
                     toastMessage = 'Network error. Please check your connection.';
                     break;
                 default:
-                    toastMessage = message || 'An unexpected error occurred.';
+                    toastMessage = 'An unexpected error occurred.';
             }
         
             Toast.show({
@@ -169,6 +168,7 @@ const styles = StyleSheet.create({
     createaccount: {
         flex: 1,
         padding: 10,
+        backgroundColor: 'white'
     },
     container: {
         flex: 1,
