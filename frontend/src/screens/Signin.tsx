@@ -48,6 +48,26 @@ const Signin = ({ navigation }: {navigation: any}) => {
             return ;
         }
 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            Toast.show({
+                type: 'error',
+                text1: 'Email Address Invalid',
+                text2: 'The email address you entered does not seem to be valid.',
+            });
+            return;
+        }
+    
+        // Validate password length
+        if (password.length < 6) {
+            Toast.show({
+                type: 'error',
+                text1: 'Weak Password',
+                text2: 'Password must be at least 6 characters long.',
+            });
+            return;
+        }
+
         const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
         if (success){
             navigation.replace('Rules');
@@ -82,8 +102,8 @@ const Signin = ({ navigation }: {navigation: any}) => {
 
     return (
         <>
-            {click && (<Icon name="arrowleft" onPress={() => setClick(false)} size={30} style={styles.icon} color="#434752" />)}
             <View style={styles.createaccount}>
+            {click && (<Icon name="arrowleft" onPress={() => setClick(false)} size={30} style={styles.icon} color="#434752" />)}
             <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.header1}>Create Account</Text>
@@ -227,9 +247,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     icon: {
-        position: "absolute",
-        top: 55,
-        left: 10
+        position: 'relative',
+        top: 20
     },
     textInputText: {
             color: '#434752',

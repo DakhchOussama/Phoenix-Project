@@ -15,33 +15,41 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
     };
 
     const handleconnection = async () => {
-        if (emailorphone && password){
-            const login = await auth(emailorphone, password);
-            if (login.success){
-                navigation.replace('Homepage');
-                if (isSelected){
-                    await storeToken(String(login.token));
-                }
+        try {
+            if (emailorphone && password){
+                const login = await auth(emailorphone, password);
+                if (login.success){
+                    navigation.replace('Homepage');
+                    if (isSelected){
+                        await storeToken(String(login.token));
+                    }
+                } else {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Login failed!',
+                        text2: 'Please check your credentials and try again.',
+                        position: 'top',
+                        visibilityTime: 4000,
+                        autoHide: true,
+                        bottomOffset: 50,
+                    });
+            }
             } else {
                 Toast.show({
                     type: 'error',
-                    text1: 'Login failed!',
-                    text2: 'Please check your credentials and try again.',
+                    text1: 'Empty Input',
+                    text2: 'Please fill in all fields to proceed.',
                     position: 'top',
                     visibilityTime: 4000,
                     autoHide: true,
                     bottomOffset: 50,
                 });
-        }
-        } else {
+            }
+        } catch (error) {
             Toast.show({
                 type: 'error',
-                text1: 'Empty Input',
-                text2: 'Please fill in all fields to proceed.',
-                position: 'top',
-                visibilityTime: 4000,
-                autoHide: true,
-                bottomOffset: 50,
+                text1: 'An error occurred',
+                text2: 'Please try again later.',
             });
         }
         
@@ -62,7 +70,10 @@ const HomeScreen = ({ navigation }: { navigation: any}) => {
                     <TextInput style={styles.textInput}
                                placeholder="Phone number or email"
                                placeholderTextColor="#9A9A9A"
-                               onChangeText={(text) => setemailorphone(text)}/>
+                               onChangeText={(text) => setemailorphone(text)}
+                               accessibilityLabel="Phone number or email input"
+                               />
+                               
                 </View>
 
                 <View style={{marginBottom: 20}}>
@@ -175,7 +186,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     button: {
-        backgroundColor: '#E46044',
+        backgroundColor: '#EB6F54',
         marginTop: 20,
         borderRadius: 5,
         height: 60,

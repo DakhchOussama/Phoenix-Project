@@ -5,21 +5,24 @@ import Icon from 'react-native-vector-icons/AntDesign';
 interface buttoninterface {
     text: string;
     onPress: (event: GestureResponderEvent) => void;
-    iconbutton: Boolean
+    iconbutton: Boolean;
+    buttonColor?: string
 };
 
-const Button: React.FC<buttoninterface> = ({ text, onPress, iconbutton }) => {
+const Button: React.FC<buttoninterface> = ({ text, onPress, iconbutton, buttonColor }) => {
     return (
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-            <Text style={styles.buttonText}>{text}</Text>
-            {iconbutton && (<Icon name="arrowright" size={20} style={styles.arrowIcon} color="white" />)}
+        <TouchableOpacity             
+            style={[styles.button, { backgroundColor: buttonColor || '#EB6F54' }]} 
+            onPress={onPress}>
+                <Text style={styles.buttonText}>{text}</Text>
+                {iconbutton && (<Icon name="arrowright" size={20} style={styles.arrowIcon} color="white" />)}
         </TouchableOpacity>
     );
 };
 
 const styles = StyleSheet.create({
     button: {
-        backgroundColor: '#E46044',
+        backgroundColor: '#EB6F54',
         marginTop: 20,
         borderRadius: 5,
         height: 60,

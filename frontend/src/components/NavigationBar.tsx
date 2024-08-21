@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
-const NavigationBar = ({ index }: { index: number }) => {
+const NavigationBar = ({ index, seindex }: { index: number, seindex: (index: number) => void }) => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -21,6 +21,7 @@ const NavigationBar = ({ index }: { index: number }) => {
             styles.dot,
             activeIndex === dotIndex && styles.activeDot,
           ]}
+          onPress={() => seindex(dotIndex)}
         />
       ))}
       <Icon name="arrow-forward-ios" size={20} color='#D3D3D3' />

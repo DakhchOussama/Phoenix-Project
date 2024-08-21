@@ -1,6 +1,7 @@
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
+import DeviceInfo from "react-native-device-info";
 
 type LoginResponse = {
     success: boolean;
@@ -98,4 +99,15 @@ export const checkToken = async (token: string): Promise<boolean> => {
         await AsyncStorage.removeItem('authToken');
         return false;
     }
-}
+};
+
+
+export const getDeviceId = async () => {
+    let deviceId = await AsyncStorage.getItem('deviceId');
+    if (!deviceId) {
+        deviceId = await DeviceInfo.getUniqueId();
+        await AsyncStorage.setItem('deviceId', deviceId);
+        return false;
+    }
+    return deviceId;
+};

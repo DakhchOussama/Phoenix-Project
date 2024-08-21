@@ -4,7 +4,7 @@ import { View, Text, TextInput, StyleSheet} from 'react-native';
 interface NameInputInterface {
     label: string;
     onChangeText: (event: string) => void;
-    value?: string
+    value?: string;
 }
 
 const NameInput : React.FC<NameInputInterface> = ({ label, onChangeText, value }) => {
@@ -18,9 +18,10 @@ const NameInput : React.FC<NameInputInterface> = ({ label, onChangeText, value }
 
 const styles = StyleSheet.create({
     nameinput: {
-        width: 155,
+        flex: 1,
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
+        paddingRight: 10
     },
     nametext: {
         fontFamily: 'Lato-Regular',
@@ -29,9 +30,9 @@ const styles = StyleSheet.create({
     inputname: {
         borderColor: '#AAADAD',
         borderWidth: 1,
-        width: 155,
+        width: '100%',
         marginTop: 10,
-        borderRadius: 6
+        borderRadius: 6,
     },
 });
 

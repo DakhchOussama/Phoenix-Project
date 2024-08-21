@@ -1,31 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
-import { checkToken, getToken } from "../services/authService";
+import { checkToken, getToken, getDeviceId } from "../services/authService";
 
 const SplashScreen =  ({ navigation }: {navigation: any}) => {
    
-    
-     useEffect(() => {
-         const timer = setTimeout(async () => {
-            try{
+    useEffect(() => {
+        const checkUserStatus = async () => {
+            try {
                 const token = await getToken();
-                if (!token)
-                    navigation.replace('Fisttime');
-                else{
+                if (!token) {
+                    const deviceid = await getDeviceId();
+                    if (deviceid) navigation.replace('Home');
+                    else 
+                    navigation.replace('Firsttime');
+                } else {
                     const validtoken = await checkToken(token);
-                    if (validtoken)
-                        navigation.replace('Homepage');
-                    else{
-                        navigation.replace('Home');
-                    }
+                    if (validtoken) navigation.replace('Homepage');
+                    else navigation.replace('Home');
                 }
-            } catch (error){
+            } catch (error) {
                 console.error("Error checking token:", error);
                 navigation.replace('Home');
             }
-         }, 3000);
-         return () => clearTimeout(timer);
-     }, [navigation]);
+        };
+    
+        const timer = setTimeout(checkUserStatus, 2000);
+    
+        return () => clearTimeout(timer);
+    }, [navigation]);
  
     return (
         <View style={styles.container}>

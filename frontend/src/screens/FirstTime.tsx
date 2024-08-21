@@ -19,21 +19,23 @@ const FirstTime = ({ navigation }: { navigation: any }) => {
             {/* Header */}
             {click !== 2 && (
                 <View style={styles.header}>
-                    {click === 0 && (
+                    {/* {click === 0 && (
                         <TouchableOpacity onPress={() => navigation.replace('Home')}>
                             <Text style={styles.headertext}>Not your first time?</Text>
                         </TouchableOpacity>
-                    )}
+                    )} */}
                 </View>
             )}
 
             {/* Middle Content */}
             <View style={styles.midd}>
                 {/* Text Section */}
-                <View style={styles.middtextcontainer}>
+                {click !== 2 && (
+                    <View style={styles.middtextcontainer}>
                     {click === 0 && <Text style={styles.middtext}>Find what you need and offer what you can</Text>}
                     {click === 1 && <Text style={styles.middtext2}>Join your peers in building a stronger community and making university life easier!</Text>}
-                </View>
+                    </View>
+                )}
 
                 {/* Image Section */}
                 {click !== 2 ? (
@@ -44,12 +46,12 @@ const FirstTime = ({ navigation }: { navigation: any }) => {
                 ) : (
                     <>
                         <View style={styles.middimage2}>
-                            <Image style={styles.welcomeImage} source={require('../assets/welcom.png')} />
+                            <Image style={styles.welcomeImage} source={require('../assets/11080267.png')} />
                         </View>
 
                         <View style={styles.welcome}>
                             <Text style={styles.welcometitle}>Welcome to PhenX</Text>
-                            <Text style={styles.welcomesubtitle}>Your journey starts here</Text>
+                            <Text style={styles.welcomesubtitle}> We're excited to have you on board. Discover amazing features, stay connected, and enjoy a seamless experience. Let's get started!</Text>
                         </View>
                     </>
                 )}
@@ -60,12 +62,13 @@ const FirstTime = ({ navigation }: { navigation: any }) => {
                         text={click !== 2 ? 'Next' : 'Get started'}
                         onPress={handleNext}
                         iconbutton={true}
+                        buttonColor="#434752"
                     />
                 </View>
 
                 {/* Navigation Dots */}
                 <View style={styles.middanimation}>
-                    <NavigationBar index={click} />
+                    <NavigationBar index={click} seindex={setClick} />
                 </View>
             </View>
         </View>
@@ -79,10 +82,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     header: {
-        height: 100,
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        paddingRight: 5,
+        height: 150,
+        // alignItems: 'flex-end',
+        // justifyContent: 'center',
+        // paddingRight: 5
     },
     headertext: {
         color: '#DD644A',
@@ -90,12 +93,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     midd: {
-        flex: 1,
+        flex: 1
     },
     middtextcontainer: {
         height: 140,
         alignItems: 'center',
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-end'
     },
     middtext: {
         fontSize: 18,
@@ -103,20 +106,20 @@ const styles = StyleSheet.create({
         fontFamily: 'Lato-Regular',
     },
     middtext2: {
-        fontSize: 17,
+        fontSize: 18,
         marginLeft: 20,
         color: '#434752',
-        fontFamily: 'Lato-Regular',
+        fontFamily: 'Lato-Regular'
     },
     middimage: {
-        flex: 3,
+        flex: 2,
         alignItems: 'center',
         justifyContent: 'center',
     },
     middimage2: {
         flex: 3,
         alignItems: 'center',
-        justifyContent: 'flex-start',
+        justifyContent: 'flex-end',
     },
     middbutton: {
         flex: 1,
@@ -137,19 +140,20 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     welcometitle: {
-        fontSize: 28,
-        color: '#DD644A',
-        fontFamily: 'Lato-Bold',
-        marginBottom: 10,
+        fontSize: 30,
+        color: '#575a89',
+        fontFamily: 'Rubik-Regular',
+        marginBottom: 18,
     },
     welcomesubtitle: {
         fontSize: 18,
         color: '#434752',
         fontFamily: 'Lato-Regular',
+        marginLeft: 22
     },
     welcomeImage: {
-        width: 400,
-        height: 400,
+        width: 350,
+        height: 350,
         resizeMode: 'contain',
     },
 });
