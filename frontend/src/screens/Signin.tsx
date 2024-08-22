@@ -58,7 +58,6 @@ const Signin = ({ navigation }: {navigation: any}) => {
             return;
         }
     
-        // Validate password length
         if (password.length < 6) {
             Toast.show({
                 type: 'error',

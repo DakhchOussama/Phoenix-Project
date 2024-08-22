@@ -4,7 +4,7 @@ import CheckBox from '@react-native-community/checkbox';
 import { auth, getToken, storeToken } from '../services/authService';
 import Toast from 'react-native-toast-message';
 
-const HomeScreen = ({ navigation }: { navigation: any}) => {
+const LoginScreen = ({ navigation }: { navigation: any}) => {
 
     const [isSelected, setSelection] = useState(false);
     const [emailorphone, setemailorphone] = useState('');
@@ -215,4 +215,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default HomeScreen;
+export default LoginScreen;
