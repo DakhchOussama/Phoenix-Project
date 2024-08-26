@@ -17,7 +17,7 @@ function AppNavigation() {
     return (
         <NavigationContainer>
             <StatusBar hidden={true} />
-            <Stack.Navigator initialRouteName="Homepage">
+            <Stack.Navigator initialRouteName="Signin">
                 <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
                 <Stack.Screen name="Home" component={LoginScreen} options={{headerShown: false}} />
                 <Stack.Screen name="Profile" component={ProfileScreen} />

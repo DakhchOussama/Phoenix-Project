@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Image, StyleSheet, Text } from "react-native";
+import { View, TouchableOpacity, Image, StyleSheet, Text, Dimensions } from "react-native";
 import Button from "../components/Button";
 import NavigationBar from "../components/NavigationBar";
+
+const { width, height } = Dimensions.get('window');
 
 const FirstTime = ({ navigation }: { navigation: any }) => {
     const [click, setClick] = useState(0);
@@ -19,11 +21,10 @@ const FirstTime = ({ navigation }: { navigation: any }) => {
             {/* Header */}
             {click !== 2 && (
                 <View style={styles.header}>
-                    {/* {click === 0 && (
-                        <TouchableOpacity onPress={() => navigation.replace('Home')}>
-                            <Text style={styles.headertext}>Not your first time?</Text>
-                        </TouchableOpacity>
-                    )} */}
+                    {/* Uncomment and adjust if needed */}
+                    {/* <TouchableOpacity onPress={() => navigation.replace('Home')}>
+                        <Text style={styles.headertext}>Not your first time?</Text>
+                    </TouchableOpacity> */}
                 </View>
             )}
 
@@ -32,8 +33,8 @@ const FirstTime = ({ navigation }: { navigation: any }) => {
                 {/* Text Section */}
                 {click !== 2 && (
                     <View style={styles.middtextcontainer}>
-                    {click === 0 && <Text style={styles.middtext}>Find what you need and offer what you can</Text>}
-                    {click === 1 && <Text style={styles.middtext2}>Join your peers in building a stronger community and making university life easier!</Text>}
+                        {click === 0 && <Text style={styles.middtext}>Find what you need and offer what you can</Text>}
+                        {click === 1 && <Text style={styles.middtext2}>Join your peers in building a stronger community and making university life easier!</Text>}
                     </View>
                 )}
 
@@ -51,7 +52,7 @@ const FirstTime = ({ navigation }: { navigation: any }) => {
 
                         <View style={styles.welcome}>
                             <Text style={styles.welcometitle}>Welcome to PhenX</Text>
-                            <Text style={styles.welcomesubtitle}> We're excited to have you on board. Discover amazing features, stay connected, and enjoy a seamless experience. Let's get started!</Text>
+                            <Text style={styles.welcomesubtitle}>We're excited to have you on board. Discover amazing features, stay connected, and enjoy a seamless experience. Let's get started!</Text>
                         </View>
                     </>
                 )}
@@ -82,34 +83,34 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
     },
     header: {
-        height: 150,
-        // alignItems: 'flex-end',
-        // justifyContent: 'center',
-        // paddingRight: 5
+        height: height * 0.15,
     },
     headertext: {
         color: '#DD644A',
         fontFamily: 'Rubik-Regular',
-        fontSize: 15,
+        fontSize: width * 0.04,
     },
     midd: {
-        flex: 1
+        flex: 1,
     },
     middtextcontainer: {
-        height: 140,
+        height: height * 0.14,
         alignItems: 'center',
-        justifyContent: 'flex-end'
+        justifyContent: 'flex-end',
     },
     middtext: {
-        fontSize: 18,
+        fontSize: width * 0.045,
         color: '#434752',
         fontFamily: 'Lato-Regular',
+        textAlign: 'center',
+        paddingHorizontal: width * 0.1,
     },
     middtext2: {
-        fontSize: 18,
-        marginLeft: 20,
+        fontSize: width * 0.045,
         color: '#434752',
-        fontFamily: 'Lato-Regular'
+        fontFamily: 'Lato-Regular',
+        textAlign: 'center',
+        paddingHorizontal: width * 0.1,
     },
     middimage: {
         flex: 2,
@@ -124,36 +125,38 @@ const styles = StyleSheet.create({
     middbutton: {
         flex: 1,
         alignItems: 'center',
+        justifyContent: 'center',
     },
     middanimation: {
-        height: 50,
+        height: height * 0.05,
         justifyContent: 'center',
     },
     image: {
-        width: 320,
-        height: 320,
+        width: width * 0.8,
+        height: width * 0.8,
         resizeMode: 'contain',
     },
     welcome: {
         flex: 1,
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: height * 0.02,
     },
     welcometitle: {
-        fontSize: 30,
+        fontSize: width * 0.08,
         color: '#575a89',
         fontFamily: 'Rubik-Regular',
-        marginBottom: 18,
+        marginBottom: height * 0.02,
     },
     welcomesubtitle: {
-        fontSize: 18,
+        fontSize: width * 0.045,
         color: '#434752',
         fontFamily: 'Lato-Regular',
-        marginLeft: 22
+        textAlign: 'center',
+        marginHorizontal: width * 0.05,
     },
     welcomeImage: {
-        width: 350,
-        height: 350,
+        width: width * 0.9,
+        height: width * 0.9,
         resizeMode: 'contain',
     },
 });

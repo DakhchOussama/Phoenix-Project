@@ -32,7 +32,7 @@ export const login = async (
                 return { success: false, message: response.data.message || 'Login failed!' };
             }
         } catch (error: any){
-            return { success: false, message: 'An error occurred during login.' };
+            return { success: false, message: error.response?.data.message || 'Login failed!', errorCode: error.response?.data?.errorCode || 'UNKNOWN_ERROR', };
         }
 };
 

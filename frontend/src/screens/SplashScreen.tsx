@@ -11,8 +11,7 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
                 if (!token) {
                     const deviceid = await getDeviceId();
                     if (deviceid) navigation.replace('Home');
-                    else 
-                    navigation.replace('Firsttime');
+                    else navigation.replace('Firsttime');
                 } else {
                     const validtoken = await checkToken(token);
                     if (validtoken) navigation.replace('Homepage');

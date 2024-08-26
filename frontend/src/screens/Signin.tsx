@@ -31,19 +31,20 @@ const Signin = ({ navigation }: {navigation: any}) => {
 
     const checkinput = async () => {
         
-        if (password !== confirmpassword){
-            Toast.show({
-                type: 'error',
-                text1: 'Passwords do not match.',
-            });
-            return ;
-        }
-
-        if (!fname || !sname || !email || !phonenumber || !date || !department || !password){
+        
+        if (!fname || !sname || !email || !phonenumber || !date || !department || !password || !confirmpassword){
             Toast.show({
                 type: 'error',
                 text1: 'Input Required',
                 text2: 'Please enter the required information before proceeding.'
+            });
+            return ;
+        }
+        
+        if (password !== confirmpassword){
+            Toast.show({
+                type: 'error',
+                text1: 'Passwords do not match.',
             });
             return ;
         }
@@ -68,11 +69,11 @@ const Signin = ({ navigation }: {navigation: any}) => {
         }
 
         const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
+        
         if (success){
             navigation.replace('Rules');
         } else {
             let toastMessage = 'Login failed!';
-            
             switch (errorCode) {
                 case 'EMAIL_EXISTS':
                     toastMessage = 'The email address is already in use.';
@@ -82,6 +83,9 @@ const Signin = ({ navigation }: {navigation: any}) => {
                     break;
                 case 'NETWORK_ERROR':
                     toastMessage = 'Network error. Please check your connection.';
+                    break;
+                case 'PHONE_NUMBER_EXISTS':
+                    toastMessage = 'The phone number is already in use.';
                     break;
                 default:
                     toastMessage = 'An unexpected error occurred.';

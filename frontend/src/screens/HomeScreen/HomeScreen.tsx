@@ -1,284 +1,190 @@
 import React from "react";
-import { Image, StyleSheet, Text, View, TextInput, ScrollView } from "react-native";
+import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensions } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 
 export default function HomeScreen(){
-    return (
-        <View style={styles.homecontainer}>
-            <View style={styles.headerhomescreen}>
-                <View style={styles.logoandicon}>
-                    <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" /></View>
-                    <View style={styles.headerimg}><Image style={{width: 60, height: 60}} source={require('../../assets/logo2.png')}/></View>
-                </View>
 
-                <View style={styles.username}>
-                    <Text style={styles.welcome}>Hey <Text style={styles.name}>Anna Jones,</Text>
-                    {'\n'}<Text style={{fontSize: 20, fontFamily: 'Raleway-SemiBold'}}>Welcome to <Text style={{color: '#DD644A'}}>PhenX</Text></Text></Text>
-                </View>
+    const { height } = Dimensions.get('window');
+    const isSmallPhone = height < 600;
+    const headerHeight = isSmallPhone ? height * 0.4 : height * 0.3;
 
-                <View style={styles.search}>
-                    <View style={styles.searchinput}>
-                        <TextInput
-                            placeholder="Search"
-                            style={{flex: 1}}
-                        ></TextInput>
-                        <Icon name="search" size={15}  style={styles.inputicon}/>
+    const categories = [
+        { name: 'Carpooling & Courier', color: '#3DC8B4', image: require('../../assets/Carpooling.png'), description: 'Share rides or send packages efficiently with our Carpooling & Courier services, saving you time and money.' },
+        { name: 'Rentals & Sales', color: '#B35D46', image: require('../../assets/RentalsSales.png'), description: 'Browse and post listings for rentals and sales, connecting you with buyers and sellers in your community.' },
+        { name: 'Entertainment & Sports', color: '#0296E5', image: require('../../assets/Entertainment.png'), description: 'Join in on the fun with Entertainment & Sports events and activities happening in your area.' },
+        { name: 'Lost & Found', color: '#DDB18A', image: require('../../assets/LostFound.png'), description: 'Report or recover lost items with our Lost & Found services, ensuring your belongings are returned safely.' },
+        { name: 'Food & Groceries', color: '#34A853', image: require('../../assets/FoodGroceries.png'), description: 'Get the best deals on food and groceries with our convenient services, saving you time and money.' },
+        { name: 'Health & Wellness', color: '#FF405C', image: require('../../assets/Health.png'), description: 'Maintain a healthy lifestyle with our Health & Wellness services, offering resources and support.' },
+        { name: 'Technology & Gadgets', color: '#0B799D', image: require('../../assets/TechnologyGadgets.png'), description: 'Stay up-to-date with the latest technology and gadgets through our services, designed to keep you connected.' },
+        { name: 'Learning & Tutoring', color: '#143D80', image: require('../../assets/LearningTutoring.png'), description: 'Expand your knowledge and skills with our Learning & Tutoring services, offering educational resources and support.' },
+        { name: 'Money Services', color: '#3D997A', image: require('../../assets/MoneyServices.png'), description: 'Access a range of Money Services to manage your finances, including transfers, exchanges, and more.' },
+        { name: 'Item Sharing & Lending', color: '#816AE2', image: require('../../assets/ItemSharingLending.png'), description: 'Share and lend items within your community, fostering a culture of collaboration and resourcefulness.' },
+        { name: 'Information & Resources', color: '#41c1f5', image: require('../../assets/InformationResources.png'), description: 'Access vital information and resources to stay informed and make well-informed decisions.' },
+    ];
+
+    const content = 
+        (
+                <View style={styles.homecontainer}>
+                <View  style={[styles.headerhomescreen, { height: headerHeight}]}>
+                    <View style={styles.logoandicon}>
+                        <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" /></View>
+                        <View style={styles.headerimg}><Image style={{width: 60, height: 60}} source={require('../../assets/logo2.png')} resizeMode="cover"/></View>
+                    </View>
+
+                    <View style={styles.username}>
+                        <View>
+                        <Text style={styles.welcome}>Hey <Text style={[styles.name, {color: '#DD644A'}]}>Anna Jones,</Text>
+                        {'\n'}<Text style={{fontSize: 20, fontFamily: 'Raleway-SemiBold'}}>Welcome to <Text style={{color: '#DD644A'}}>PhenX</Text></Text></Text>
+                        </View>
+                        <View style={styles.search}>
+                        <View style={styles.searchinput}>
+                            <TextInput
+                                placeholder="Search"
+                                style={styles.textinput}
+                            ></TextInput>
+                            <Icon name="search" size={15}  style={styles.inputicon}/>
+                        </View>
+                    </View>
                     </View>
                 </View>
-            </View>
 
-            <View style={styles.categories}>
-                <View style={styles.categoriesheader}>
-                    <Text style={styles.categorieword}>Categories</Text>
-                    <View style={styles.categorieall}>
-                        <Text style={styles.allword}>All</Text>
-                        <MaterialIcons  name="arrow-forward-ios" size={17} color="#B1B2C0" />
+                <View style={styles.categories}>
+                    <View style={styles.categoriesheader}>
+                        <Text style={styles.categorieword}>Categories</Text>
+                        <View style={styles.categorieall}>
+                            <Text style={styles.allword}>All</Text>
+                            <MaterialIcons  name="arrow-forward-ios" size={17} color="#B1B2C0" />
+                        </View>
                     </View>
-                </View>
 
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
                     <View style={styles.categorieslist}>
 
-                        {/* Carpooling & Courier */}
-                        <View style={[styles.categorie, {borderColor: '#3DC8B4'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 45, height: 45, marginLeft: 2, marginTop: 5}} source={require('../../assets/Carpooling.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#3abfac"}]}>Carpooling & Courier</Text>
+                    <FlatList
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        data={categories}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={({ item }) => (
+                            <View style={[styles.categorie, { borderColor: item.color }]}>
+                                <View style={styles.catogorieimg}>
+                                    <Image style={{ width: 40, height: 40, marginLeft: 2, marginTop: 5 }} source={item.image} resizeMode="cover" />
                                 </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Share rides or send packages efficiently with our Carpooling & Courier services, saving you time and money.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        
-                        {/* Rentals & Sales */}
-                        <View style={[styles.categorie, {borderColor: '#B35D46'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/RentalsSales.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#B35D46"}]}>Rentals & Sales</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Browse and post listings for rentals and sales, connecting you with buyers and sellers in your community.</Text>
+                                <View style={styles.categorieinformation}>
+                                    <View style={styles.categorietitle}>
+                                        <Text style={[styles.header, { color: item.color }]}>{item.name}</Text>
+                                    </View>
+                                    <View style={styles.categorietext}>
+                                        <Text style={styles.title}>{item.description}</Text>
+                                    </View>
                                 </View>
                             </View>
-                        </View>
-
-                        {/* Entertainment & Sports */}
-                        <View style={[styles.categorie, {borderColor: '#0296E5'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/Entertainment.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#0296E5"}]}>Entertainment & Sports</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Join in on the fun with Entertainment & Sports events and activities happening in your area.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Lost & Found */}
-                        <View style={[styles.categorie, {borderColor: '#DDB18A'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/LostFound.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#DDB18A"}]}>Lost & Found</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Report or recover lost items with our Lost & Found services, ensuring your belongings are returned safely.</Text>
-                                </View>
-                            </View>
-                        </View>
-                        {/* Food & Groceries */}
-                        <View style={[styles.categorie, {borderColor: '#34A853'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/FoodGroceries.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#34A853"}]}>Food & Groceries</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Get the best deals on food and groceries with our convenient services, saving you time and money.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Health & Wellness */}
-                        <View style={[styles.categorie, {borderColor: '#FF405C'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/Health.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#FF405C"}]}>Health & Wellness</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Maintain a healthy lifestyle with our Health & Wellness services, offering resources and support.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Technology & Gadgets */}
-                        <View style={[styles.categorie, {borderColor: '#0B799D'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/TechnologyGadgets.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#0B799D"}]}>Technology & Gadgets</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Stay up-to-date with the latest technology and gadgets through our services, designed to keep you connected.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Learning & Tutoring */}
-                        <View style={[styles.categorie, {borderColor: '#143D80'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/LearningTutoring.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#143D80"}]}>Learning & Tutoring</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Expand your knowledge and skills with our Learning & Tutoring services, offering educational resources and support.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Money Services */}
-                        <View style={[styles.categorie, {borderColor: '#3D997A'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/MoneyServices.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#3D997A"}]}>Money Services</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Access a range of Money Services to manage your finances, including transfers, exchanges, and more.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Item Sharing & Lending */}
-                        <View style={[styles.categorie, {borderColor: '#816AE2'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/ItemSharingLending.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#816AE2"}]}>Item Sharing & Lending</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Share and lend items within your community, fostering a culture of collaboration and resourcefulness.</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* Information & Resources */}
-                        <View style={[styles.categorie, {borderColor: '#41c1f5'}]}>
-                            <View style={styles.catogorieimg}>
-                                <Image style={{width: 40, height: 40, marginLeft: 2, marginTop: 5}} source={require('../../assets/InformationResources.png')}/>
-                            </View>
-                            <View style={styles.categorieinformation}>
-                                <View style={styles.categorietitle}>
-                                    <Text style={[styles.header, {color: "#41c1f5"}]}>Information & Resources</Text>
-                                </View>
-                                <View style={styles.categorietext}>
-                                    <Text style={styles.title}>Access vital information and resources to stay informed and make well-informed decisions.</Text>
-                                </View>
-                            </View>
-                        </View>
+                        )}
+                    />
                     </View>
-                </ScrollView>
-
-            </View>
-
-            <View style={styles.services}>
-                <View style={styles.newservicestitle}>
-                    <Text style={[styles.categorieword, {fontSize: 16, marginLeft: 7}]}>Discover New Services</Text>
                 </View>
 
-                <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
-                    <View style={styles.newservices}>
-                        <View style={styles.servicecontainer}>
-                            <View style={styles.serviceslist}>
-                                <View style={styles.service}>
-                                    <View style={styles.clientimg}>
-                                        <Image style={styles.clientImage} source={require('../../assets/bot.png')} />
-                                    </View>
-                                    <View style={styles.serviceuser}>
-                                        <Text style={styles.username2}>Admin</Text>
-                                        <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.servicetime}>
-                                    <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                    <Text style={styles.timeText}>21:00</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* 2 */}
-
-                        <View style={styles.servicecontainer}>
-                            <View style={styles.serviceslist}>
-                                <View style={styles.service}>
-                                    <View style={styles.clientimg}>
-                                        <Image style={styles.clientImage} source={require('../../assets/bot.png')} />
-                                    </View>
-                                    <View style={styles.serviceuser}>
-                                        <Text style={styles.username2}>Admin</Text>
-                                        <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.servicetime}>
-                                    <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                    <Text style={styles.timeText}>21:00</Text>
-                                </View>
-                            </View>
-                        </View>
-
-                        {/* 3 */}
-
-                        <View style={styles.servicecontainer}>
-                            <View style={styles.serviceslist}>
-                                <View style={styles.service}>
-                                    <View style={styles.clientimg}>
-                                        <Image style={styles.clientImage} source={require('../../assets/bot.png')} />
-                                    </View>
-                                    <View style={styles.serviceuser}>
-                                        <Text style={styles.username}>Admin</Text>
-                                        <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                    </View>
-                                </View>
-                                <View style={styles.servicetime}>
-                                    <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                    <Text style={styles.timeText}>21:00</Text>
-                                </View>
-                            </View>
-                        </View>
+                <View style={styles.services}>
+                    <View style={styles.newservicestitle}>
+                        <Text style={[styles.categorieword, {fontSize: 16, marginLeft: 7}]}>Discover New Services</Text>
                     </View>
-                </ScrollView>
 
+                    <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
+                        <View style={styles.newservices}>
+                            <View style={styles.servicecontainer}>
+                                <View style={styles.serviceslist}>
+                                    <View style={styles.service}>
+                                        <View style={styles.clientimg}>
+                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
+                                        </View>
+                                        <View style={styles.serviceuser}>
+                                            <Text style={styles.username2}>Admin</Text>
+                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.servicetime}>
+                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
+                                        <Text style={styles.timeText}>21:00</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                            {/* 2 */}
+
+                            <View style={styles.servicecontainer}>
+                                <View style={styles.serviceslist}>
+                                    <View style={styles.service}>
+                                        <View style={styles.clientimg}>
+                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
+                                        </View>
+                                        <View style={styles.serviceuser}>
+                                            <Text style={styles.username2}>Admin</Text>
+                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.servicetime}>
+                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
+                                        <Text style={styles.timeText}>21:00</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+                            {/* 3 */}
+
+                            <View style={styles.servicecontainer}>
+                                <View style={styles.serviceslist}>
+                                    <View style={styles.service}>
+                                        <View style={styles.clientimg}>
+                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
+                                        </View>
+                                        <View style={styles.serviceuser}>
+                                            <Text style={styles.username2}>Admin</Text>
+                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.servicetime}>
+                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
+                                        <Text style={styles.timeText}>21:00</Text>
+                                    </View>
+                                </View>
+                            </View>
+
+
+                            {/* 4 */}
+
+                            <View style={styles.servicecontainer}>
+                                <View style={styles.serviceslist}>
+                                    <View style={styles.service}>
+                                        <View style={styles.clientimg}>
+                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
+                                        </View>
+                                        <View style={styles.serviceuser}>
+                                            <Text style={styles.username2}>Admin</Text>
+                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.servicetime}>
+                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
+                                        <Text style={styles.timeText}>21:00</Text>
+                                    </View>
+                                </View>
+                            </View>
+                        </View>
+                    </ScrollView>
+
+                </View>
             </View>
-        </View>
+    )
+
+    return (
+       isSmallPhone ? (
+            <ScrollView contentContainerStyle={styles.scrollView}>
+                 {content}
+            </ScrollView>
+       ): (
+            content
+       )
     )
 };
 
@@ -289,21 +195,19 @@ const styles = StyleSheet.create({
       },
       headerhomescreen: {
         padding: 15,
-        flex: 1,
-        // backgroundColor: 'red',
+        height: 250,
+        // backgroundColor: 'blue'
     },
     logoandicon: {
         flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'center',  // Center the content within this view
-        position: 'relative',  // Allows for absolute positioning of the icon
+        alignItems: 'center',
+        justifyContent: 'center',
         width: '100%',
         flex: 1,
-        // backgroundColor: 'red',
     },
     headericon: {
         position: 'absolute',
-        left: 0,  // Position icon to the left
+        left: 0,
         padding: 5,
     },
     headerimg: {
@@ -311,25 +215,25 @@ const styles = StyleSheet.create({
         height: 60,
     },
     username: {
-        marginTop: 15,
         flex: 1,
-        // backgroundColor: 'blue',
-        justifyContent: 'flex-end'
+        justifyContent: 'center',
+        alignItems: 'flex-start',
+        // backgroundColor: 'red'
     },
     welcome: {
         textAlign: 'left',
-        lineHeight: 26,
+        // lineHeight: 26,
         fontFamily: 'Raleway-Bold',
-        fontSize: 30,
-        justifyContent: 'center',
+        fontSize: 35,
         color: '#434752',
     },
     name: {
         fontFamily: 'Raleway-Bold',
-        fontSize: 18,
+        fontSize: 20,
     },
     search: {
-        marginTop: 20,
+        height: 50,
+        marginTop: 18,
     },
     searchinput: {
         flexDirection: 'row',
@@ -339,6 +243,14 @@ const styles = StyleSheet.create({
         borderRadius: 25,
         paddingVertical: 10,
         paddingHorizontal: 15,
+        justifyContent: 'space-between',
+    },
+    textinput: {
+        flex: 1,
+        fontSize: 16,
+        color: '#434752',
+        padding: 0,
+        margin: 0,
     },
     inputicon: {
         marginLeft: 10,
@@ -347,15 +259,16 @@ const styles = StyleSheet.create({
       categories: {
         // height: 250,
         marginTop: 10,
-        paddingHorizontal: 15,
-        flex:  1,
-        // backgroundColor: 'blue'
+        paddingHorizontal: 12,
+        flex:  1.1,
+        // backgroundColor: 'blue',
+        justifyContent: 'center'
       },
       categoriesheader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 18,
         // backgroundColor: 'red'
       },
       categorieall: {
@@ -394,7 +307,9 @@ const styles = StyleSheet.create({
       categorieslist: {
         flexDirection: 'row',
         alignItems: 'center',
-        // backgroundColor: 'red'
+        // backgroundColor: 'red',
+        marginLeft: 15
+        // height: 200
       },
       categorie: {
         flexDirection: 'column',
@@ -407,6 +322,7 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         backgroundColor: '#FAFAFA',
         paddingVertical: 10,
+        height: 210
       },
       catogorieimg: {
         flex: 1,
@@ -444,6 +360,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
+        borderWidth: 0.5,
+        borderColor: '#F1C3B8'
     },
     serviceslist: {
         flexDirection: 'row',
@@ -490,4 +408,8 @@ const styles = StyleSheet.create({
         color: '#6A6B6C', // Lighter grey for the time
         marginLeft: 5,
     },
+    scrollView: {
+        flexGrow: 1,
+        justifyContent: 'center',
+      },
 })
