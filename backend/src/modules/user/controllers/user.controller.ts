@@ -21,10 +21,11 @@ export class UserController {
           }
         }
       } catch (error){
+        console.log('error : ', error.response.code);
           return {
             success: false,
-            message: error.message || 'An error occurred',
-            errorCode: error.code || 'UNKNOWN_ERROR', // Optionally include an error code
+            message: error.response?.message,
+            errorCode: error.response?.code, // Optionally include an error code
           };
       }
     return { success: false, message: 'User creation failed' };

@@ -3,12 +3,14 @@ import { View, Text, Button, StyleSheet, Image, TextInput, TouchableOpacity } fr
 import CheckBox from '@react-native-community/checkbox';
 import { auth, getToken, storeToken } from '../services/authService';
 import Toast from 'react-native-toast-message';
+import Loading from '../components/Loading';
 
 const LoginScreen = ({ navigation }: { navigation: any}) => {
 
     const [isSelected, setSelection] = useState(false);
     const [emailorphone, setemailorphone] = useState('');
     const [password, setpassword] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleRememberMeToggle = () => {
       setSelection(!isSelected);
@@ -17,7 +19,9 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
     const handleconnection = async () => {
         try {
             if (emailorphone && password){
+                setIsLoading(true);
                 const login = await auth(emailorphone, password);
+                setIsLoading(false);
                 if (login.success){
                     navigation.replace('Homepage');
                     if (isSelected){
@@ -51,8 +55,11 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
                 text1: 'An error occurred',
                 text2: 'Please try again later.',
             });
-        }
-        
+        }   
+    };
+
+    if (isLoading) {
+        return <Loading />;
     }
     return (
         <View style={styles.container}>

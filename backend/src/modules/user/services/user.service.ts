@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
@@ -17,10 +17,23 @@ export class UserService {
           }
         });
 
+        const checkphonenumber = await this.prisma.user.findUnique({
+          where: {
+              Phone: phonenumber
+          }
+        });
+
         if (checkemail) {
           throw new Error('Email already in use');
         }
-        return this.prisma.user.create({
+        
+        if (checkphonenumber) {
+          throw new ConflictException({
+            code: 'PHONE_NUMBER_EXISTS',
+            message: 'The phone number is already in use.',
+          });
+        }
+        const user = this.prisma.user.create({
           data: {
               Fname: fname,
               Sname: sname,
@@ -32,6 +45,7 @@ export class UserService {
               Password: hashedPassword
           },
         });
+        return user;
   }
 
 

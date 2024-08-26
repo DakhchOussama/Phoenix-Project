@@ -7,6 +7,7 @@ import DateInput from "../components/DateInput";
 import Button from "../components/Button";
 import { login } from "../services/authService";
 import DepartmentModal from "../components/DepartmentModal";
+import Loading from "../components/Loading";
 
 const Signin = ({ navigation }: {navigation: any}) => {
     const [click, setClick] = useState(false);
@@ -21,6 +22,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
     const [confirmpassword, setconfirmpassword] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [already, setalready] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
 
     const departments = [
@@ -68,7 +70,9 @@ const Signin = ({ navigation }: {navigation: any}) => {
             return;
         }
 
+        setIsLoading(true);
         const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
+        setIsLoading(false);
         
         if (success){
             navigation.replace('Rules');
@@ -102,6 +106,10 @@ const Signin = ({ navigation }: {navigation: any}) => {
         setdepartment(dept);
         setModalVisible(false);
     };
+
+
+    if (isLoading)
+        return <Loading />
 
     return (
         <>

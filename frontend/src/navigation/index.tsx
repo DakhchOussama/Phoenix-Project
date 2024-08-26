@@ -10,6 +10,7 @@ import WelcomePage from '../screens/WelcomePage';
 import HomePage from '../screens/HomePage';
 import RulesandTerms from '../screens/RulesandTerms';
 import FirstTime from '../screens/FirstTime';
+import Loading from '../components/Loading';
 
 const Stack = createNativeStackNavigator();
 
@@ -17,7 +18,7 @@ function AppNavigation() {
     return (
         <NavigationContainer>
             <StatusBar hidden={true} />
-            <Stack.Navigator initialRouteName="Signin">
+            <Stack.Navigator initialRouteName="Splash">
                 <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
                 <Stack.Screen name="Home" component={LoginScreen} options={{headerShown: false}} />
                 <Stack.Screen name="Profile" component={ProfileScreen} />
@@ -26,6 +27,7 @@ function AppNavigation() {
                 <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
                 <Stack.Screen name="Rules" component={RulesandTerms} options={{headerShown: false}} />
                 <Stack.Screen name="Firsttime" component={FirstTime} options={{headerShown: false}} />
+                <Stack.Screen name="Loading" component={Loading} options={{headerShown: false}} />
             </Stack.Navigator>
         </NavigationContainer>
     );
