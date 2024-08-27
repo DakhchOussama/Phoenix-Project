@@ -14,7 +14,25 @@ type LoginResponse = {
 const instance = axios.create({
     baseURL: BASE_URL,
     timeout: 10000,
-  });
+});
+
+
+export const checkinfo = async (email: string, phonenumber: string)=> {
+    try {
+
+        const response = await instance.post('/users/checkinfo', {email, phonenumber});
+        if (response.data.success) {
+            return { success: true, message: 'info successful!' };
+        } else {
+            return { success: false, message: response.data.message || 'info failed!', errorCode: response.data.errorCode };
+        }
+    } catch (error: any){
+        console.log('error : ', error);
+        return { success: false, message: error.response?.data.message || 'info failed!', errorCode: error.response?.data?.errorCode || 'UNKNOWN_ERROR', };
+
+    }
+
+}
 
 export const login = async (
     fname: string,

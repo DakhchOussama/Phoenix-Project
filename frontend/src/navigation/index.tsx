@@ -25,7 +25,7 @@ function AppNavigation() {
                 <Stack.Screen name="Signin" component={Signin} options={{headerShown: false}} />
                 <Stack.Screen name="Welcome" component={WelcomePage} options={{headerShown: false}} />
                 <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
-                <Stack.Screen name="Rules" component={RulesandTerms} options={{headerShown: false}} />
+                {/* <Stack.Screen name="Rules" component={RulesandTerms} options={{headerShown: false}} /> */}
                 <Stack.Screen name="Firsttime" component={FirstTime} options={{headerShown: false}} />
                 <Stack.Screen name="Loading" component={Loading} options={{headerShown: false}} />
             </Stack.Navigator>

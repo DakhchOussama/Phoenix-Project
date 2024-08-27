@@ -1,17 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { GestureResponderEvent, ScrollView, StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity, GestureHandlerRootView } from "react-native-gesture-handler";
 import CheckBox from "@react-native-community/checkbox";
 import Button from "../components/Button";
 import Toast from "react-native-toast-message";
 
-export default function RulesandTerms({navigation}: {navigation: any}) {
+
+interface rulesinter {
+    onPress: () => void;
+}
+
+const RulesandTerms: React.FC<rulesinter> = ({onPress}) => {
 
     const [isSelected, setisselected] = useState(false);
     
     const handleClick = () => {
-        if (isSelected)
-            navigation.replace('Homepage')
+        if (isSelected){
+            onPress();
+        }
         else{
             Toast.show({
                 type: 'info',
@@ -178,3 +184,4 @@ const styles = StyleSheet.create({
     },
 });
 
+export default RulesandTerms;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, Image, StyleSheet, Text, Dimensions } from "react-native";
+import { View, Image, StyleSheet, Text, Dimensions } from "react-native";
 import Button from "../components/Button";
 import NavigationBar from "../components/NavigationBar";
 

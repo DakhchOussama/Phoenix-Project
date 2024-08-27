@@ -36,7 +36,7 @@ export default function HomeScreen(){
                     <View style={styles.username}>
                         <View>
                         <Text style={styles.welcome}>Hey <Text style={[styles.name, {color: '#DD644A'}]}>Anna Jones,</Text>
-                        {'\n'}<Text style={{fontSize: 20, fontFamily: 'Raleway-SemiBold'}}>Welcome to <Text style={{color: '#DD644A'}}>PhenX</Text></Text></Text>
+                        {'\n'}<Text style={{fontSize: 19, fontFamily: 'Raleway-SemiBold'}}>Welcome to <Text style={{color: '#DD644A'}}>PhenX</Text></Text></Text>
                         </View>
                         <View style={styles.search}>
                         <View style={styles.searchinput}>
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     },
     welcome: {
         textAlign: 'left',
-        // lineHeight: 26,
+        lineHeight: 33,
         fontFamily: 'Raleway-Bold',
         fontSize: 35,
         color: '#434752',
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
       },
       title: {
         fontFamily: 'Sora-SemiBold',
-        fontSize: 12,
+        fontSize: 11,
         color: '#434752',
       },
       allword: {
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
         marginRight: 14,
         paddingLeft: 10,
         borderRadius: 12,
-        backgroundColor: '#FAFAFA',
+        backgroundColor: '#FFFFFF',
         paddingVertical: 10,
         height: 210
       },
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     serviceText: {
         fontFamily: 'Raleway-Regular',
         fontSize: 12,
-        color: '#7A7A7A', // Grey for the service description
+        color: '#434752', // Grey for the service description
     },
     servicetime: {
         flexDirection: 'column',

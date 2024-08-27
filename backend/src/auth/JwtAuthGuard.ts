@@ -1,7 +1,6 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { AuthGuard } from "@nestjs/passport";
-import { Observable } from "rxjs";
 import { UserService } from "src/modules/user/services/user.service";
 
 

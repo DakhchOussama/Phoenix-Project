@@ -5,9 +5,10 @@ import Toast from 'react-native-toast-message';
 import NameInput from "../components/NameInput";
 import DateInput from "../components/DateInput";
 import Button from "../components/Button";
-import { login } from "../services/authService";
+import { checkinfo, login } from "../services/authService";
 import DepartmentModal from "../components/DepartmentModal";
 import Loading from "../components/Loading";
+import RulesandTerms from "./RulesandTerms";
 
 const Signin = ({ navigation }: {navigation: any}) => {
     const [click, setClick] = useState(false);
@@ -23,6 +24,40 @@ const Signin = ({ navigation }: {navigation: any}) => {
     const [modalVisible, setModalVisible] = useState(false);
     const [already, setalready] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [rules, setrules] = useState(false);
+
+    const senddata = async () => {
+        setIsLoading(true);
+        const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
+        setIsLoading(false);
+        
+        if (success){
+            navigation.replace('Homepage');
+        } else {
+            let toastMessage = 'Login failed!';
+            switch (errorCode) {
+                case 'EMAIL_EXISTS':
+                    toastMessage = 'The email address is already in use.';
+                    break;
+                case 'INVALID_PASSWORD':
+                    toastMessage = 'Incorrect password. Please try again.';
+                    break;
+                case 'NETWORK_ERROR':
+                    toastMessage = 'Network error. Please check your connection.';
+                    break;
+                case 'PHONE_NUMBER_EXISTS':
+                    toastMessage = 'The phone number is already in use.';
+                    break;
+                default:
+                    toastMessage = 'An unexpected error occurred.';
+            }
+        
+            Toast.show({
+                type: 'error',
+                text1: toastMessage,
+            });
+        }
+    }
 
 
     const departments = [
@@ -71,11 +106,11 @@ const Signin = ({ navigation }: {navigation: any}) => {
         }
 
         setIsLoading(true);
-        const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
+        const { success, message, errorCode } = await checkinfo(email, phonenumber);
         setIsLoading(false);
         
         if (success){
-            navigation.replace('Rules');
+            setrules(true);
         } else {
             let toastMessage = 'Login failed!';
             switch (errorCode) {
@@ -110,6 +145,9 @@ const Signin = ({ navigation }: {navigation: any}) => {
 
     if (isLoading)
         return <Loading />
+
+    if (rules)
+        return <RulesandTerms onPress={senddata} />
 
     return (
         <>
@@ -180,7 +218,7 @@ const Signin = ({ navigation }: {navigation: any}) => {
             )}
                 <View style={styles.button}>
                 {!click && (<Button text={'Next'} onPress={() => setClick(!click)} iconbutton={true}/>)}
-                {click && (<Button text={'Sign Up'} onPress={checkinput} iconbutton={false} />)}
+                {click && (<Button text={'Next'} onPress={checkinput} iconbutton={true} />)}
                 </View>
                 <DepartmentModal
                         visible={modalVisible}
