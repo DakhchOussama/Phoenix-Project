@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { auth, getToken, storeToken } from '../services/authService';
+import { auth, getToken, isTokenValid, storeToken } from '../services/authService';
 import Toast from 'react-native-toast-message';
 import Loading from '../components/Loading';
 
@@ -23,10 +23,8 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
                 const login = await auth(emailorphone, password);
                 setIsLoading(false);
                 if (login.success){
-                    navigation.replace('Homepage');
-                    if (isSelected){
-                        await storeToken(String(login.token));
-                    }
+                        await storeToken(login.token, isSelected);
+                        navigation.replace('Homepage');
                 } else {
                     Toast.show({
                         type: 'error',
@@ -63,7 +61,6 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
     }
     return (
         <View style={styles.container}>
-            <Toast />
             <View style={styles.logoContainer}>
                 <View style={styles.logoContainerchild}>
                     <Image style={styles.logo} source={require('../assets/logo2.png')} />
@@ -113,6 +110,7 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
                     <Text style={styles.buttonText2}>Sign up</Text>
                 </TouchableOpacity>
             </View>
+            <Toast />
         </View>
     );
 };

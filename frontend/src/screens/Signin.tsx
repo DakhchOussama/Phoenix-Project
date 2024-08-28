@@ -68,7 +68,6 @@ const Signin = ({ navigation }: {navigation: any}) => {
 
     const checkinput = async () => {
         
-        
         if (!fname || !sname || !email || !phonenumber || !date || !department || !password || !confirmpassword){
             Toast.show({
                 type: 'error',
@@ -226,8 +225,8 @@ const Signin = ({ navigation }: {navigation: any}) => {
                         onSelect={handleSelectDepartment}
                         departments={departments}
                     />
-                <Toast />
             </View>
+                <Toast />
         </View>
         </>
     );

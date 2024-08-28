@@ -11,25 +11,29 @@ import HomePage from '../screens/HomePage';
 import RulesandTerms from '../screens/RulesandTerms';
 import FirstTime from '../screens/FirstTime';
 import Loading from '../components/Loading';
+import Services from '../screens/Servicespost/Services';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const Stack = createNativeStackNavigator();
 
 function AppNavigation() {
     return (
-        <NavigationContainer>
-            <StatusBar hidden={true} />
-            <Stack.Navigator initialRouteName="Splash">
-                <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
-                <Stack.Screen name="Home" component={LoginScreen} options={{headerShown: false}} />
-                <Stack.Screen name="Profile" component={ProfileScreen} />
-                <Stack.Screen name="Signin" component={Signin} options={{headerShown: false}} />
-                <Stack.Screen name="Welcome" component={WelcomePage} options={{headerShown: false}} />
-                <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
-                {/* <Stack.Screen name="Rules" component={RulesandTerms} options={{headerShown: false}} /> */}
-                <Stack.Screen name="Firsttime" component={FirstTime} options={{headerShown: false}} />
-                <Stack.Screen name="Loading" component={Loading} options={{headerShown: false}} />
-            </Stack.Navigator>
-        </NavigationContainer>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <NavigationContainer>
+                <StatusBar hidden={true} />
+                <Stack.Navigator initialRouteName="Splash">
+                    <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
+                    <Stack.Screen name="Home" component={LoginScreen} options={{headerShown: false}} />
+                    <Stack.Screen name="Profile" component={ProfileScreen} />
+                    <Stack.Screen name="Signin" component={Signin} options={{headerShown: false}} />
+                    <Stack.Screen name="Welcome" component={WelcomePage} options={{headerShown: false}} />
+                    <Stack.Screen name="Homepage" component={HomePage} options={{headerShown: false}} />
+                    <Stack.Screen name="Services" component={Services} options={{headerShown: false}} />
+                    <Stack.Screen name="Firsttime" component={FirstTime} options={{headerShown: false}} />
+                    <Stack.Screen name="Loading" component={Loading} options={{headerShown: false}} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </GestureHandlerRootView>
     );
 }
 

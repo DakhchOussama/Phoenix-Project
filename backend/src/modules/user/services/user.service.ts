@@ -23,7 +23,7 @@ export class UserService {
     });
 
 
-    console.log('check phone : ', checkphonenumber);
+    // console.log('check phone : ', checkphonenumber);
 
     if (checkemail) {
       throw new ConflictException({

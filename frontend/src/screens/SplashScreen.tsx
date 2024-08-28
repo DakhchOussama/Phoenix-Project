@@ -10,12 +10,10 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
                 const token = await getToken();
                 if (!token) {
                     const deviceid = await getDeviceId();
-                    if (deviceid) navigation.replace('Home');
-                    else navigation.replace('Firsttime');
+                    navigation.replace(deviceid ? 'Home' : 'Firsttime');
                 } else {
                     const validtoken = await checkToken(token);
-                    if (validtoken) navigation.replace('Homepage');
-                    else navigation.replace('Home');
+                    navigation.replace(validtoken ? 'Homepage' : 'Home');
                 }
             } catch (error) {
                 console.error("Error checking token:", error);

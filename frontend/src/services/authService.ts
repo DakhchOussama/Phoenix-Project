@@ -20,7 +20,7 @@ const instance = axios.create({
 export const checkinfo = async (email: string, phonenumber: string)=> {
     try {
 
-        const response = await instance.post('/users/checkinfo', {email, phonenumber});
+        const response = await instance.post('/user/checkinfo', {email, phonenumber});
         if (response.data.success) {
             return { success: true, message: 'info successful!' };
         } else {
@@ -43,7 +43,7 @@ export const login = async (
     department: string,
     password: string) : Promise<LoginResponse> => {
         try {
-            const response = await instance.post(`/users/create`, {fname, sname, email, phonenumber, birthday, department, password});
+            const response = await instance.post(`/user/create`, {fname, sname, email, phonenumber, birthday, department, password});
             if (response.data.token) {
                 return { success: true, message: 'Login successful!' };
             } else {
@@ -85,15 +85,21 @@ export const getToken = async () => {
 export const removeToken = async () => {
     try {
       await AsyncStorage.removeItem('authToken');
+      await AsyncStorage.removeItem('expiryTime');
     } catch (error) {
       console.error('Error removing token:', error);
     }
 };
 
-export const storeToken = async (token: string) => {
+export const storeToken = async (token: string, rememberMe: boolean) => {
     try {
-      await AsyncStorage.setItem('authToken', token);
-      return true;
+        const expiryTime = rememberMe 
+        ? Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
+        : Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+        
+        await AsyncStorage.setItem('authToken', token);
+        await AsyncStorage.setItem('expiryTime', expiryTime.toString());
+        return true;
     } catch (error) {
       return false;
     }
@@ -129,3 +135,39 @@ export const getDeviceId = async () => {
     }
     return deviceId;
 };
+
+export const isTokenValid = async () => {
+    try {
+        const expiryTime = await AsyncStorage.getItem('expiryTime');
+        if (!expiryTime) return false;
+
+        const now = Date.now();
+        if (now > parseInt(expiryTime)) {
+            await removeToken();
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('Error checking token validity:', error);
+        return false;
+    }
+};
+
+export const getprofileuser = async () => {
+    try{
+        const token = await AsyncStorage.getItem('authToken');
+        const response = await instance.get('/auth/profile', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = response.data;
+        if (data)
+            return data;
+        else
+            return false;
+    } catch (error){
+        return false;
+    }
+}

@@ -1,14 +1,44 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensions } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
+import { getprofileuser, getToken } from "../../services/authService";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import Services from "../Servicespost/Services";
+
+interface User {
+    AvatarURL: string;
+    Ban: boolean;
+    Department: string;
+    Email: string;
+    Fname: string;
+    Phone: string;
+    Sname: string;
+    UserID: string;
+}
 
 export default function HomeScreen(){
 
     const { height } = Dimensions.get('window');
     const isSmallPhone = height < 600;
     const headerHeight = isSmallPhone ? height * 0.4 : height * 0.3;
+    const [profile, setprofile] = useState<User>();
+    const [services, setservices] = useState(false);
+
+   useEffect(() => {
+        const getprofile = async () => {
+            const data = await getprofileuser();
+            if (data)
+                setprofile(data);
+            else{
+                console.log('error');
+            }
+        }
+
+        getprofile();
+    }, []);
+
 
     const categories = [
         { name: 'Carpooling & Courier', color: '#3DC8B4', image: require('../../assets/Carpooling.png'), description: 'Share rides or send packages efficiently with our Carpooling & Courier services, saving you time and money.' },
@@ -24,6 +54,10 @@ export default function HomeScreen(){
         { name: 'Information & Resources', color: '#41c1f5', image: require('../../assets/InformationResources.png'), description: 'Access vital information and resources to stay informed and make well-informed decisions.' },
     ];
 
+
+    if (services)
+        return <Services />
+
     const content = 
         (
                 <View style={styles.homecontainer}>
@@ -35,7 +69,7 @@ export default function HomeScreen(){
 
                     <View style={styles.username}>
                         <View>
-                        <Text style={styles.welcome}>Hey <Text style={[styles.name, {color: '#DD644A'}]}>Anna Jones,</Text>
+                        <Text style={styles.welcome}>Hey <Text style={[styles.name, {color: '#DD644A'}]}>{profile?.Fname},</Text>
                         {'\n'}<Text style={{fontSize: 19, fontFamily: 'Raleway-SemiBold'}}>Welcome to <Text style={{color: '#DD644A'}}>PhenX</Text></Text></Text>
                         </View>
                         <View style={styles.search}>
@@ -53,10 +87,12 @@ export default function HomeScreen(){
                 <View style={styles.categories}>
                     <View style={styles.categoriesheader}>
                         <Text style={styles.categorieword}>Categories</Text>
-                        <View style={styles.categorieall}>
-                            <Text style={styles.allword}>All</Text>
-                            <MaterialIcons  name="arrow-forward-ios" size={17} color="#B1B2C0" />
-                        </View>
+                        <TouchableOpacity onPress={() => setservices(true)}>
+                            <View style={styles.categorieall}>
+                                <Text style={styles.allword}>All</Text>
+                                <MaterialIcons  name="arrow-forward-ios" size={17} color="#B1B2C0" />
+                            </View>
+                        </TouchableOpacity>
                     </View>
 
                     <View style={styles.categorieslist}>

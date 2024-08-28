@@ -1,50 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { GestureResponderEvent, ScrollView, StyleSheet, Text, View } from "react-native";
-import { TouchableOpacity, GestureHandlerRootView } from "react-native-gesture-handler";
+import React, { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import CheckBox from "@react-native-community/checkbox";
 import Button from "../components/Button";
 import Toast from "react-native-toast-message";
 
-
-interface rulesinter {
-    onPress: () => void;
+interface RulesandTermsProps {
+  onPress: () => void;
 }
 
-const RulesandTerms: React.FC<rulesinter> = ({onPress}) => {
+const RulesandTerms: React.FC<RulesandTermsProps> = ({ onPress }) => {
+  const [isSelected, setIsSelected] = useState(false);
 
-    const [isSelected, setisselected] = useState(false);
-    
-    const handleClick = () => {
-        if (isSelected){
-            onPress();
-        }
-        else{
-            Toast.show({
-                type: 'info',
-                text1: 'You should agree to continue',
-                position: 'top',
-                visibilityTime: 3000,
-            });
-        }
-    };
+  const handleContinue = () => {
+    if (isSelected) {
+      onPress();
+    } else {
+      Toast.show({
+        type: 'info',
+        text1: 'Please agree to the terms to continue',
+        position: 'top',
+        visibilityTime: 3000,
+      });
+    }
+  };
 
-    const handleRememberMeToggle = () => {
-        setisselected(!isSelected);
-    };
-
-    return (
-        <GestureHandlerRootView style={{ flex: 1, backgroundColor: 'white' }}>
-            <Toast />
-            <View style={styles.rulesandterms}>
-                <View style={styles.rulesandtermscontainer}>
-                    <View style={styles.header}>
-                        <Text style={styles.rulesandtermstext}>Terms & Conditions</Text>
-                    </View>
-                    <View style={styles.text}>
-                    <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-                        <View style={styles.textContainer}>
-                        <Text style={styles.text2}>
-                            <Text style={styles.bold}>1. Introduction:</Text> {"\n\n"} PhenX is a cutting-edge digital mobile application solution tailored specifically for university campuses, designed to bridge connections among students. Through this app, students can easily reach out to one another and share services, fostering collaboration, support, and a sense of belonging within the campus community. As such, PhenX provides Users with a service that allows them to upload and store posts, comments, reactions, photos, videos, and other information related to their engagement in a community-based approach. The app is based on the principle of free participation of internet users and freedom of expression, to ask what they need and offer what they can. It is specified that ALL POSTS/REVIEWS/COMMENTS/ and other content PUBLISHED ON THE app ARE BASED ON USERS EXPERIENCE AND ARE COMPLETELY INDEPENDENT. By registering and using the PhenX app, you agree to comply with these terms and conditions, as well as any applicable laws and regulations.
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Terms & Conditions</Text>
+      </View>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+        <Text style={styles.text}>
+        <Text style={styles.bold}>1. Introduction:</Text> {"\n\n"} PhenX is a cutting-edge digital mobile application solution tailored specifically for university campuses, designed to bridge connections among students. Through this app, students can easily reach out to one another and share services, fostering collaboration, support, and a sense of belonging within the campus community. As such, PhenX provides Users with a service that allows them to upload and store posts, comments, reactions, photos, videos, and other information related to their engagement in a community-based approach. The app is based on the principle of free participation of internet users and freedom of expression, to ask what they need and offer what they can. It is specified that ALL POSTS/REVIEWS/COMMENTS/ and other content PUBLISHED ON THE app ARE BASED ON USERS EXPERIENCE AND ARE COMPLETELY INDEPENDENT. By registering and using the PhenX app, you agree to comply with these terms and conditions, as well as any applicable laws and regulations.
                             {"\n\n"}<Text style={styles.bold}>2. Definitions:</Text> 
                             {"\n\n-"} App: Refers to the PhenX mobile application.
                             {"\n-"} User: Any individual who has registered and created an account on PhenX including advertisers.
@@ -101,87 +89,109 @@ const RulesandTerms: React.FC<rulesinter> = ({onPress}) => {
                             {"\n-"} If any provision of these terms is found to be invalid or unenforceable, the remaining provisions will remain in full force and effect.
                             {"\n-"} The failure of PhenX to enforce any right or provision of these terms shall not be deemed a waiver of such right or provision.
 </Text>
-
-                        </View>
-                    </ScrollView>
-                    </View>
-                </View>
-                <View style={styles.acceptcontainer}>
-                    <View style={styles.acceptcheckbox}>
-                        <CheckBox
-                            value={isSelected}
-                            onValueChange={handleRememberMeToggle}
-                        />
-                        <Text style={styles.accept}>I have read and agree to the terms and conditions as well as the privacy policy</Text>
-                    </View>
-                    <View style={styles.buttonaccept}>
-                        <Button text="accept" onPress={handleClick} iconbutton={false} />
-                    </View>
-                </View>
-            </View>
-        </GestureHandlerRootView>
-    )
-}
+      </ScrollView>
+      <View style={styles.footer}>
+        <View style={styles.checkboxContainer}>
+          <CheckBox
+            value={isSelected}
+            onValueChange={setIsSelected}
+            tintColors={{ true: '#D84B2C', false: '#9A9A9A' }}
+            style={styles.checkbox}
+          />
+          <Text style={styles.checkboxLabel}>I agree to the Terms & Conditions</Text>
+        </View>
+        <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Button text="Continue" onPress={handleContinue} iconbutton={false}  />
+        </View>
+      </View>
+        <Toast />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-    rulesandterms: {
-        flex: 1
-    },
-    rulesandtermscontainer: {
-        flex: 2,
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+      padding: 24,
     },
     header: {
-        height: 135,
-        alignItems: 'flex-start',
-        justifyContent: 'flex-end'
+      paddingVertical: 24,
+      alignItems: 'center',
+      borderBottomWidth: 2,
+      borderBottomColor: '#F3F4F6',
+      marginBottom: 24,
     },
-    rulesandtermstext: {
-        fontSize: 30,
-        fontFamily: 'Sora-Medium',
-        marginLeft: 5,
-        color: '#EB6F54'
-    },
-    text: {
-        flex: 2,
-        padding: 10,
-    },
-    acceptcontainer: {
-        height: 180,
-        padding: 5
-    },
-    acceptcheckbox: {
-        flexDirection: 'row',
-        flex: 1,
-        alignItems: 'center'
-    },
-    buttonaccept: {
-        flex: 2,
-        alignItems: 'center',
+    title: {
+      fontSize: 32,
+      fontWeight: '800',
+      color: '#434752',
+      letterSpacing: -0.5,
     },
     scrollView: {
-        flex: 1
-    },
-    textContainer: {
-        
+      flex: 1,
+      marginBottom: 24,
     },
     scrollContent: {
-        paddingVertical: 20,
+      paddingBottom: 36,
     },
-    text2: {
-        color: '#213038',
-        fontSize: 16,
-        lineHeight: 24,
-        padding: 5,
-        alignItems: 'flex-start'
-    },
-    accept: {
-        color: '#434752',
+    text: {
+      fontSize: 17,
+      lineHeight: 28,
+      color: '#374151',
+      marginBottom: 18,
     },
     bold: {
-        fontWeight: 'bold',
-        color: '#40444E',
-        fontSize: 17
+      fontWeight: '700',
+      color: '#434752',
     },
-});
-
-export default RulesandTerms;
+    footer: {
+      borderTopWidth: 2,
+      borderTopColor: '#F3F4F6',
+      paddingTop: 24,
+      paddingHorizontal: 16,
+      backgroundColor: '#FFFFFF',
+    },
+    checkboxContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 24,
+      backgroundColor: '#F9FAFB',
+      padding: 16,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: '#E5E7EB',
+    },
+    checkbox: {
+      marginRight: 16,
+    },
+    checkboxLabel: {
+      fontSize: 16,
+      color: '#4B5563',
+      flex: 1,
+      lineHeight: 24,
+    },
+    continueButton: {
+      backgroundColor: '#4F46E5',
+      paddingVertical: 16,
+      borderRadius: 12,
+      alignItems: 'center',
+      shadowColor: '#4F46E5',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+    continueButtonText: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: '700',
+      letterSpacing: 0.5,
+    },
+    highlightText: {
+      color: '#4F46E5',
+      fontWeight: '600',
+    },
+  });
+  
+  export default RulesandTerms;
