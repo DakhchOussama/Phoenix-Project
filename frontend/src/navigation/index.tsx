@@ -21,7 +21,7 @@ function AppNavigation() {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <NavigationContainer>
                 <StatusBar hidden={true} />
-                <Stack.Navigator initialRouteName="Splash">
+                <Stack.Navigator initialRouteName="Home">
                     <Stack.Screen name="Splash" component={SplashScreen} options={{headerShown: false}} />
                     <Stack.Screen name="Home" component={LoginScreen} options={{headerShown: false}} />
                     <Stack.Screen name="Profile" component={ProfileScreen} />

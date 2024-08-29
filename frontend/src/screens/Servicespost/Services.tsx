@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { FlatList, Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import Iconfont from 'react-native-vector-icons/FontAwesome';
 import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
 import { TouchableOpacity } from "react-native-gesture-handler";
 
+const screenWidth = Dimensions.get('window').width;
+
+
+const itemWidth = screenWidth > 600 ? screenWidth / 11 : 70;
 
 const Services = () => {
 
@@ -66,13 +70,15 @@ const Services = () => {
                                         const textColor = isSelected ? '#31343D' : '#9F9F9F';
 
                                         return (
-                                            <View style={styles.categoriecontainer}>
+                                            <View style={{ flex: 1 , justifyContent: 'center' }}> 
+                                            <View style={[styles.categoriecontainer, { width: itemWidth }]}>
                                                 <TouchableOpacity onPress={() => handlePress(index)}>
                                                     <View style={[styles.categoriecircle, { backgroundColor, borderColor: item.color, borderWidth: 1, marginBottom: 10 }]}>
                                                         <Image style={{width: 30, height: 30}} source={item.image} />
                                                     </View>
                                                     <Text style={[styles.categorietext, { color: textColor }]}>{item.name}</Text>
                                                 </TouchableOpacity>
+                                            </View>
                                             </View>
                                         );
                                     }}
@@ -88,7 +94,7 @@ const Services = () => {
                     <View style={{flex: 1,flexDirection: 'row'}}>
                         <ScrollView horizontal={false} style={{marginTop: 10}}>
                             <View style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
-                                <Icon name="list" size={28} style={{marginRight: 10, color: "#4a4f5b"}} />
+                                <Icon name="list" size={27} style={{marginRight: 10, color: "#4a4f5b"}} />
                             </View>
                             <View style={{margin: 21, marginTop: 12}}>
                                 {/* POSTcontainer */}
@@ -115,7 +121,7 @@ const Services = () => {
                                             <Iconoct name="kebab-horizontal" size={20} color={"#A4A3A3"} style={{ transform: [{ rotate: '90deg' }] }} />
                                         </View>
                                         {/* like */}
-                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={{flexDirection: 'column', justifyContent: 'flex-start', alignItems: 'center', position: 'relative', bottom: 7}}>
                                             <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F", fontWeight: '700'}}>138</Text>
                                             <Iconant name="heart" color={"#F9595F"} size={20}/>
                                         </View>
@@ -179,7 +185,7 @@ const Services = () => {
                                         <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>
                                             {/* name and min */}
                                             <View style={{}}>
-                                                <Text style={{fontFamily: 'Raleway-SemiBold', color: '#1E1E1E'}}>Sadek Rony<Text style={{fontFamily: 'Sora-SemiBold', color: '#8C8B8B', fontSize: 12}}>.9min</Text></Text>
+                                                <Text style={{fontFamily: 'Raleway-SemiBold', color: '#1E1E1E'}}>Sadek Rony<Text style={{fontFamily: 'Sora-SemiBold', color: '#8C8B8B', fontSize: 12}}>.1h</Text></Text>
                                             </View>
                                             <Text style={{fontFamily: 'Rubik-Medium', color: '#DD644A'}}>Service</Text>
                                         </View>
@@ -191,7 +197,7 @@ const Services = () => {
                                             <Iconoct name="kebab-horizontal" size={20} color={"#A4A3A3"} style={{ transform: [{ rotate: '90deg' }] }} />
                                         </View>
                                         {/* like */}
-                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', bottom: 7}}>
                                             <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F", fontWeight: '700'}}>138</Text>
                                             <Iconant name="heart" color={"#F9595F"} size={20}/>
                                         </View>
@@ -256,11 +262,11 @@ const Services = () => {
 
                                     {/* like and delete */}
                                     <View style={{flexDirection: 'column', width: 50, justifyContent: 'center'}}>
-                                        <View style={{justifyContent: 'center', alignItems: 'flex-end'}}>
+                                        <View style={{alignItems: 'flex-end', position: 'relative', bottom: 5}}>
                                             <Iconfont name="remove" size={20} color={"#c8c8c8"} />
                                         </View>
                                         {/* like */}
-                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', bottom: 7}}>
                                             <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F", fontWeight: '700'}}>138</Text>
                                             <Iconant name="heart" color={"#F9595F"} size={20}/>
                                         </View>
@@ -333,7 +339,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: 50,
-        marginBottom: 7
+        marginBottom: 7,
     },
     posticon: {
         flexDirection: 'row',

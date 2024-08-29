@@ -293,10 +293,10 @@ const styles = StyleSheet.create({
         color: '#434752',
     },
       categories: {
-        // height: 250,
+        height: 250,
         marginTop: 10,
         paddingHorizontal: 12,
-        flex:  1.1,
+        // flex:  1.1,
         // backgroundColor: 'blue',
         justifyContent: 'center'
       },

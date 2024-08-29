@@ -21,11 +21,11 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
             if (emailorphone && password){
                 setIsLoading(true);
                 const login = await auth(emailorphone, password);
-                setIsLoading(false);
                 if (login.success){
                         await storeToken(login.token, isSelected);
                         navigation.replace('Homepage');
                 } else {
+                    setIsLoading(false);
                     Toast.show({
                         type: 'error',
                         text1: 'Login failed!',

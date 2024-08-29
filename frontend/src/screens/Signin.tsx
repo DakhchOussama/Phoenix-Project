@@ -29,11 +29,11 @@ const Signin = ({ navigation }: {navigation: any}) => {
     const senddata = async () => {
         setIsLoading(true);
         const { success, message, errorCode } = await login(fname, sname, email, phonenumber, date, department, password);
-        setIsLoading(false);
         
         if (success){
             navigation.replace('Homepage');
         } else {
+            setIsLoading(false);
             let toastMessage = 'Login failed!';
             switch (errorCode) {
                 case 'EMAIL_EXISTS':

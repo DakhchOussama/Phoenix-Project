@@ -31,7 +31,7 @@ export default function HomePage() {
                     const routeName = route.name as TabRouteNames;
 
                     if (routeName === 'Newpost') {
-                        return <MaterialIcon name="add-box" size={60} color="#E1674C" />
+                        return <MaterialIcon name="add-box" size={60} color="#E1674C" style={{width: 60}} />
                     }
 
                     return icons[routeName] ? <Icon name={icons[routeName]} size={25} color={color} /> : null;
@@ -44,7 +44,7 @@ export default function HomePage() {
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderTopWidth: 1,
-                    borderColor: '#E9E9E9',
+                    borderColor: '#E9E9E9'
                 }
             })}
         >

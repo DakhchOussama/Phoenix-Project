@@ -44,7 +44,10 @@ export const login = async (
     password: string) : Promise<LoginResponse> => {
         try {
             const response = await instance.post(`/user/create`, {fname, sname, email, phonenumber, birthday, department, password});
-            if (response.data.token) {
+            if (response.data.token) 
+            {
+                removeToken();
+                storeToken(response.data.token, false);
                 return { success: true, message: 'Login successful!' };
             } else {
                 return { success: false, message: response.data.message || 'Login failed!' };
