@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { FlatList, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import Iconfont from 'react-native-vector-icons/FontAwesome';
 import Iconant from 'react-native-vector-icons/AntDesign';
+import Iconoct from 'react-native-vector-icons/Octicons';
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 const Services = () => {
+
+
+    const [like, setlike] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
 
     const categories = [
         { name: 'Transport', color: '#3DC8B4', image: require('../../assets/Carpooling.png'), description: 'Share rides or send packages efficiently with our Carpooling & Courier services, saving you time and money.' },
@@ -21,6 +27,14 @@ const Services = () => {
         { name: 'Borrow', color: '#816AE2', image: require('../../assets/ItemSharingLending.png'), description: 'Share and lend items within your community, fostering a culture of collaboration and resourcefulness.' },
         { name: 'Guides', color: '#41c1f5', image: require('../../assets/InformationResources.png'), description: 'Access vital information and resources to stay informed and make well-informed decisions.' },
     ];
+
+    const handlePress = (index: number) => {
+        if (selectedCategory === index) {
+            setSelectedCategory(null);
+        } else {
+            setSelectedCategory(index);
+        }
+    };
     
 
     return (
@@ -42,92 +56,109 @@ const Services = () => {
                             <Text style={styles.categorietext}>Categories</Text>
                         </View>
                         <FlatList
-                            horizontal
-                            showsHorizontalScrollIndicator={false}
-                            data={categories}
-                            keyExtractor={(item, index) => index.toString()}
-                            renderItem={({ item }) => (
-                                <View style={styles.categoriecontainer}>
-                                    {/* circle */}
-                                    <View style={[styles.categoriecircle, {backgroundColor: '#FFFFFF', borderColor: item.color, borderWidth: 1}]}>
-                                        <Image style={{width: 30, height: 30}} source={item.image} />
-                                    </View>
-                                    <View>
-                                        <Text style={[styles.categorietext, {color: "#9F9F9F"}]}>{item.name}</Text>
-                                    </View>
-                                </View>
-                            )}
-                        />
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    data={categories}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    renderItem={({ item, index }) => {
+                                        const isSelected = selectedCategory === index;
+                                        const backgroundColor = isSelected ? item.color : '#FFFFFF';
+                                        const textColor = isSelected ? '#31343D' : '#9F9F9F';
+
+                                        return (
+                                            <View style={styles.categoriecontainer}>
+                                                <TouchableOpacity onPress={() => handlePress(index)}>
+                                                    <View style={[styles.categoriecircle, { backgroundColor, borderColor: item.color, borderWidth: 1, marginBottom: 10 }]}>
+                                                        <Image style={{width: 30, height: 30}} source={item.image} />
+                                                    </View>
+                                                    <Text style={[styles.categorietext, { color: textColor }]}>{item.name}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        );
+                                    }}
+                                />
                     </View>
                 </View>
 
                 {/* post */}
                 <View style={{flex: 2}}>
                     {/* icon */}
-                    <View style={{justifyContent: 'flex-end', alignItems: "flex-end", height: 40}}>
-                        <Icon name="list" size={30} style={{marginRight: 5, color: "#434752"}} />
-                    </View>
 
                     {/* postscroll */}
                     <View style={{flex: 1,flexDirection: 'row'}}>
-                        <ScrollView horizontal={false}>
-                            {/* POSTcontainer */}
-                            <View style={{flexDirection: 'column', borderWidth: 1, borderColor: 'black', marginLeft: 10, marginRight: 10}}>
+                        <ScrollView horizontal={false} style={{marginTop: 10}}>
+                            <View style={{justifyContent: 'flex-end', alignItems: 'flex-end'}}>
+                                <Icon name="list" size={28} style={{marginRight: 10, color: "#4a4f5b"}} />
+                            </View>
+                            <View style={{margin: 21, marginTop: 12}}>
+                                {/* POSTcontainer */}
+                            <View style={{flexDirection: 'column', borderWidth: 1, borderColor: '#BFBFBF', padding: 10, marginBottom: 20, borderRadius: 8}}>
                                 {/* name & like */}
                                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                     {/* name and img */}
-                                    <View style={{flexDirection: 'row'}}>
-                                        <View style={{padding: 10}}>
-                                            <Image source={require('../../assets/profile.png')} style={{width: 44, height: 44}} />
+                                    <View style={{flexDirection: 'row', alignItems: 'flex-end', paddingLeft: 10}}>
+                                        <View style={{marginRight: 10}}>
+                                            <Image source={require('../../assets/profile_user.jpg')} style={{width: 50, height: 50, borderWidth: 2, borderRadius: 50, borderColor: "#FBAE41"}} />
                                         </View>
                                         <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>
                                             {/* name and min */}
                                             <View style={{}}>
-                                                <Text style={{fontFamily: 'Raleway-SemiBold', color: '#1E1E1E'}}>Sadek Rony<Text style={{fontFamily: 'Urbanist-Bold', color: '#8C8B8B'}}>.9min</Text></Text>
+                                                <Text style={{fontFamily: 'Raleway-SemiBold', color: '#1E1E1E'}}>Sadek Rony<Text style={{fontFamily: 'Sora-SemiBold', color: '#8C8B8B', fontSize: 12}}>.9min</Text></Text>
                                             </View>
-                                            <Text style={{fontFamily: 'Urbanist-Bold', color: '#DD644A', fontWeight: '700'}}>Service</Text>
+                                            <Text style={{fontFamily: 'Rubik-Medium', color: '#DD644A'}}>Service</Text>
                                         </View>
                                     </View>
 
                                     {/* like and delete */}
-                                    <View style={{flexDirection: 'column', width: 50}}>
-                                        <View style={{justifyContent: 'center', alignItems: 'flex-end'}}>
-                                            <Iconfont name="remove" size={20} color={"#A4A3A3"} />
+                                    <View style={{flexDirection: 'column', width: 50, justifyContent: 'center'}}>
+                                        <View style={{justifyContent: 'center', alignItems: 'flex-end', position: 'relative', left: 5}}>
+                                            <Iconoct name="kebab-horizontal" size={20} color={"#A4A3A3"} style={{ transform: [{ rotate: '90deg' }] }} />
                                         </View>
                                         {/* like */}
                                         <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
-                                            <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F"}}>138</Text>
+                                            <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F", fontWeight: '700'}}>138</Text>
                                             <Iconant name="heart" color={"#F9595F"} size={20}/>
                                         </View>
                                     </View>
                                 </View>
                                 {/* message */}
-                                <View style={{padding: 10}}>
-                                    <Text style={{color: "#3C404B", fontFamily: 'Urbanist-SemiBold', fontSize: 15}}>Hello, hope you’re doing well I want to recharge my paypal with 40 dollar, I will be able to pay in cih or cash.</Text>
+                                <View style={{padding: 14}}>
+                                    <Text style={{color: "#3C404B", fontFamily: 'Urbanist-Bold', fontSize: 16}}>Hello, hope you’re doing well I want to recharge my paypal with 40 dollar, I will be able to pay in cih or cash.</Text>
                                 </View>
                                 {/* sidebar */}
-                                <View style={{}}>
-                                    <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+                                <View style={{padding: 5}}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-around', borderWidth: 1, borderColor: '#c5c4c4', borderRadius: 6}}>
                                         {/* click like */}
-                                        <View style={{flex: 1}}>
-                                            <TouchableOpacity style={styles.posticon}>
-                                                <Iconant name="hearto" size={14} />
-                                                <Text style={styles.text}>Like</Text>
-                                            </TouchableOpacity>
-                                        </View>
+                                        {!like && (
+                                            <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>
+                                                <TouchableOpacity style={styles.posticon} onPress={() => setlike(true)}>
+                                                    <Iconant name="hearto" size={14} style={{marginTop: 2}} color={"#434752"} />
+                                                    <Text style={styles.text}>Like</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )}
+
+                                        {like && (
+                                            <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopLeftRadius: 6, borderBottomLeftRadius: 6, backgroundColor: '#F9595F'}}>
+                                                <TouchableOpacity style={styles.posticon} onPress={() => setlike(false)}>
+                                                    <Iconant name="heart" size={14} style={{marginTop: 2, color: "#FFFFFF"}} />
+                                                    <Text style={[styles.text, {color: "#FFFFFF"}]}>Like</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        )}
 
                                         {/* click send */}
-                                        <View style={{flex: 1}}>
+                                        <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea'}}>
                                             <TouchableOpacity style={styles.posticon}>
-                                                <Iconfont name="whatsapp" size={15} />
+                                                <Iconfont name="whatsapp" size={17} color={"#434752"} />
                                                 <Text style={styles.text}>Send</Text>
                                             </TouchableOpacity>
                                         </View>
 
                                         {/* click SHARE */}
-                                        <View  style={{flex: 1}}>
+                                        <View  style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopRightRadius: 6, borderBottomRightRadius: 6}}>
                                             <TouchableOpacity style={styles.posticon}>
-                                                <Iconfont name="share-square-o" size={15} />
+                                                <Iconfont name="share-square-o" size={15} style={{marginTop: 2}} color={"#434752"} />
                                                 <Text style={styles.text}>Share</Text>
                                             </TouchableOpacity>
                                         </View>
@@ -137,60 +168,137 @@ const Services = () => {
 
                             {/* 2 post */}
 
-                            <View style={{}}>
+                            <View style={{flexDirection: 'column', borderWidth: 1, borderColor: '#BFBFBF', padding: 10, marginBottom: 20, borderRadius: 6}}>
                                 {/* name & like */}
-                                <View style={{}}>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                     {/* name and img */}
-                                    <View style={{}}>
-                                        <View style={{}}>
-                                            <Image source={require('../../assets/profile.png')} style={{width: 30, height: 30}} />
+                                     <View style={{flexDirection: 'row', alignItems: 'flex-end', paddingLeft: 10}}>
+                                        <View style={{marginRight: 10}}>
+                                            <Image source={require('../../assets/profile.png')} style={{width: 50, height: 50, borderWidth: 2, borderRadius: 50, borderColor: "#FBAE41"}} />
                                         </View>
-                                        <View style={{}}>
+                                        <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>
                                             {/* name and min */}
                                             <View style={{}}>
-                                                <Text>Olivia Brown<Text>.9min</Text></Text>
+                                                <Text style={{fontFamily: 'Raleway-SemiBold', color: '#1E1E1E'}}>Sadek Rony<Text style={{fontFamily: 'Sora-SemiBold', color: '#8C8B8B', fontSize: 12}}>.9min</Text></Text>
                                             </View>
-                                            <Text>Demand</Text>
+                                            <Text style={{fontFamily: 'Rubik-Medium', color: '#DD644A'}}>Service</Text>
                                         </View>
                                     </View>
 
                                     {/* like and delete */}
-                                    <View style={{}}>
-                                        <Iconfont name="remove" />
+                                    <View style={{flexDirection: 'column', width: 50, justifyContent: 'center'}}>
+                                        <View style={{justifyContent: 'center', alignItems: 'flex-end', position: 'relative', left: 5}}>
+                                            <Iconoct name="kebab-horizontal" size={20} color={"#A4A3A3"} style={{ transform: [{ rotate: '90deg' }] }} />
+                                        </View>
                                         {/* like */}
-                                        <View style={{}}>
-                                            <Text>138</Text>
-                                            <Iconant name="heart" />
+                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                                            <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F", fontWeight: '700'}}>138</Text>
+                                            <Iconant name="heart" color={"#F9595F"} size={20}/>
                                         </View>
                                     </View>
                                 </View>
                                 {/* message */}
-                                <View style={{}}>
-                                    <Text>Brand new vintage T9 phones + mini RFID wallets for sale, only 120 dh! Never used. Grab yours now!</Text>
-                                    <Image style={{width: 100, height: 100}} source={require('../../assets/wallet.jpg')}/>
-                                </View>
-                                {/* sidebar */}
-                                <View style={{}}>
-                                    <View style={{}}>
-                                        {/* click like */}
-                                        <TouchableOpacity>
-                                            <Text>Like</Text>
-                                            <Iconant name="hearto" />
-                                        </TouchableOpacity>
-
-                                        {/* click send */}
-                                        <TouchableOpacity>
-                                            <Text>Send</Text>
-                                            <Iconfont name="whatsapp" />
-                                        </TouchableOpacity>
-
-                                        {/* click SHARE */}
-                                        <TouchableOpacity>
-                                            <Text>Share</Text>
-                                            <Iconfont name="share-square-o" />
-                                        </TouchableOpacity>
+                                <View style={{padding: 14}}>
+                                    <Text style={{color: "#3C404B", fontFamily: 'Urbanist-Bold', fontSize: 16, marginBottom: 10}}>Hello, hope you’re doing well I want to recharge my paypal with 40 dollar, I will be able to pay in cih or cash.</Text>
+                                    <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                                        <Image style={{width: 250, height: 150}} source={require('../../assets/wallet.jpg')}/>
                                     </View>
                                 </View>
+                                {/* sidebar */}
+                                <View style={{padding: 5}}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-around', borderWidth: 1, borderColor: '#c5c4c4', borderRadius: 6}}>
+                                        {/* click like */}
+                                        <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>
+                                            <TouchableOpacity style={styles.posticon}>
+                                                <Iconant name="hearto" size={14} style={{marginTop: 2}} color={"#434752"} />
+                                                <Text style={styles.text}>Like</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {/* click send */}
+                                        <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea'}}>
+                                            <TouchableOpacity style={styles.posticon}>
+                                                <Iconfont name="whatsapp" size={17} color={"#434752"} />
+                                                <Text style={styles.text}>Send</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {/* click SHARE */}
+                                        <View  style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopRightRadius: 6, borderBottomRightRadius: 6}}>
+                                            <TouchableOpacity style={styles.posticon}>
+                                                <Iconfont name="share-square-o" size={15} style={{marginTop: 2}} color={"#434752"} />
+                                                <Text style={styles.text}>Share</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
+
+
+                            {/* 3 */}
+
+                            <View style={{flexDirection: 'column', borderWidth: 1, borderColor: '#BFBFBF', padding: 10, marginBottom: 20, borderRadius: 6}}>
+                                {/* name & like */}
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    {/* name and img */}
+                                     <View style={{flexDirection: 'row', alignItems: 'flex-end', paddingLeft: 10}}>
+                                        <View style={{marginRight: 10}}>
+                                            <Image source={require('../../assets/profile_user.jpg')} style={{width: 50, height: 50, borderWidth: 2, borderRadius: 50, borderColor: "#FBAE41"}} />
+                                        </View>
+                                        <View style={{justifyContent: 'center', alignItems: 'flex-start'}}>
+                                            {/* name and min */}
+                                            <View style={{}}>
+                                                <Text style={{fontFamily: 'Raleway-SemiBold', color: '#1E1E1E'}}>Sadek Rony<Text style={{fontFamily: 'Sora-SemiBold', color: '#8C8B8B', fontSize: 12}}>.9min</Text></Text>
+                                            </View>
+                                            <Text style={{fontFamily: 'Rubik-Medium', color: '#DD644A'}}>Service</Text>
+                                        </View>
+                                    </View>
+
+                                    {/* like and delete */}
+                                    <View style={{flexDirection: 'column', width: 50, justifyContent: 'center'}}>
+                                        <View style={{justifyContent: 'center', alignItems: 'flex-end'}}>
+                                            <Iconfont name="remove" size={20} color={"#c8c8c8"} />
+                                        </View>
+                                        {/* like */}
+                                        <View style={{flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                                            <Text style={{fontFamily: 'Lato-Regular', color: "#F9595F", fontWeight: '700'}}>138</Text>
+                                            <Iconant name="heart" color={"#F9595F"} size={20}/>
+                                        </View>
+                                    </View>
+                                </View>
+                                {/* message */}
+                                <View style={{padding: 14}}>
+                                    <Text style={{color: "#3C404B", fontFamily: 'Urbanist-Bold', fontSize: 16}}>Hello, hope you’re doing well I want to recharge my paypal with 40 dollar, I will be able to pay in cih or cash.</Text>
+                                </View>
+                                {/* sidebar */}
+                                <View style={{padding: 5}}>
+                                    <View style={{flexDirection: 'row', justifyContent: 'space-around', borderWidth: 1, borderColor: '#c5c4c4', borderRadius: 6}}>
+                                        {/* click like */}
+                                        <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopLeftRadius: 6, borderBottomLeftRadius: 6}}>
+                                            <TouchableOpacity style={styles.posticon}>
+                                                <Iconant name="hearto" size={14} style={{marginTop: 2}} color={"#434752"}  />
+                                                <Text style={styles.text}>Like</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {/* click send */}
+                                        <View style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea'}}>
+                                            <TouchableOpacity style={styles.posticon}>
+                                                <Iconfont name="whatsapp" size={17} color={"#434752"}  />
+                                                <Text style={styles.text}>Send</Text>
+                                            </TouchableOpacity>
+                                        </View>
+
+                                        {/* click SHARE */}
+                                        <View  style={{flex: 1, borderWidth: 1, padding: 4, borderColor: '#eaeaea', borderTopRightRadius: 6, borderBottomRightRadius: 6}}>
+                                            <TouchableOpacity style={styles.posticon}>
+                                                <Iconfont name="share-square-o" size={15} style={{marginTop: 2}} color={"#434752"} />
+                                                <Text style={styles.text}>Share</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>
+                            </View>
                             </View>
                         </ScrollView>
                     </View>
