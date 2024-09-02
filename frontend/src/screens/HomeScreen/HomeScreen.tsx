@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensions } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensions, PanResponder } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
 import { getprofileuser, getToken } from "../../services/authService";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Services from "../Servicespost/Services";
+import { PanGestureHandler } from 'react-native-gesture-handler';
+import LeftBar from "../../components/LeftBar";
+
 
 interface User {
     AvatarURL: string;
@@ -25,6 +28,7 @@ export default function HomeScreen(){
     const headerHeight = isSmallPhone ? height * 0.4 : height * 0.3;
     const [profile, setprofile] = useState<User>();
     const [services, setservices] = useState(false);
+    const [leftbar, setleftbar] = useState(false);
 
    useEffect(() => {
         const getprofile = async () => {
@@ -39,6 +43,13 @@ export default function HomeScreen(){
         getprofile();
     }, []);
 
+    const handleSwipeGesture = (event: any) => {
+        if (event.nativeEvent.translationX > 50) { 
+            setservices(false);
+        } else if (event.nativeEvent.translationX < -50) {
+            setservices(true);
+        }
+    };
 
     const categories = [
         { name: 'Carpooling & Courier', color: '#3DC8B4', image: require('../../assets/Carpooling.png'), description: 'Share rides or send packages efficiently with our Carpooling & Courier services, saving you time and money.' },
@@ -55,15 +66,35 @@ export default function HomeScreen(){
     ];
 
 
-    if (services)
-        return <Services />
+    if (services) {
+        return (
+            <PanGestureHandler onGestureEvent={handleSwipeGesture} >
+                <View style={{ flex: 1}}>
+                    <Services />
+                </View>
+            </PanGestureHandler>
+        );
+    };
+
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponder: () => true,
+            onPanResponderMove: (evt, gestureState) => {
+                if (gestureState.dx < -30) {
+                    setleftbar(false);
+                }
+            },
+        })
+    ).current;
 
     const content = 
         (
-                <View style={styles.homecontainer}>
+                <View style={styles.homecontainer} {...panResponder.panHandlers}>
+                {leftbar && (<LeftBar />)}
                 <View  style={[styles.headerhomescreen, { height: headerHeight}]}>
                     <View style={styles.logoandicon}>
-                        <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" /></View>
+                        <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" onPress={() => setleftbar(!leftbar)} /></View>
                         <View style={styles.headerimg}><Image style={{width: 60, height: 60}} source={require('../../assets/logo2.png')} resizeMode="cover"/></View>
                     </View>
 
@@ -229,7 +260,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
       },
-      headerhomescreen: {
+    headerhomescreen: {
         padding: 15,
         height: 250,
         // backgroundColor: 'blue'

@@ -66,19 +66,18 @@ const Services = () => {
                             <Icon name="list" size={27} style={{ marginRight: 10, color: "#4a4f5b" }} onPress={() => setlist(!list)} />
                         </View>
                         {list && (
-  <View style={styles.dropdownContainer}>
-    <TouchableOpacity style={styles.dropdownItem}>
-      <Icon name="tools" size={20} color="#4a4f5b" />
-      <Text style={styles.dropdownText}>Service</Text>
-    </TouchableOpacity>
-    <View style={styles.divider} />
-    <TouchableOpacity style={styles.dropdownItem}>
-      <Icon name="megaphone" size={20} color="#4a4f5b" />
-      <Text style={styles.dropdownText}>Demand</Text>
-    </TouchableOpacity>
-  </View>
-)}
-
+                          <View style={styles.dropdownContainer}>
+                            <TouchableOpacity style={styles.dropdownItem}>
+                              <Icon name="tools" size={20} color="#4a4f5b" />
+                              <Text style={styles.dropdownText}>Service</Text>
+                            </TouchableOpacity>
+                            <View style={styles.divider} />
+                            <TouchableOpacity style={styles.dropdownItem}>
+                              <Icon name="megaphone" size={20} color="#4a4f5b" />
+                              <Text style={styles.dropdownText}>Demand</Text>
+                            </TouchableOpacity>
+                          </View>
+                        )}
                         <View style={{ margin: 21, marginTop: 12 }}>
                             {posts.map((post) => (
                                 <View key={post.id}>

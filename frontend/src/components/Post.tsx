@@ -79,38 +79,38 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             {/* message */}
             <View style={styles.messageContainer}>
             <View>
-                <Text style={styles.description}>
-                    {post.translate ? (translate ? post.translate : post.description) : post.description}
-                </Text>
-                {post.image && (
-                    <View style={styles.imageContainer}>
-                        <Image style={styles.postImage} source={post.image} />
-                    </View>
-                )}
-                {post.translate && (
-                    <TouchableOpacity
-                        style={{ marginTop: 8, justifyContent: 'flex-start', alignItems: 'flex-start' }}
-                        onPress={() => settranslate(!translate)}
+            <Text style={styles.description}>
+                {post.translate ? (translate ? post.translate : post.description) : post.description}
+            </Text>
+            {post.image && (
+                <View style={styles.imageContainer}>
+                    <Image style={styles.postImage} source={post.image} />
+                </View>
+            )}
+            {post.translate && (
+                <TouchableOpacity
+                    style={{ marginTop: 8, justifyContent: 'flex-start', alignItems: 'flex-start' }}
+                    onPress={() => settranslate(!translate)}
+                >
+                    <Text
+                        style={{ fontFamily: 'Sora-SemiBold', borderBottomWidth: 1, paddingBottom: 3, color: '#9F9E9E', borderColor: '#9F9E9E' }}
                     >
-                        <Text
-                            style={{ fontFamily: 'Sora-SemiBold', borderBottomWidth: 1, paddingBottom: 3, color: '#9F9E9E', borderColor: '#9F9E9E' }}
-                        >
-                            See translate
-                        </Text>
-                    </TouchableOpacity>
-                )}
-            </View>
+                        See translate
+                    </Text>
+                </TouchableOpacity>
+            )}
+        </View>
             </View>
             {/* sidebar */}
             <View style={styles.sidebarContainer}>
                 <View style={styles.sidebar}>
                     {/* click like */}
-                    <View style={like ? styles.likedButton : styles.likeButton}>
+                    <View style={styles.likeButton}>
                     <Animated.View
                             style={[
                                 styles.button,
                                 { transform: [{ scale: scaleValue }] },
-                                like ? styles.likedButton : {},
+                            
                             ]}
                         >
                         <TouchableOpacity
@@ -232,13 +232,14 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     modalOptions: {
-        paddingVertical: 10,
+        paddingVertical: 8,
         borderBottomWidth: 1,
         borderBottomColor: '#E0E0E0',
     },
     modalButton: {
         flexDirection: 'row',
         alignItems: 'center',
+        justifyContent: 'center',
         paddingVertical: 15,
         paddingHorizontal: 20,
         borderBottomWidth: 1,
@@ -367,12 +368,6 @@ const styles = StyleSheet.create({
         borderTopLeftRadius: 6,
         borderBottomLeftRadius: 6,
     },
-    likedButton: {
-        flex: 1,
-        padding: 4,
-        backgroundColor: '#F9595F',
-        
-    },
     posticon: {
         flexDirection: 'row',
         justifyContent: 'center',
@@ -385,14 +380,14 @@ const styles = StyleSheet.create({
         color: '#434752',
     },
     likedText: {
-        color: "#FFFFFF",
+        color: "#F9595F",
     },
     likeIcon: {
         marginTop: 2,
     },
     likedIcon: {
         marginTop: 2,
-        color: "#FFFFFF",
+        color: "#F9595F",
     },
     sendButton: {
         flex: 1,
