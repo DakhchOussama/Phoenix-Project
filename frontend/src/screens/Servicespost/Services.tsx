@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, forwardRef  } from "react";
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import PostItem from "../../components/Post";
 import CategoryItem from "../../components/Categories";
 
-const Services = () => {
+const Services =  () => {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [list, setlist] = useState(false);
 

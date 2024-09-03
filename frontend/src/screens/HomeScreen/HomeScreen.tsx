@@ -26,15 +26,16 @@ export default function HomeScreen(){
     const { height } = Dimensions.get('window');
     const isSmallPhone = height < 600;
     const headerHeight = isSmallPhone ? height * 0.4 : height * 0.3;
-    const [profile, setprofile] = useState<User>();
-    const [services, setservices] = useState(false);
-    const [leftbar, setleftbar] = useState(false);
+    const [profile, setProfile] = useState<User | null>(null);
+    const [services, setServices] = useState<boolean>(false);
+    const [leftbar, setLeftbar] = useState<boolean>(false);
+
 
    useEffect(() => {
         const getprofile = async () => {
             const data = await getprofileuser();
             if (data)
-                setprofile(data);
+                setProfile(data);
             else{
                 console.log('error');
             }
@@ -45,9 +46,9 @@ export default function HomeScreen(){
 
     const handleSwipeGesture = (event: any) => {
         if (event.nativeEvent.translationX > 50) { 
-            setservices(false);
+            setServices(false);
         } else if (event.nativeEvent.translationX < -50) {
-            setservices(true);
+            setServices(true);
         }
     };
 
@@ -65,36 +66,40 @@ export default function HomeScreen(){
         { name: 'Information & Resources', color: '#41c1f5', image: require('../../assets/InformationResources.png'), description: 'Access vital information and resources to stay informed and make well-informed decisions.' },
     ];
 
+    
 
     if (services) {
         return (
             <PanGestureHandler onGestureEvent={handleSwipeGesture} >
-                <View style={{ flex: 1}}>
                     <Services />
-                </View>
             </PanGestureHandler>
+            // <Services />
         );
     };
 
-    const panResponder = useRef(
-        PanResponder.create({
-            onStartShouldSetPanResponder: () => true,
-            onMoveShouldSetPanResponder: () => true,
-            onPanResponderMove: (evt, gestureState) => {
-                if (gestureState.dx < -30) {
-                    setleftbar(false);
-                }
-            },
-        })
-    ).current;
+    // const panResponder = useRef(
+    //     PanResponder.create({
+    //         onStartShouldSetPanResponder: () => true,
+    //         onMoveShouldSetPanResponder: () => true,
+    //         onPanResponderMove: (evt, gestureState) => {
+    //             // Detect swipe left
+    //             if (gestureState.dx < -30) {  // -30 means the user swiped left by at least 30 pixels
+    //                 setLeftbar(false);
+    //             }
+    //         },
+    //     })
+    // ).current;
+
+
+    
 
     const content = 
         (
-                <View style={styles.homecontainer} {...panResponder.panHandlers}>
+                <View style={styles.homecontainer} >
                 {leftbar && (<LeftBar />)}
                 <View  style={[styles.headerhomescreen, { height: headerHeight}]}>
                     <View style={styles.logoandicon}>
-                        <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" onPress={() => setleftbar(!leftbar)} /></View>
+                        <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" onPress={() => setLeftbar(!leftbar)} /></View>
                         <View style={styles.headerimg}><Image style={{width: 60, height: 60}} source={require('../../assets/logo2.png')} resizeMode="cover"/></View>
                     </View>
 
@@ -118,7 +123,7 @@ export default function HomeScreen(){
                 <View style={styles.categories}>
                     <View style={styles.categoriesheader}>
                         <Text style={styles.categorieword}>Categories</Text>
-                        <TouchableOpacity onPress={() => setservices(true)}>
+                        <TouchableOpacity onPress={() => setServices(true)}>
                             <View style={styles.categorieall}>
                                 <Text style={styles.allword}>All</Text>
                                 <MaterialIcons  name="arrow-forward-ios" size={17} color="#B1B2C0" />

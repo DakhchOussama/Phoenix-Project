@@ -1,10 +1,9 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMat from 'react-native-vector-icons/MaterialIcons';
-import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function LeftBar() {
 
@@ -20,14 +19,13 @@ export default function LeftBar() {
 
     const handleMenuItemPress = (itemId: string) => {
         setSelectedItem(itemId);
-        console.log('id : ', itemId);
     };
 
     return (
         <View style={styles.sidebar}>
             <View style={styles.profileSection}>
                 <View style={styles.arrowContainer}>
-                    <MaterialIcons name="arrow-back-ios" size={27} color="#666d80" />
+                    <MaterialIcons name="arrow-back-ios" size={27} color="#ffffff" />
                 </View>
 
                 <View style={styles.profileInfo}>
@@ -61,7 +59,8 @@ export default function LeftBar() {
                             styles.menuItem,
                                      selectedItem === item.id && styles.selectedMenuItem
                                  ]} key={item.id}>
-                            <TouchableOpacity 
+                            <TouchableOpacity
+                                style={{flex: 1}}
                                 onPress={() => handleMenuItemPress(item.id)}
                             >
                             <View style={styles.menuItemContent}>
@@ -90,7 +89,7 @@ export default function LeftBar() {
 const styles = StyleSheet.create({
     sidebar: {
         width: 270,
-        backgroundColor: '#434752',
+        backgroundColor: '#d36249',
         position: 'absolute',
         left: 0,
         top: 0,
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
     },
     separator: {
         borderBottomWidth: 1,
-        borderColor: '#585C65',
+        borderColor: '#FFFFFF',
         marginLeft: 10,
         marginRight: 10,
     },
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
     logoutSection: {
         height: 90,
         borderTopWidth: 1,
-        borderColor: '#81848B',
+        borderColor: '#FFFFFF',
         justifyContent: 'center',
     },
     logoutContent: {
@@ -182,6 +181,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
     },
     selectedMenuItem: {
-        backgroundColor: '#585C65',
+        backgroundColor: '#434752',
     },
 });
