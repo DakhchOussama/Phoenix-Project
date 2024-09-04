@@ -1,71 +1,69 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Icon from 'react-native-vector-icons/AntDesign';
 
-const SelectionTextInput = () => {
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [items, setItems] = useState([
-    { label: 'Option 1', value: 'option1' },
-    { label: 'Option 2', value: 'option2' },
-    { label: 'Option 3', value: 'option3' },
-  ]);
+const SelectionTextInput = ({ placeholder, data, icon }) => {
+    const [open, setOpen] = useState(false);
+    const [value, setValue] = useState(null);
+    const [items, setItems] = useState(data);
 
-  return (
-    <View style={styles.container}>
-      <DropDownPicker
-        open={open}
-        value={value}
-        items={items}
-        setOpen={setOpen}
-        setValue={setValue}
-        setItems={setItems}
-        placeholder={
-          <View style={styles.placeholderContainer}>
-            <Image source={require('../assets/categorydark.png')} style={styles.icon} />
-            <Text style={styles.placeholderText}>Events</Text>
-          </View>
-        }
-        style={styles.dropdown}
-        textStyle={styles.dropdownText}
-        dropDownContainerStyle={styles.dropdownStyle}
-        containerStyle={styles.dropdownContainer}
-      />
-    </View>
-  );
+    return (
+        <View style={styles.container}>
+            <View style={styles.placeholderContainer}>
+                {!icon ? <Image source={require('../assets/categorydark.png')} style={styles.icon} /> : <Icon name='isv' size={25} color={"#434752"} style={{marginRight: 8}} />}
+            </View>
+            <DropDownPicker
+                open={open}
+                value={value}
+                items={items.map(item => ({ label: item, value: item }))}
+                setOpen={setOpen}
+                setValue={setValue}
+                setItems={setItems}
+                placeholder={placeholder}
+                style={styles.dropdown}
+                textStyle={styles.dropdownText}
+                dropDownContainerStyle={styles.dropdownStyle}
+                containerStyle={styles.dropdownContainer}
+            />
+        </View>
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    
-  },
-  placeholderContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 25,  // Maintain the original size of the image
-    height: 25,
-    marginRight: 8,
-  },
-  placeholderText: {
-    color: '#434752',
-    fontSize: 20,
-  },
-  dropdown: {
-    borderWidth: 1,
-    borderColor: '#E0E1E3',
-  },
-  dropdownText: {
-    color: 'black',
-    fontSize: 16,
-  },
-  dropdownStyle: {
-    backgroundColor: '#fafafa',
-  },
-  dropdownContainer: {
-    marginBottom: 10,
-  },
+    container: {
+        borderWidth: 1,
+        borderColor: '#E0E1E3',
+        flexDirection: 'row',
+        borderRadius: 5,
+        width: 400
+    },
+    placeholderContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 10
+    },
+    icon: {
+        width: 25,
+        height: 25,
+        marginRight: 8
+    },
+    dropdown: {
+        borderWidth: 0,
+        width: 350,
+    },
+    dropdownText: {
+        color: '#434752',
+        fontSize: 16,
+    },
+    dropdownStyle: {
+        borderRadius: 5,
+        borderColor: '#E0E1E3',
+        backgroundColor: '#FFFFFF'
+    },
+    dropdownContainer: {
+        width: 355,
+    },
 });
 
 export default SelectionTextInput;

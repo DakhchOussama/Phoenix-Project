@@ -1,5 +1,7 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, FlatList, Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, Dimensions } from 'react-native';
+import { FlatList } from 'react-native-gesture-handler';
+
 
 const screenWidth = Dimensions.get('window').width;
 const itemWidth = screenWidth > 600 ? screenWidth / 11 : 70;
@@ -28,7 +30,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePre
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
                 <Text style={{ fontFamily: 'Raleway-Bold', fontSize: 35, marginLeft: 8, color: '#434752' }}>Services</Text>
-                <View style={{ backgroundColor: 'blue', borderWidth: 1.5, width: 100, marginLeft: 8, borderRadius: 15, marginTop: 4, borderColor: '#DD644A' }} />
+                <View style={{ backgroundColor: 'blue', borderWidth: 1.5, width: 100, marginLeft: 11, borderRadius: 15, marginTop: 4, borderColor: '#DD644A' }} />
             </View>
 
             {/* list */}

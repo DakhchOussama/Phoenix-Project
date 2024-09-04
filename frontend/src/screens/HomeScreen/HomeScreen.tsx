@@ -45,10 +45,13 @@ export default function HomeScreen(){
     }, []);
 
     const handleSwipeGesture = (event: any) => {
-        if (event.nativeEvent.translationX > 50) { 
-            setServices(false);
-        } else if (event.nativeEvent.translationX < -50) {
-            setServices(true);
+        if (event.nativeEvent.translationX < 10) {
+            const { width } = Dimensions.get('window');
+            const leftThreshold = width * 0.1;
+
+            if (event.nativeEvent.x < leftThreshold) {
+                setServices(false);
+            }
         }
     };
 
@@ -71,9 +74,11 @@ export default function HomeScreen(){
     if (services) {
         return (
             <PanGestureHandler onGestureEvent={handleSwipeGesture} >
-                    <Services />
+                <View style={{flex: 1}}>
+                       <Services />
+                </View>
             </PanGestureHandler>
-            // <Services />
+            // <Services onPress={() => setServices(false)} />
         );
     };
 
@@ -91,6 +96,15 @@ export default function HomeScreen(){
     // ).current;
 
 
+    const handleSwipeLeftBar = (event: any) => {
+        if (event.nativeEvent.translationX < 10) {
+            const leftThreshold = 270;
+
+            if (event.nativeEvent.x < leftThreshold) {
+                setServices(false);
+            }
+        }
+    };
     
 
     const content = 

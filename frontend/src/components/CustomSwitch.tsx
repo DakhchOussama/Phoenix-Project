@@ -11,7 +11,7 @@ const CustomSwitch = () => {
     <View style={styles.container}>
       <TouchableOpacity onPress={toggleSwitch} style={styles.switchContainer}>
         <View style={[styles.switchBackground, isEnabled && styles.switchBackgroundOn]}>
-          <View style={[styles.switchCircle, isEnabled && styles.switchCircleOn]} />
+            <View style={[styles.switchCircle, isEnabled && styles.switchCircleOn]} />
         </View>
       </TouchableOpacity>
     </View>
@@ -28,8 +28,8 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   switchContainer: {
-    width: 60,
-    height: 30,
+    width: 55,
+    height: 25,
     borderRadius: 15,
     overflow: 'hidden',
     justifyContent: 'center',
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CAF50',
   },
   switchCircle: {
-    width: 24,
-    height: 24,
+    width: 20,
+    height: 20,
     borderRadius: 12,
     backgroundColor: '#ffffff',
     position: 'absolute',
