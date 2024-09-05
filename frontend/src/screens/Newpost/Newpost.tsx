@@ -8,11 +8,19 @@ import CustomSwitch from "../../components/CustomSwitch";
 import Button from "../../components/Button";
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import Toast from "react-native-toast-message";
+import { createPost, uploadImage } from "../../services/postService";
 
 
 export default function Newpost() {
     const [nextpage, setnextpage] = useState(false);
-    const [imageUri, setimage] = useState<string>();
+    const [imageUri, setimage] = useState<string | null>(null);
+    const [title, settitle] = useState<string | null>(null);
+    const [categorie, setCategorie] = useState(null);
+    const [Type, setType] = useState(null);
+    const [isEnabled, setIsEnabled] = useState(false);
+
+
     const type = ["Demand", "Service"];
     const categories = [
         'Carpooling & Courier',
@@ -27,8 +35,6 @@ export default function Newpost() {
         'Item Sharing & Lending',
         'Information & Resources',
     ];
-
-
 
     const handleGesture = (event: any) => {
         if (event.nativeEvent.translationX < 10) {
@@ -77,6 +83,35 @@ export default function Newpost() {
                 }
             }
         });
+    };
+
+    const handleuploadpost = () => {
+        if (!categorie || !title){
+            Toast.show({
+                type: 'error',
+                text1: 'You should provide both categories and a title.',
+            });
+            return ;
+        }
+
+        const PostData = {
+            title,
+            categorie,
+            type,
+            isEnabled,
+            imageUri
+        };
+
+        try{
+            if (PostData.imageUri){
+                const image = uploadImage(PostData.imageUri);
+                console.log('image : ', image);
+            }
+            const response = createPost(PostData);
+        } catch (error){
+
+        }
+        
     };
 
     return (
@@ -145,31 +180,33 @@ export default function Newpost() {
                         <View style={styles.categorySection}>
                             <Text style={styles.sectionTitle}>Categories :</Text>
                             <View style={styles.selectionContainer}>
-                                <SelectionTextInput placeholder={"Event"} data={categories} icon={false}/>
+                                <SelectionTextInput placeholder={"Event"} data={categories} icon={false} setCategorie={setCategorie} setType={setType}/>
                             </View>
                         </View>
 
                         <View style={styles.typeSection}>
                             <Text style={styles.sectionTitle}>Type :</Text>
                             <View style={[styles.selectionContainer, {zIndex: 997}]}>
-                                <SelectionTextInput placeholder={"Demand"} data={type} icon={true}/>
+                                <SelectionTextInput placeholder={"Demand"} data={type} icon={true} setCategorie={setCategorie} setType={setType} />
                             </View>
                         </View>
 
                         <View style={styles.switchContainer}>
                             <Text style={styles.switchLabel}>Enable Comments</Text>
-                            <CustomSwitch />
+                            <CustomSwitch isEnabled={isEnabled} setIsEnabled={setIsEnabled} />
                         </View>
 
                         <View style={styles.titleSection}>
                             <Text style={styles.sectionTitle}>Title :</Text>
                             <View style={styles.titleInputContainer}>
-                                <TextInput style={styles.titleInput}></TextInput>
+                                <TextInput style={styles.titleInput}
+                                    onChangeText={(text) => settitle(text)}
+                                ></TextInput>
                             </View>
                         </View>
 
                         <View style={styles.uploadButtonContainer}>
-                            <TouchableOpacity style={styles.uploadButton}>
+                            <TouchableOpacity style={styles.uploadButton} onPress={handleuploadpost}>
                                 <Text style={styles.uploadButtonText}>Upload</Text>
                                 <Icon name="upload" size={18} style={styles.uploadButtonIcon}/>
                             </TouchableOpacity>
@@ -179,6 +216,7 @@ export default function Newpost() {
                     </PanGestureHandler>
                 )}
             </View>
+            <Toast />
         </>
     );
 }
@@ -359,6 +397,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fcfcfc',
         width: 400,
         textAlignVertical: 'top', 
+        padding: 10
     },
     uploadButtonContainer: {
         flex: 1,

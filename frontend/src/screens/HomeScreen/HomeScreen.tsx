@@ -101,7 +101,7 @@ export default function HomeScreen(){
             const leftThreshold = 270;
 
             if (event.nativeEvent.x < leftThreshold) {
-                setServices(false);
+                setLeftbar(false);
             }
         }
     };
@@ -110,7 +110,7 @@ export default function HomeScreen(){
     const content = 
         (
                 <View style={styles.homecontainer} >
-                {leftbar && (<LeftBar />)}
+                {leftbar && (<LeftBar onPress={() => setLeftbar(false)} />)}
                 <View  style={[styles.headerhomescreen, { height: headerHeight}]}>
                     <View style={styles.logoandicon}>
                         <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" onPress={() => setLeftbar(!leftbar)} /></View>

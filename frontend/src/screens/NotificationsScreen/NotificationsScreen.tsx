@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
     timeText: {
-        color: '#cac9c9',
+        color: '#bdbbbb',
     },
     followButton: {
         backgroundColor: '#DD644A',

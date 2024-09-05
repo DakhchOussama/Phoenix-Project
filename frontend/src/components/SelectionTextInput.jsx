@@ -1,22 +1,35 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, Image } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import Icon from 'react-native-vector-icons/AntDesign';
 
-const SelectionTextInput = ({ placeholder, data, icon }) => {
+const SelectionTextInput = ({ placeholder, data, icon, setCategorie, setType }) => {
     const [open, setOpen] = useState(false);
     const [value, setValue] = useState(null);
-    const [items, setItems] = useState(data);
+    const [items, setItems] = useState(data.map(item => ({ label: item, value: item })));
+
+    useEffect(() => {
+        if (placeholder === "Event" && value) {
+            setCategorie(value);
+        }
+        if (placeholder === "Demand" && value) {
+            setType(value);
+        } else {
+            setType("Demand");
+        }
+    }, [value, placeholder, setCategorie, setType]);
 
     return (
         <View style={styles.container}>
             <View style={styles.placeholderContainer}>
-                {!icon ? <Image source={require('../assets/categorydark.png')} style={styles.icon} /> : <Icon name='isv' size={25} color={"#434752"} style={{marginRight: 8}} />}
+                {!icon 
+                    ? <Image source={require('../assets/categorydark.png')} style={styles.icon} /> 
+                    : <Icon name='isv' size={25} color="#434752" style={styles.icon} />}
             </View>
             <DropDownPicker
                 open={open}
                 value={value}
-                items={items.map(item => ({ label: item, value: item }))}
+                items={items}
                 setOpen={setOpen}
                 setValue={setValue}
                 setItems={setItems}

@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMat from 'react-native-vector-icons/MaterialIcons';
 
-export default function LeftBar() {
+
+interface leftbarinterface {
+    onPress: (event: GestureResponderEvent) => void;
+}
+
+const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
 
     const menuItems = [
         { id: 'home', title: 'Home', icon: "home" },
@@ -25,7 +30,7 @@ export default function LeftBar() {
         <View style={styles.sidebar}>
             <View style={styles.profileSection}>
                 <View style={styles.arrowContainer}>
-                    <MaterialIcons name="arrow-back-ios" size={27} color="#ffffff" />
+                    <MaterialIcons name="arrow-back-ios" size={27} color="#ffffff" onPress={onPress} />
                 </View>
 
                 <View style={styles.profileInfo}>
@@ -47,14 +52,6 @@ export default function LeftBar() {
 
             <View style={styles.menuSection}>
                 {menuItems.map((item) => (
-                //      <TouchableOpacity
-                //      key={item.id}
-                //      style={[
-                //          styles.menuItem,
-                //          selectedItem === item.id && styles.selectedMenuItem
-                //      ]}
-                //      onPress={() => handleMenuItemPress(item.id)}
-                //  >
                         <View style={[
                             styles.menuItem,
                                      selectedItem === item.id && styles.selectedMenuItem
@@ -184,3 +181,5 @@ const styles = StyleSheet.create({
         backgroundColor: '#434752',
     },
 });
+
+export default LeftBar;

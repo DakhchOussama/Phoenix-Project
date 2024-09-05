@@ -8,10 +8,13 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthService } from './auth/auth.service';
 import { JwtService } from '@nestjs/jwt';
+import { PostControllerController } from './modules/post/post-controller/post-controller.controller';
+import { PostServiceService } from './modules/post/post-service/post-service.service';
+import { PostModuleModule } from './modules/post/post.module';
 
 @Module({
-  imports: [AuthModule, UserModule],
-  controllers: [AppController, UserController],
-  providers: [AppService, PrismaService, UserService, AuthService, JwtService],
+  imports: [AuthModule, UserModule, PostModuleModule],
+  controllers: [AppController, UserController, PostControllerController],
+  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService],
 })
 export class AppModule {}

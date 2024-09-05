@@ -1,17 +1,26 @@
-// CustomSwitch.js
-import React, { useState } from 'react';
-import { View, Switch, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
 
-const CustomSwitch = () => {
-  const [isEnabled, setIsEnabled] = useState(false);
+// Define the props interface
+interface CustomSwitchProps {
+  isEnabled: boolean;
+  setIsEnabled: React.Dispatch<React.SetStateAction<boolean>>;
+}
 
-  const toggleSwitch = () => setIsEnabled(previousState => !previousState);
+const CustomSwitch: React.FC<CustomSwitchProps> = ({ isEnabled, setIsEnabled }) => {
+  const toggleSwitch = () => setIsEnabled(prevState => !prevState);
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={toggleSwitch} style={styles.switchContainer}>
+      <TouchableOpacity 
+        onPress={toggleSwitch} 
+        style={styles.switchContainer} 
+        accessibilityRole="switch"
+        accessibilityState={{ checked: isEnabled }}
+        accessibilityLabel="Toggle switch"
+      >
         <View style={[styles.switchBackground, isEnabled && styles.switchBackgroundOn]}>
-            <View style={[styles.switchCircle, isEnabled && styles.switchCircleOn]} />
+          <View style={[styles.switchCircle, isEnabled && styles.switchCircleOn]} />
         </View>
       </TouchableOpacity>
     </View>

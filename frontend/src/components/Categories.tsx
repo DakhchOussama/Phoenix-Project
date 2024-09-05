@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, Dimensions } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-
 const screenWidth = Dimensions.get('window').width;
 const itemWidth = screenWidth > 600 ? screenWidth / 11 : 70;
 
@@ -35,12 +34,12 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePre
 
             {/* list */}
             <View style={{ flex: 1, flexDirection: 'row', borderBottomWidth: 1, borderColor: '#d8d8d8', paddingLeft: 15 }}>
-                <View style={styles.categoriecontainer}>
+                <View style={{ marginRight: 20, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: 70 }}>
                     {/* circle */}
-                    <View style={[styles.categoriecircle, { padding: 20 }]}>
+                    <View style={{ backgroundColor: '#DD644A', padding: 17, alignItems: 'center', justifyContent: 'center', borderRadius: 50, marginBottom: 7 }}>
                         <Image source={require('../assets/Category.png')} style={{ width: 31, height: 31 }} resizeMode="cover" />
                     </View>
-                    <Text style={styles.categorietext}>Categories</Text>
+                    <Text style={{ fontFamily: 'Raleway-Bold', color: '#31343D', fontSize: 12, textAlign: 'center' }}>Categories</Text>
                 </View>
                 <FlatList
                     horizontal
@@ -54,12 +53,12 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePre
 
                         return (
                             <View style={{ flex: 1, justifyContent: 'center' }}>
-                                <View style={[styles.categoriecontainer, { width: itemWidth }]}>
+                                <View style={{ marginRight: 20, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', width: itemWidth }}>
                                     <TouchableOpacity onPress={() => handlePress(index)}>
-                                        <View style={[styles.categoriecircle, { backgroundColor, borderColor: item.color, borderWidth: 1, marginBottom: 10 }]}>
+                                        <View style={{ backgroundColor, borderColor: item.color, borderWidth: 1, marginBottom: 10, borderRadius: 50, padding: 17, alignItems: 'center', justifyContent: 'center' }}>
                                             <Image style={{ width: 30, height: 30 }} source={item.image} />
                                         </View>
-                                        <Text style={[styles.categorietext, { color: textColor }]}>{item.name}</Text>
+                                        <Text style={{ fontFamily: 'Raleway-Bold', color: textColor, fontSize: 12, textAlign: 'center' }}>{item.name}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -70,40 +69,5 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePre
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    categoriecontainer: {
-        marginRight: 20,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 70
-    },
-    categorietext: {
-        fontFamily: 'Raleway-Bold',
-        color: '#31343D',
-        fontSize: 12,
-        textAlign: 'center'
-    },
-    categoriecircle: {
-        backgroundColor: '#DD644A',
-        padding: 17,
-        alignItems: 'center',
-        justifyContent: 'center',
-        borderRadius: 50,
-        marginBottom: 7,
-    },
-    posticon: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    text: {
-        fontFamily: 'Sora-Medium',
-        marginLeft: 5,
-        fontSize: 14,
-        color: '#434752'
-    }
-});
 
 export default CategoryItem;
