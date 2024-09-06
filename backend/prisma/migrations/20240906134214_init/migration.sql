@@ -22,7 +22,7 @@ CREATE TABLE "Notification" (
     "NotificationID" TEXT NOT NULL,
     "Time" TIMESTAMP(3) NOT NULL,
     "NotificationType" TEXT NOT NULL,
-    "FriendID" INTEGER NOT NULL,
+    "FriendID" TEXT NOT NULL,
     "UserID" TEXT NOT NULL,
     "isRead" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -36,22 +36,15 @@ CREATE TABLE "Post" (
     "ImgURL" TEXT,
     "Title" TEXT NOT NULL,
     "Categories" TEXT NOT NULL,
+    "Type" TEXT NOT NULL,
+    "isEnabled" BOOLEAN NOT NULL DEFAULT false,
     "Likes" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
+    "translates" TEXT,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("PostID")
-);
-
--- CreateTable
-CREATE TABLE "PostTranslate" (
-    "PostTranslateID" TEXT NOT NULL,
-    "TranslateTitle" TEXT NOT NULL,
-    "AdminID" TEXT NOT NULL,
-    "PostID" TEXT NOT NULL,
-
-    CONSTRAINT "PostTranslate_pkey" PRIMARY KEY ("PostTranslateID")
 );
 
 -- CreateTable
@@ -88,12 +81,6 @@ ALTER TABLE "Notification" ADD CONSTRAINT "Notification_UserID_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PostTranslate" ADD CONSTRAINT "PostTranslate_AdminID_fkey" FOREIGN KEY ("AdminID") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PostTranslate" ADD CONSTRAINT "PostTranslate_PostID_fkey" FOREIGN KEY ("PostID") REFERENCES "Post"("PostID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Friends" ADD CONSTRAINT "Friends_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;

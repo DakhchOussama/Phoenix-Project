@@ -31,7 +31,6 @@ model User {
   notifications   Notification[]
   friendsAsUser   Friends[] @relation("UserFriends")
   friendsAsFriend Friends[] @relation("FriendFriends")
-  postTranslates  PostTranslate[]
   posts           Post[]
 }
 
@@ -39,7 +38,7 @@ model Notification {
   NotificationID    String       @id @default(uuid())
   Time              DateTime
   NotificationType  String
-  FriendID          Int
+  FriendID          String
   UserID            String
   isRead            Boolean   @default(false)
   createdAt         DateTime  @default(now())
@@ -52,24 +51,16 @@ model Post {
   ImgURL     String?
   Title      String
   Categories String
+  Type       String
+  isEnabled  Boolean   @default(false)
   Likes      Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   userId     String
   user       User @relation(fields: [userId], references: [UserID])
-  translates PostTranslate[]
+  translates String?
   comments   Comment[]
-}
-
-model PostTranslate {
-  PostTranslateID String       @id @default(uuid())
-  TranslateTitle  String
-  AdminID         String
-  PostID          String
-
-  admin           User @relation(fields: [AdminID], references: [UserID])
-  post            Post @relation(fields: [PostID], references: [PostID])
 }
 
 model Friends {

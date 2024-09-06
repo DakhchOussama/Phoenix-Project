@@ -15,8 +15,8 @@ export class AuthController {
         return { message: 'Invalid credentials'};
     }
 
-    @UseGuards(JwtAuthGuard)
     @Get('profile')
+    @UseGuards(JwtAuthGuard)
     getProfile(@Request() req){
         return req.user
     }

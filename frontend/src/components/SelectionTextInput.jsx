@@ -12,10 +12,9 @@ const SelectionTextInput = ({ placeholder, data, icon, setCategorie, setType }) 
         if (placeholder === "Event" && value) {
             setCategorie(value);
         }
-        if (placeholder === "Demand" && value) {
-            setType(value);
-        } else {
-            setType("Demand");
+        if (placeholder === "Demand") {
+            // Set Type only if it is a valid value or default to "Demand"
+            setType(value || "Demand");
         }
     }, [value, placeholder, setCategorie, setType]);
 

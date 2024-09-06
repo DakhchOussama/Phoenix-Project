@@ -44,10 +44,12 @@ export const login = async (
     password: string) : Promise<LoginResponse> => {
         try {
             const response = await instance.post(`/user/create`, {fname, sname, email, phonenumber, birthday, department, password});
+            
             if (response.data.token) 
             {
                 removeToken();
-                storeToken(response.data.token, false);
+                await storeToken(response.data.token, false);
+                await checkStoredItems();
                 return { success: true, message: 'Login successful!' };
             } else {
                 return { success: false, message: response.data.message || 'Login failed!' };
@@ -75,7 +77,7 @@ export const getToken = async () => {
     try{
         const token = await AsyncStorage.getItem('authToken');
         if (token !== null) {
-                return token;
+            return token;
         } else {
             return null;
         }
@@ -96,6 +98,7 @@ export const removeToken = async () => {
 
 export const storeToken = async (token: string, rememberMe: boolean) => {
     try {
+       
         const expiryTime = rememberMe 
         ? Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
         : Date.now() + 24 * 60 * 60 * 1000; // 24 hours
@@ -158,7 +161,11 @@ export const isTokenValid = async () => {
 
 export const getprofileuser = async () => {
     try{
-        const token = await AsyncStorage.getItem('authToken');
+        const token = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+
         const response = await instance.get('/auth/profile', {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -171,6 +178,16 @@ export const getprofileuser = async () => {
         else
             return false;
     } catch (error){
+        console.log('error : ', error)
         return false;
     }
-}
+};
+
+export const checkStoredItems = async () => {
+    try {
+        const token = await AsyncStorage.getItem('authToken');
+        const expiryTime = await AsyncStorage.getItem('expiryTime');
+    } catch (error) {
+        console.error('Error checking stored items:', error);
+    }
+};

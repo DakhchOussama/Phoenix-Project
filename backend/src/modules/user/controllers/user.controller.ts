@@ -32,7 +32,7 @@ export class UserController {
       try {
         const user = await this.userService.CreateUser(userdto.fname, userdto.sname, userdto.email, userdto.phonenumber, new Date(`${userdto.birthday}`), userdto.department, userdto.password);
         if (user){
-          const token = this.authService.login(user);
+          const token = await this.authService.login(user);
           return {
               success: true,
               message: 'User created successfully',

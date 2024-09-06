@@ -34,33 +34,41 @@ export const uploadImage = async (uri: string) => {
     const formData = new FormData();
     formData.append('file', {
         uri,
-        name: getFileName(uri),
+        name: await getFileName(uri),
         type: getFileType(uri),
     });
 
+
     try{
-        const token = getToken();
-        const response = await instance.post('/posts/image', {
+        const token = await getToken();
+        const response = await instance.post('/posts/image', formData, {
             headers: {
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-            body: formData
+                'Content-Type': 'multipart/form-data',
+            }
         });
 
-        if (response.data)
-            return true
+        if (response.data && response.data.filename)
+            return response.data.filename
         else
             return null;
     } catch (error){
         console.log('error : ', error);
+        return null
     }
 }
 
 
 export const createPost = async (PostData: any) => {
     try {
-        const response = await instance.post('/posts/create', PostData);
+        const token = await getToken();
+        const response = await instance.post('/posts/create', PostData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        }
+            
+        );
         return response.data;
     } catch (error) {
         console.log('error : ', error);

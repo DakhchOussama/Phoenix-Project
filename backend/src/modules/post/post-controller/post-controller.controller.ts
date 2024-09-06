@@ -1,21 +1,59 @@
-import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res  } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'; // Import diskStorage from multer
 import { extname } from 'path';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
+import { PostServiceService } from '../post-service/post-service.service';
 
 @Controller('posts')
 export class PostControllerController {
 
-    constructor(){}
+    constructor(private readonly PostService: PostServiceService){}
+
+
+    @Get('postuser')
+    @UseGuards(JwtAuthGuard)
+    async getPost(@Request() req, @Res() res){
+        try{
+            const userId = req.user?.UserID;
+
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+
+            const Posts = await this.PostService.getPost(userId);
+
+            return Posts;
+        } catch(error){
+            console.log('error : ', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+
 
     @Post('create')
-    async createPost(@Body() post){
-        console.log('Post : ', post);
+    @UseGuards(JwtAuthGuard)
+    async createPost(@Body() post, @Request() req){
+        try{
+            const userId =  req.user?.UserID;
+
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+
+            const newPost = await this.PostService.createPost(post, userId);
+
+            return newPost;
+
+        } catch (error){
+            console.error('Error creating post:', error);
+            throw new Error('Error creating post');
+        }
     }
 
     @Post('image')
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @UseInterceptors(
         FileInterceptor('file', {
             storage: diskStorage({

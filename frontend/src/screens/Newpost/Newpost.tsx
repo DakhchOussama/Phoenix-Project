@@ -14,13 +14,13 @@ import { createPost, uploadImage } from "../../services/postService";
 
 export default function Newpost() {
     const [nextpage, setnextpage] = useState(false);
-    const [imageUri, setimage] = useState<string | null>(null);
+    const [imgUri, setimage] = useState<string | null>(null);
     const [title, settitle] = useState<string | null>(null);
     const [categorie, setCategorie] = useState(null);
-    const [Type, setType] = useState(null);
+    const [Type, setType] = useState("Demand");
     const [isEnabled, setIsEnabled] = useState(false);
-
-
+    
+    
     const type = ["Demand", "Service"];
     const categories = [
         'Carpooling & Courier',
@@ -35,18 +35,18 @@ export default function Newpost() {
         'Item Sharing & Lending',
         'Information & Resources',
     ];
-
+    
     const handleGesture = (event: any) => {
         if (event.nativeEvent.translationX < 10) {
             const { width } = Dimensions.get('window');
             const leftThreshold = width * 0.1;
-
+            
             if (event.nativeEvent.x < leftThreshold) {
                 setnextpage(!nextpage);
             }
         }
     };
-
+    
     const openImagePicker = () => {
         launchImageLibrary({mediaType: 'photo', quality: 1}, response => {
             if (response.didCancel)
@@ -65,7 +65,7 @@ export default function Newpost() {
             }
         })
     };
-
+    
     const openCamera = () => {
         launchCamera({ mediaType: 'photo', quality: 1 }, response => {
             if (response.didCancel) {
@@ -84,8 +84,8 @@ export default function Newpost() {
             }
         });
     };
-
-    const handleuploadpost = () => {
+    
+    const handleuploadpost = async () => {
         if (!categorie || !title){
             Toast.show({
                 type: 'error',
@@ -93,29 +93,47 @@ export default function Newpost() {
             });
             return ;
         }
-
-        const PostData = {
-            title,
-            categorie,
-            type,
-            isEnabled,
-            imageUri
-        };
-
-        try{
-            if (PostData.imageUri){
-                const image = uploadImage(PostData.imageUri);
-                console.log('image : ', image);
+        
+        
+        try {
+            let imageUri = null;
+            
+            if (imgUri) {
+                imageUri = await uploadImage(imgUri);
             }
-            const response = createPost(PostData);
-        } catch (error){
-
+            
+            const PostData = {
+                title,
+                categorie,
+                Type,
+                isEnabled,
+                imageUri
+            };
+            
+            const response = await createPost(PostData);
+            
+            // Handle the response if needed
+            if (response) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'Post created successfully!',
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error uploading post:', error);
+            // Optionally show a user-friendly message
+            Toast.show({
+                type: 'error',
+                text1: 'An error occurred while uploading the post.',
+            });
         }
         
     };
 
     return (
         <>
+            <Toast />
             <View style={styles.container}>
                 <View style={styles.progressContainer}>
                     {!nextpage ? (
@@ -138,8 +156,8 @@ export default function Newpost() {
 
                             <View style={styles.imageUploadContainer}>
                                 <TouchableOpacity style={styles.imageUploadBox} onPress={openImagePicker}>
-                                     {imageUri ? (
-                                        <Image source={{ uri: imageUri }} style={styles.imagePreview}  />
+                                     {imgUri ? (
+                                        <Image source={{ uri: imgUri }} style={styles.imagePreview}  />
                                     ) : (
                                         <>
                                             <Text style={styles.imageUploadText}>Select file</Text>

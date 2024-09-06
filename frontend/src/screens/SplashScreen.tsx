@@ -8,6 +8,7 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
         const checkUserStatus = async () => {
             try {
                 const token = await getToken();
+                console.log('token : ', token);
                 if (!token) {
                     const deviceid = await getDeviceId();
                     navigation.replace(deviceid ? 'Home' : 'Firsttime');
