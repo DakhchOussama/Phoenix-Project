@@ -13,24 +13,15 @@ export class PostControllerController {
 
     @Get('postuser')
     @UseGuards(JwtAuthGuard)
-    async getPost(@Request() req, @Res() res){
-        try{
-            const userId = req.user?.UserID;
-
-            if (!userId) {
-                throw new Error('User not authenticated');
-            }
-
-            const Posts = await this.PostService.getPost(userId);
-
-            return Posts;
-        } catch(error){
-            console.log('error : ', error);
+    async getPost(@Request() req, @Res() res) {
+        try {
+            const Posts = await this.PostService.getPost();
+            return res.status(200).json(Posts); // Use res to send a response
+        } catch (error) {
+            console.log('error:', error);
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
-
-
 
     @Post('create')
     @UseGuards(JwtAuthGuard)

@@ -1,58 +1,66 @@
-import React, { useState, forwardRef  } from "react";
+import React, { useState, forwardRef, useEffect  } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import PostItem from "../../components/Post";
 import CategoryItem from "../../components/Categories";
 import { ScrollView } from 'react-native-gesture-handler';
+import { getPosts } from "../../services/postService";
+
+interface PostFromApi {
+  PostID: string;
+  ImgURL?: string;
+  Title: string;
+  Categories: string;
+  Type: "DEMAND" | "SERVICE";
+  isEnabled: boolean;
+  Likes: number;
+  createdAt: string; // or Date if your API returns Date objects
+  updatedAt: string; // or Date if your API returns Date objects
+  userId: string;
+  fname: string; // Assuming this is part of the API response
+  sname: string; // Assuming this is part of the API response
+  userAvatar: string; // Assuming this is part of the API response
+  translates?: string;
+}
+
+interface MappedPost {
+  id: string;
+  title: "DEMAND" | "SERVICE";
+  description: string;
+  avatar: any; // Update this based on the type you use for avatars
+  image: { uri: string } | null;
+  username: string;
+  time: string;
+  likes: number;
+  translate?: string;
+}
 
 
 const Services =  () => {
     const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
     const [list, setlist] = useState(false);
+    const [posts, setPosts] = useState<MappedPost[]>([]);
 
-    const posts = [
-        {
-            id: 1,
-            title: 'Service',
-            description: 'Looking for a tutor to help me prepare for my upcoming exams. Need someone with experience in math and science.',
-            avatar: require('../../assets/profile_user.jpg'),
-            image: null,
-            username: 'John Doe',
-            time: "2h",
-            likes: 10
-        },
-        {
-            id: 2,
-            title: 'Demand',
-            description: 'Looking for a tutor to help me prepare for my upcoming exams. Need someone with experience in math and science.',
-            avatar: require('../../assets/profile.png'),
-            image: require('../../assets/wallet.jpg'),
-            username: 'Oussama Dakhch',
-            time: "2h",
-            likes: 20
-        },
-        {
-            id: 3,
-            title: 'Service',
-            description: 'Looking for a tutor to help me prepare for my upcoming exams. Need someone with experience in math and science.',
-            avatar: require('../../assets/profile_user.jpg'),
-            image: null,
-            username: 'John Doe',
-            time: "2h",
-            likes: 120
-        },
-        {
-          id: 4,
-          title: 'Service',
-          description: 'kan9alab 3la dars bach l exams jay, bghit chi wahd experience f lmath and science',
-          avatar: require('../../assets/profile_user.jpg'),
-          image: null,
-          username: 'John Doe',
-          time: "2h",
-          likes: 120,
-          translate: 'Looking for a tutor to help me prepare for my upcoming exams. Need someone with experience in math and science.'
-        },
-    ];
+    useEffect(() => {
+      const fetchPosts = async () => {
+        const fetchedPosts: PostFromApi[] = await getPosts(); // Replace with your actual API call
+        const mappedPosts: MappedPost[] = fetchedPosts.map((post: PostFromApi) => ({
+          id: post.PostID,
+          title: post.Type,
+          description: post.Title,
+          avatar: require('../../assets/profile_user.jpg'), // Assuming this is static
+          image: post.ImgURL ? { uri: post.ImgURL } : null,
+          username: `${post.fname} ${post.sname}`,
+          time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          likes: post.Likes,
+          translate: post.translates
+        }));
+        setPosts(mappedPosts);
+      };
+  
+      fetchPosts();
+    }, []);
+
 
     const handlePress = (index: number) => {
         setSelectedCategory(selectedCategory === index ? null : index);

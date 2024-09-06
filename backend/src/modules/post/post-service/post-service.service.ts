@@ -10,15 +10,45 @@ export class PostServiceService {
         private readonly prisma: PrismaService
     ){}
 
-    async getPost(userId: string){
+    async getPost(){
 
-        const post = await this.prisma.post.findMany({
-            where: {
-                userId: userId
-            }
+        const posts = await this.prisma.post.findMany({
+            include: {
+                user: {
+                    select: {
+                        Fname: true,
+                        Sname: true,
+                        AvatarURL: true,
+                    },
+                },
+            },
         });
 
-       return post;
+        const formattedPosts = posts.map(post => ({
+            PostID: post.PostID,
+            ImgURL: post.ImgURL,
+            Title: post.Title,
+            Categories: post.Categories,
+            Type: post.Type,
+            isEnabled: post.isEnabled,
+            Likes: post.Likes,
+            createdAt: post.createdAt,
+            updatedAt: post.updatedAt,
+            fname: post.user.Fname,
+            sname: post.user.Sname,
+            avatar: post.user.AvatarURL,
+            translates: post.translates,
+        }));
+
+        console.log('posts : ', formattedPosts);
+
+        // const UserId = post.userId;
+
+        // const user = this.prisma.user.findUnique({
+        //     where: {UserId},
+        // });
+
+       return formattedPosts;
     }
 
 
@@ -26,10 +56,6 @@ export class PostServiceService {
         const { title, categorie, Type, isEnabled, imageUri } = createPost;
     
         const isEnabledValue: boolean = Boolean(isEnabled);
-
-        console.log('imageuril : ', imageUri);
-        console.log('Type : ', Type);
-
     
         const post = await this.prisma.post.create({
             data: {

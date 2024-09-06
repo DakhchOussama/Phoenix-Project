@@ -7,15 +7,15 @@ import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 
 interface Post {
-    id: number;
-    title: string;
+    id: string;
+    title: "DEMAND" | "SERVICE";
     description: string;
-    avatar: ImageSourcePropType;
-    image: ImageSourcePropType | null;
+    avatar: any; // Update this based on the type you use for avatars
+    image: { uri: string } | null;
     username: string;
     time: string;
     likes: number;
-    translate?: string
+    translate?: string;
 }
 
 interface PostItemProps {
@@ -28,6 +28,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     const [modalVisible, setModalVisible] = useState(false);
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [translate, settranslate] = useState(false);
+
 
         useEffect(() => {
             Animated.spring(scaleValue, {
@@ -82,7 +83,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
             <Text style={styles.description}>
                 {post.translate ? (translate ? post.translate : post.description) : post.description}
             </Text>
-            {post.image && (
+            {post.image !== null && post.image !== undefined && (
                 <View style={styles.imageContainer}>
                     <Image style={styles.postImage} source={post.image} />
                 </View>
@@ -343,7 +344,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     imageContainer: {
-        marginTop: 10,
+        marginTop: 10
     },
     postImage: {
         width: '100%',
