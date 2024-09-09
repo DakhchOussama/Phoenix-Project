@@ -10,15 +10,17 @@ import { PanGestureHandler } from 'react-native-gesture-handler';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Toast from "react-native-toast-message";
 import { createPost, uploadImage } from "../../services/postService";
+import Loading from "../../components/Loading";
 
 
 export default function Newpost() {
     const [nextpage, setnextpage] = useState(false);
     const [imgUri, setimage] = useState<string | null>(null);
     const [title, settitle] = useState<string | null>(null);
-    const [categorie, setCategorie] = useState(null);
+    const [categorie, setCategorie] = useState<string | null>(null);
     const [Type, setType] = useState("Demand");
     const [isEnabled, setIsEnabled] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     
     
     const type = ["Demand", "Service"];
@@ -110,9 +112,10 @@ export default function Newpost() {
                 imageUri
             };
             
+            setIsLoading(true);
             const response = await createPost(PostData);
+            setIsLoading(false);
             
-            // Handle the response if needed
             if (response) {
                 Toast.show({
                     type: 'success',
@@ -128,8 +131,11 @@ export default function Newpost() {
                 text1: 'An error occurred while uploading the post.',
             });
         }
-        
     };
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <>
@@ -276,13 +282,13 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Raleway-Bold',
-        fontSize: 25,
+        fontSize: 27,
         color: "#434752",
         marginBottom: 10
     },
     description: {
         fontFamily: 'Rubik-Regular',
-        fontSize: 12,
+        fontSize: 13,
         color: "#434752",
         marginLeft: 7
     },

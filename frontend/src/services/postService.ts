@@ -85,17 +85,27 @@ export const getPosts = async () => {
             }
         });
 
-        console.log('data : ', response.data);
-
         if (response.status === 200) {
-            console.log('Successfully retrieved posts:', response.data);
             return response.data; // Return the data to be used by the caller
         } else {
-            console.log('Unexpected response status:', response.status);
             throw new Error(`Unexpected response status: ${response.status}`);
         }
     } catch (error) {
-        console.error('Failed to fetch posts:', error);
         throw error;
     }
 };
+
+export const likePost = async (postId: string, userId: string) => {
+    try {
+        const token = await getToken();
+        const response = await instance.get(`/posts/${postId}/like`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            params: { userId },
+        });
+      return response.data;
+    } catch (error) {
+      return false;
+    }
+  };

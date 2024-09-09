@@ -38,13 +38,23 @@ CREATE TABLE "Post" (
     "Categories" TEXT NOT NULL,
     "Type" TEXT NOT NULL,
     "isEnabled" BOOLEAN NOT NULL DEFAULT false,
-    "Likes" INTEGER NOT NULL,
+    "Likes" INTEGER NOT NULL DEFAULT 0,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userId" TEXT NOT NULL,
     "translates" TEXT,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("PostID")
+);
+
+-- CreateTable
+CREATE TABLE "Like" (
+    "LikeID" TEXT NOT NULL,
+    "postId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Like_pkey" PRIMARY KEY ("LikeID")
 );
 
 -- CreateTable
@@ -74,6 +84,9 @@ CREATE UNIQUE INDEX "User_Email_key" ON "User"("Email");
 CREATE UNIQUE INDEX "User_Phone_key" ON "User"("Phone");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Like_postId_userId_key" ON "Like"("postId", "userId");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Friends_UserId_FriendId_key" ON "Friends"("UserId", "FriendId");
 
 -- AddForeignKey
@@ -81,6 +94,12 @@ ALTER TABLE "Notification" ADD CONSTRAINT "Notification_UserID_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("PostID") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Like" ADD CONSTRAINT "Like_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Friends" ADD CONSTRAINT "Friends_UserId_fkey" FOREIGN KEY ("UserId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;

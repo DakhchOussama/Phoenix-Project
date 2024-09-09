@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     profileImage: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: 20
     },
     notificationText: {
         fontFamily: 'Poppins-Regular',
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         color: '#bdbbbb',
     },
     followButton: {
-        backgroundColor: '#DD644A',
+        backgroundColor: '#dc6c55',
         paddingVertical: 5,
         paddingHorizontal: 10,
         borderRadius: 5,

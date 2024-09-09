@@ -1,9 +1,10 @@
-import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res  } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res, Param, Response, Query  } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'; // Import diskStorage from multer
-import { extname } from 'path';
+import { extname, join } from 'path';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
 import { PostServiceService } from '../post-service/post-service.service';
+import { createReadStream } from 'fs';
 
 @Controller('posts')
 export class PostControllerController {
@@ -63,5 +64,34 @@ export class PostControllerController {
             message: 'File uploaded successfully',
             filename: file.filename,
         };
+    };
+    
+    
+    @Get('/image/:imgPath')
+    // @UseGuards(JwtAuthGuard)
+    async getImage(@Param('imgPath') img, @Response() res){
+        const filePath = join(process.cwd(), 'uploads', img);
+        
+        const filestream = createReadStream(filePath);
+        
+        filestream.on('error', (err) => {
+            res.status(404).send({ message: 'File not found' });
+        });
+        
+        filestream.pipe(res);
+    }
+    
+    @Get(':postId/like')
+    @UseGuards(JwtAuthGuard)
+    async likePost(
+        @Param('postId') postId: string,
+        @Query('userId') userId: string,
+    ): Promise<void>
+    {
+        try{
+            await this.PostService.likedpost(postId, userId);
+        } catch (error){
+            throw new Error('You have already liked this post');
+        }
     }
 }

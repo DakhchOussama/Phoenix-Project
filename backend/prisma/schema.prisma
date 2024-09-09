@@ -15,23 +15,25 @@ datasource db {
 }
 
 model User {
-  UserID          String       @id @default(uuid())
-  Fname           String
-  Sname           String
-  Email           String    @unique
-  Phone           String    @unique
-  Birthday        DateTime
-  Department      String
-  Password        String
-  AvatarURL       String
-  Ban             Boolean?  @default(false)
-  isAdmin         Boolean?  @default(false)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  notifications   Notification[]
-  friendsAsUser   Friends[] @relation("UserFriends")
+  UserID     String   @id @default(uuid())
+  Fname      String
+  Sname      String
+  Email      String   @unique
+  Phone      String   @unique
+  Birthday   DateTime
+  Department String
+  Password   String
+  AvatarURL  String
+  Ban        Boolean? @default(false)
+  isAdmin    Boolean? @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  notifications Notification[]
+  friendsAsUser Friends[] @relation("UserFriends")
   friendsAsFriend Friends[] @relation("FriendFriends")
-  posts           Post[]
+  posts          Post[]
+  likes          Like[]  // Relation to Like model
 }
 
 model Notification {
@@ -47,13 +49,13 @@ model Notification {
 }
 
 model Post {
-  PostID     String       @id @default(uuid())
+  PostID     String   @id @default(uuid())
   ImgURL     String?
   Title      String
   Categories String
   Type       String
   isEnabled  Boolean   @default(false)
-  Likes      Int
+  Likes      Int       @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -61,6 +63,19 @@ model Post {
   user       User @relation(fields: [userId], references: [UserID])
   translates String?
   comments   Comment[]
+  likes      Like[]  // Relation to Like model
+}
+
+model Like {
+  LikeID   String   @id @default(uuid())
+  postId   String
+  userId   String
+  createdAt DateTime @default(now())
+
+  post     Post @relation(fields: [postId], references: [PostID])
+  user     User @relation(fields: [userId], references: [UserID])
+
+  @@unique([postId, userId]) // Ensure that a user can only like a post once
 }
 
 model Friends {

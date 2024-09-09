@@ -28,7 +28,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePre
     return (
         <View style={{ flex: 1, flexDirection: 'column' }}>
             <View style={{ flex: 1, justifyContent: 'flex-end' }}>
-                <Text style={{ fontFamily: 'Raleway-Bold', fontSize: 35, marginLeft: 8, color: '#434752' }}>Services</Text>
+                <Text style={{ fontFamily: 'Raleway-Bold', fontSize: 40, marginLeft: 8, color: '#434752' }}>Services</Text>
                 <View style={{ backgroundColor: 'blue', borderWidth: 1.5, width: 100, marginLeft: 11, borderRadius: 15, marginTop: 4, borderColor: '#DD644A' }} />
             </View>
 

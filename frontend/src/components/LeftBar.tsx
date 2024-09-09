@@ -1,17 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import IconMat from 'react-native-vector-icons/MaterialIcons';
+import { getprofileuser } from "../services/authService";
 
 
 interface leftbarinterface {
     onPress: (event: GestureResponderEvent) => void;
 }
 
+interface User {
+    AvatarURL: string;
+    Ban: boolean;
+    Department: string;
+    Email: string;
+    Fname: string;
+    Phone: string;
+    Sname: string;
+    UserID: string;
+}
+
 const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
 
+    const [selectedItem, setSelectedItem] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
+    
     const menuItems = [
         { id: 'home', title: 'Home', icon: "home" },
         { id: 'notification', title: 'Notification', icon: "bell" },
@@ -20,7 +35,19 @@ const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
         { id: 'contact', title: 'Contact us', icon: "contacts" }
     ];
 
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
+    useEffect(() => {
+        const getprofile = async () => {
+            const data = await getprofileuser();
+            if (data)
+                setUser(data);
+            else{
+                console.log('error');
+            }
+        }
+
+        getprofile();
+    }, []);
+
 
     const handleMenuItemPress = (itemId: string) => {
         setSelectedItem(itemId);
@@ -42,8 +69,8 @@ const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
                     </View>
 
                     <View style={styles.profileTextContainer}>
-                        <Text style={styles.profileName}>Anna Jones</Text>
-                        <Text style={styles.profileEmail}>randommail@gmail.com</Text>
+                        <Text style={styles.profileName}>{user?.Fname} {user?.Sname}</Text>
+                        <Text style={styles.profileEmail}>{user?.Email}</Text>
                     </View>
                 </View>
 
@@ -123,7 +150,7 @@ const styles = StyleSheet.create({
     },
     profileName: {
         fontFamily: 'Raleway-SemiBold',
-        fontSize: 23,
+        fontSize: 19,
         color: '#FFFFFF',
         letterSpacing: 1,
         marginBottom: 2,

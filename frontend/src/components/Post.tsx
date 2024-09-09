@@ -5,6 +5,8 @@ import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
 import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
+import { getprofileuser } from '../services/authService';
+import { likePost } from '../services/postService';
 
 interface Post {
     id: string;
@@ -20,9 +22,10 @@ interface Post {
 
 interface PostItemProps {
     post: Post;
+    onLikeToggle: (postId: string, like: boolean) => void;
 }
 
-const PostItem: React.FC<PostItemProps> = ({ post }) => {
+const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle }) => {
     
     const [like, setlike] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -30,14 +33,41 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     const [translate, settranslate] = useState(false);
 
 
-        useEffect(() => {
-            Animated.spring(scaleValue, {
-                toValue: like ? 1.2 : 1,
-                friction: 3,
-                tension: 100,
-                useNativeDriver: true,
-            }).start();
-        }, [like]);
+    useEffect(() => {
+        Animated.spring(scaleValue, {
+            toValue: like ? 1.2 : 1,
+            friction: 3,
+            tension: 100,
+            useNativeDriver: true,
+        }).start();
+    }, [like])
+
+
+    useEffect(() => {
+
+        const fetchData = async () => {
+            try {
+                // Fetch user data
+                const User = await getprofileuser();
+                const userId = User.UserID;
+    
+                // Check the like status
+                const check = await likePost(post.id, userId);
+                if (!check)
+                    setlike(true);
+            } catch (error) {
+                console.error('Error in useEffect:', error);
+            }
+        };
+    
+        fetchData();
+    }, [ ]);
+
+
+    const handleLikeClick = async () => {
+        setlike(!like);
+        onLikeToggle(post.id, !like);
+    }
 
     return (
         <>
@@ -116,7 +146,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                         >
                         <TouchableOpacity
                             style={styles.posticon}
-                            onPress={() => setlike(!like)}
+                            onPress={handleLikeClick}
                         >
                             <Iconant
                                 name={like ? "heart" : "hearto"}
@@ -288,7 +318,7 @@ const styles = StyleSheet.create({
     avatar: {
         width: 50,
         height: 50,
-        borderWidth: 2,
+        borderWidth: 1,
         borderRadius: 50,
         borderColor: "#FBAE41",
     },
