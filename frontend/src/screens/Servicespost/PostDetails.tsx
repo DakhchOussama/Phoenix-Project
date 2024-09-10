@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
     },
     header: {
-        height: 150,
+        height: 180,
         justifyContent: 'center',
     },
     backButton: {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontFamily: 'Raleway-Bold',
-        fontSize: 38,
+        fontSize: 40,
         color: '#434752',
     },
     headerLine: {
@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     },
     postImage: {
         width: '100%',
-        height: 200,
+        height: 250,
         borderRadius: 6,
     },
     commentsTitle: {
