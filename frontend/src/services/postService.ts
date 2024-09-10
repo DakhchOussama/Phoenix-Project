@@ -86,7 +86,7 @@ export const getPosts = async () => {
         });
 
         if (response.status === 200) {
-            return response.data; // Return the data to be used by the caller
+            return response.data;
         } else {
             throw new Error(`Unexpected response status: ${response.status}`);
         }

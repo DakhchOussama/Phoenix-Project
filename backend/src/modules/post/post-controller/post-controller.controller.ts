@@ -91,7 +91,7 @@ export class PostControllerController {
         try{
             await this.PostService.likedpost(postId, userId);
         } catch (error){
-            throw new Error('You have already liked this post');
+            return error; // change this 
         }
     }
 }

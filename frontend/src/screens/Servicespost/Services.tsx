@@ -8,6 +8,7 @@ import { getPosts, likePost } from "../../services/postService";
 import { BASE_URL } from "@env";
 import Loading from "../../components/Loading";
 import PostDetails from "./PostDetails";
+import Toast from "react-native-toast-message";
 
 interface PostFromApi {
   PostID: string;
@@ -17,12 +18,12 @@ interface PostFromApi {
   Type: "DEMAND" | "SERVICE";
   isEnabled: boolean;
   Likes: number;
-  createdAt: string; // or Date if your API returns Date objects
-  updatedAt: string; // or Date if your API returns Date objects
+  createdAt: string;
+  updatedAt: string;
   userId: string;
-  fname: string; // Assuming this is part of the API response
-  sname: string; // Assuming this is part of the API response
-  userAvatar: string; // Assuming this is part of the API response
+  fname: string;
+  sname: string;
+  userAvatar: string;
   translates?: string;
   userHasLiked: boolean;
 }
@@ -38,36 +39,51 @@ interface MappedPost {
   likes: number;
   translate?: string;
   userHasLiked: boolean;
+  Categories: string;
+  isEnabled: boolean;
 }
 
 
 const Services =  () => {
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-    const [list, setlist] = useState(false);
-    const [posts, setPosts] = useState<MappedPost[]>([]);
-    const [isLoading, setIsLoading] = useState(false);
-    const [selectedPost, setSelectedPost] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [List, setList] = useState<string | null>(null);
+  const [list, setlist] = useState(false);
+  const [posts, setPosts] = useState<MappedPost[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedPost, setSelectedPost] = useState(null);
     
 
     useEffect(() => {
       const fetchPosts = async () => {
-        setIsLoading(true);
-        const fetchedPosts: PostFromApi[] = await getPosts(); // Replace with your actual API call
-        setIsLoading(false);
-        const mappedPosts: MappedPost[] = fetchedPosts.map((post: PostFromApi) => ({
-          id: post.PostID,
-          title: post.Type,
-          description: post.Title,
-          avatar: require('../../assets/profile.png'), // Assuming this is static
-          image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
-          username: `${post.fname} ${post.sname}`,
-          time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          likes: post.Likes,
-          translate: post.translates,
-          userHasLiked: post.userHasLiked || false
-        }));
-        setPosts(mappedPosts);
+        try {
+          setIsLoading(true);
+          const fetchedPosts: PostFromApi[] = await getPosts();
+          const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
+            id: post.PostID,
+            title: post.Type,
+            description: post.Title,
+            avatar: require('../../assets/profile.png'),
+            image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
+            username: `${post.fname} ${post.sname}`,
+            time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            likes: post.Likes,
+            translate: post.translates,
+            userHasLiked: post.userHasLiked || false,
+            Categories: post.Categories,
+            isEnabled: post.isEnabled
+          }));
+          setPosts(mappedPosts);
+        } catch (error) {
+          Toast.show({
+            type: 'error',
+            text1: 'An error occurred',
+            text2: 'Failed to fetch posts , please try again.',
+        });
+        } finally {
+          setIsLoading(false);
+        }
       };
+      
   
       fetchPosts();
     }, []);
@@ -78,9 +94,9 @@ const Services =  () => {
   }
 
 
-    const handlePress = (index: number) => {
-        setSelectedCategory(selectedCategory === index ? null : index);
-    };
+  const handlePress = (category: string) => {
+    setSelectedCategory(selectedCategory === category ? null : category);
+  };
 
     const handleLikeToggle = async (postId: any, liked: any) => {
     
@@ -102,10 +118,13 @@ const Services =  () => {
   
 
     return (
+      <>
+      <Toast />
       <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-          {selectedPost ? <PostDetails post={selectedPost} onBack={handleBack} /> : (
+          {selectedPost ?  <PostDetails post={selectedPost} onBack={handleBack} /> : (
             <>
               <CategoryItem selectedCategory={selectedCategory} handlePress={handlePress} />
+
                 <View style={{ flex: 2 }}>
                     <View style={{ flex: 1, flexDirection: 'row' }}>
                         <ScrollView horizontal={false} style={{ marginTop: 10 }}>
@@ -114,31 +133,62 @@ const Services =  () => {
                             </View>
                             {list && (
                               <View style={styles.dropdownContainer}>
-                                <TouchableOpacity style={styles.dropdownItem}>
+                                <TouchableOpacity style={styles.dropdownItem} onPress={() => setList("SERVICE")}>
                                   <Icon name="tools" size={20} color="#4a4f5b" />
                                   <Text style={styles.dropdownText}>Service</Text>
                                 </TouchableOpacity>
                                 <View style={styles.divider} />
-                                <TouchableOpacity style={styles.dropdownItem}>
-                                  <Icon name="megaphone" size={20} color="#4a4f5b" />
+                                <TouchableOpacity style={styles.dropdownItem} onPress={() => setList("DEMAND")}>
+                                  <Icon name="megaphone" size={20} color="#4a4f5b"  />
                                   <Text style={styles.dropdownText}>Demand</Text>
                                 </TouchableOpacity>
                               </View>
                             )}
                             <View style={{ margin: 21, marginTop: 12 }}>
-                                  {posts.map((post) => (
-                                  <View key={post.id}>
-                                      <TouchableOpacity
-                                        onPress={() => handlePostClick(post)}
-                                      >
-                                      <PostItem key={post.id}
-                                                post={post}
-                                                onLikeToggle={handleLikeToggle}
-                                                
-                                                />
+                            {selectedCategory !== null ? (
+                              posts
+                                .filter((post) => post.Categories === selectedCategory)
+                                .map((post) => (
+                                  post.isEnabled ? (
+                                    <View key={post.id}>
+                                      <TouchableOpacity onPress={() => handlePostClick(post)}>
+                                        <PostItem 
+                                          post={post}
+                                          onLikeToggle={handleLikeToggle}
+                                        />
                                       </TouchableOpacity>
+                                    </View>
+                                  ) : (
+                                    <View key={post.id}>
+                                      <PostItem 
+                                        post={post}
+                                        onLikeToggle={handleLikeToggle}
+                                      />
+                                    </View>
+                                  )
+                                ))
+                            ) : (
+                              posts.map((post) => (
+                                post.isEnabled ? (
+                                  <View key={post.id}>
+                                    <TouchableOpacity onPress={() => handlePostClick(post)}>
+                                      <PostItem 
+                                        post={post}
+                                        onLikeToggle={handleLikeToggle}
+                                      />
+                                    </TouchableOpacity>
                                   </View>
-                                  ))}  
+                                ) : (
+                                  <View key={post.id}>
+                                    <PostItem 
+                                      post={post}
+                                      onLikeToggle={handleLikeToggle}
+                                    />
+                                  </View>
+                                )
+                              ))
+                            )}
+                             
                             </View>
                         </ScrollView>
                     </View>
@@ -146,6 +196,7 @@ const Services =  () => {
             </>
           )}
         </View>
+      </>
     );
 };
 
