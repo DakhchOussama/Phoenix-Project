@@ -78,23 +78,8 @@ export default function HomeScreen(){
                        <Services />
                 </View>
             </PanGestureHandler>
-            // <Services onPress={() => setServices(false)} />
         );
     };
-
-    // const panResponder = useRef(
-    //     PanResponder.create({
-    //         onStartShouldSetPanResponder: () => true,
-    //         onMoveShouldSetPanResponder: () => true,
-    //         onPanResponderMove: (evt, gestureState) => {
-    //             // Detect swipe left
-    //             if (gestureState.dx < -30) {  // -30 means the user swiped left by at least 30 pixels
-    //                 setLeftbar(false);
-    //             }
-    //         },
-    //     })
-    // ).current;
-
 
     const handleSwipeLeftBar = (event: any) => {
         if (event.nativeEvent.translationX < 10) {
@@ -153,19 +138,21 @@ export default function HomeScreen(){
                         data={categories}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <View style={[styles.categorie, { borderColor: item.color }]}>
-                                <View style={styles.catogorieimg}>
-                                    <Image style={{ width: 40, height: 40, marginLeft: 2, marginTop: 5 }} source={item.image} resizeMode="cover" />
-                                </View>
-                                <View style={styles.categorieinformation}>
-                                    <View style={styles.categorietitle}>
-                                        <Text style={[styles.header, { color: item.color }]}>{item.name}</Text>
+                            <TouchableOpacity >
+                                <View style={[styles.categorie, { borderColor: item.color }]}>
+                                    <View style={styles.catogorieimg}>
+                                        <Image style={{ width: 40, height: 40, marginLeft: 2, marginTop: 5 }} source={item.image} resizeMode="cover" />
                                     </View>
-                                    <View style={styles.categorietext}>
-                                        <Text style={styles.title}>{item.description}</Text>
+                                    <View style={styles.categorieinformation}>
+                                        <View style={styles.categorietitle}>
+                                            <Text style={[styles.header, { color: item.color }]}>{item.name}</Text>
+                                        </View>
+                                        <View style={styles.categorietext}>
+                                            <Text style={styles.title}>{item.description}</Text>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         )}
                     />
                     </View>

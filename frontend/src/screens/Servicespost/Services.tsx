@@ -160,6 +160,7 @@ const Services =  () => {
                                           <PostItem 
                                             post={post}
                                             onLikeToggle={handleLikeToggle}
+                                            comment={true}
                                           />
                                         </TouchableOpacity>
                                       </View>
@@ -168,6 +169,7 @@ const Services =  () => {
                                         <PostItem 
                                           post={post}
                                           onLikeToggle={handleLikeToggle}
+                                          comment={false}
                                         />
                                       </View>
                                     )
@@ -183,6 +185,7 @@ const Services =  () => {
                                           <PostItem 
                                             post={post}
                                             onLikeToggle={handleLikeToggle}
+                                            comment={true}
                                           />
                                         </TouchableOpacity>
                                       </View>
@@ -191,6 +194,7 @@ const Services =  () => {
                                         <PostItem 
                                           post={post}
                                           onLikeToggle={handleLikeToggle}
+                                          comment={false}
                                         />
                                       </View>
                                     )
@@ -206,6 +210,7 @@ const Services =  () => {
                                           <PostItem 
                                             post={post}
                                             onLikeToggle={handleLikeToggle}
+                                            comment={true}
                                           />
                                         </TouchableOpacity>
                                       </View>
@@ -214,6 +219,7 @@ const Services =  () => {
                                         <PostItem 
                                           post={post}
                                           onLikeToggle={handleLikeToggle}
+                                          comment={false}
                                         />
                                       </View>
                                     )
@@ -227,6 +233,7 @@ const Services =  () => {
                                         <PostItem 
                                           post={post}
                                           onLikeToggle={handleLikeToggle}
+                                          comment={true}
                                         />
                                       </TouchableOpacity>
                                     </View>
@@ -235,6 +242,7 @@ const Services =  () => {
                                       <PostItem 
                                         post={post}
                                         onLikeToggle={handleLikeToggle}
+                                        comment={false}
                                       />
                                     </View>
                                   )

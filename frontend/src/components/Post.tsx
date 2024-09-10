@@ -23,9 +23,10 @@ interface Post {
 interface PostItemProps {
     post: Post;
     onLikeToggle: (postId: string, like: boolean) => void;
+    comment: boolean
 }
 
-const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle }) => {
+const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     
     const [like, setlike] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
@@ -134,6 +135,11 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle }) => {
             </View>
             {/* sidebar */}
             <View style={styles.sidebarContainer}>
+                {comment && (
+                    <View style={styles.commentContainer}>
+                        <Text style={styles.commentText}>Add comment</Text>
+                    </View>
+                )}
                 <View style={styles.sidebar}>
                     {/* click like */}
                     <View style={styles.likeButton}>
@@ -378,11 +384,11 @@ const styles = StyleSheet.create({
     },
     postImage: {
         width: '100%',
-        height: 180,
+        height: 190,
         borderRadius: 6
     },
     sidebarContainer: {
-        padding: 3,
+        padding: 3
     },
     sidebar: {
         flexDirection: 'row',
@@ -437,6 +443,22 @@ const styles = StyleSheet.create({
     shareIcon: {
         marginTop: 2,
     },
+    commentContainer: {
+        backgroundColor: '#f3f3f3',
+        borderRadius: 8,
+        padding: 8,
+        marginLeft: 5,
+        marginRight: 5,
+        marginBottom: 20
+    },
+    commentText: {
+        fontSize: 14,
+        color: '#aba7a7',
+        fontFamily: 'Urbanist-Regular',
+        width: '90%',
+        paddingVertical: 4,
+    }
+
 });
 
 export default PostItem;
