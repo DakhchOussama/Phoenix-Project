@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, Modal, Pressable, Animated } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, Modal, Pressable, Animated, Linking } from 'react-native';
 import Iconfont from 'react-native-vector-icons/FontAwesome';
 import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
@@ -64,7 +64,55 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         fetchData();
     }, [ ]);
 
+    const handleShareClick = () => {
+        const message = `🚀 **New ${post.title}:**\n\n` +
+                    `📜 **Title:** ${post.title}\n` +
+                    `📝 **Description:** ${post.description}\n` +
+                    `👤 **Posted by:** ${post.username}\n` +
+                    `⏰ **Time:** ${post.time}\n` +
+                    `🔗 **Check it out:** [YourAppLink]`;
 
+
+        console.log('message : ', message);
+
+        const url = `whatsapp://send?text=${encodeURIComponent(message)}`;
+        
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (supported) {
+                    return Linking.openURL(url);
+                } else {
+                    console.log('WhatsApp is not installed');
+                }
+            })
+            .catch((err) => console.error('Error opening WhatsApp:', err));
+    };
+
+
+    const handleSendClick = () => {
+        // Define the message or action
+        const message = `Hi ${post.username},\n\n` +
+        `I saw your ${post.title} post titled "${post.title}" and I’m interested in learning more about it.\n` +
+        `Could you please provide more details?\n\n` +
+        `Thanks!`;
+
+
+        console.log('message : ', message);
+
+        // Open WhatsApp with the message (assuming WhatsApp is installed on the device)
+        const url = `whatsapp://send?text=${encodeURIComponent(message)}`;
+        
+        Linking.canOpenURL(url)
+            .then((supported) => {
+                if (supported) {
+                    return Linking.openURL(url);
+                } else {
+                    console.log('WhatsApp is not installed');
+                }
+            })
+            .catch((err) => console.error('Error opening WhatsApp:', err));
+    };
+    
     const handleLikeClick = async () => {
         setlike(!like);
         onLikeToggle(post.id, !like);
@@ -168,7 +216,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                     </View>
                     {/* click send */}
                     <View style={styles.sendButton}>
-                        <TouchableOpacity style={styles.posticon}>
+                        <TouchableOpacity style={styles.posticon} onPress={handleSendClick}>
                             <Iconfont name="whatsapp" size={17} color={"#434752"} />
                             <Text style={styles.text}>Send</Text>
                         </TouchableOpacity>
@@ -176,7 +224,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
 
                     {/* click SHARE */}
                     <View style={styles.shareButton}>
-                        <TouchableOpacity style={styles.posticon}>
+                        <TouchableOpacity style={styles.posticon} onPress={() => handleShareClick}>
                             <Iconfont name="share-square-o" size={15} style={styles.shareIcon} color={"#434752"} />
                             <Text style={styles.text}>Share</Text>
                         </TouchableOpacity>

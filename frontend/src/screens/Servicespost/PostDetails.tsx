@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFF',
     },
     header: {
-        height: 180,
+        height: 170,
         justifyContent: 'center',
     },
     backButton: {

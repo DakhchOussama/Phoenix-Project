@@ -3,12 +3,12 @@ import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
-import IconMat from 'react-native-vector-icons/MaterialIcons';
 import { getprofileuser } from "../services/authService";
 
-
-interface leftbarinterface {
+// Update the interface to include navigation
+interface LeftBarProps {
     onPress: (event: GestureResponderEvent) => void;
+    navigation: any; // Use any if you don't want to specify types
 }
 
 interface User {
@@ -22,11 +22,10 @@ interface User {
     UserID: string;
 }
 
-const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
-
+const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
     const [selectedItem, setSelectedItem] = useState<string | null>(null);
     const [user, setUser] = useState<User | null>(null);
-    
+
     const menuItems = [
         { id: 'home', title: 'Home', icon: "home" },
         { id: 'notification', title: 'Notification', icon: "bell" },
@@ -38,19 +37,36 @@ const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
     useEffect(() => {
         const getprofile = async () => {
             const data = await getprofileuser();
-            if (data)
-                setUser(data);
-            else{
-                console.log('error');
-            }
+            if (data) setUser(data);
+            else console.log('error');
         }
 
         getprofile();
     }, []);
 
-
     const handleMenuItemPress = (itemId: string) => {
         setSelectedItem(itemId);
+
+        // Navigate based on the selected item
+        switch (itemId) {
+            case 'home':
+                navigation.navigate('HomeScreen');
+                break;
+            case 'notification':
+                navigation.navigate('NotificationsScreen');
+                break;
+            case 'profile':
+                navigation.navigate('ProfileScreen');
+                break;
+            case 'setting':
+                navigation.navigate('SettingsScreen');
+                break;
+            case 'contact':
+                navigation.navigate('ContactScreen');
+                break;
+            default:
+                break;
+        }
     };
 
     return (
@@ -79,31 +95,36 @@ const LeftBar: React.FC<leftbarinterface> = ({onPress}) => {
 
             <View style={styles.menuSection}>
                 {menuItems.map((item) => (
-                        <View style={[
+                    <View
+                        style={[
                             styles.menuItem,
-                                     selectedItem === item.id && styles.selectedMenuItem
-                                 ]} key={item.id}>
-                            <TouchableOpacity
-                                style={{flex: 1}}
-                                onPress={() => handleMenuItemPress(item.id)}
-                            >
+                            selectedItem === item.id && styles.selectedMenuItem
+                        ]}
+                        key={item.id}
+                    >
+                        <TouchableOpacity
+                            style={{ flex: 1 }}
+                            onPress={() => handleMenuItemPress(item.id)}
+                        >
                             <View style={styles.menuItemContent}>
-                                <View style={{justifyContent: 'flex-start'}}>
+                                <View style={{ justifyContent: 'flex-start' }}>
                                     <Text style={styles.menuText}>{item.title}</Text>
                                 </View>
-                                {item.icon === "contacts" ? (<IconAnt name={item.icon} size={27} color="#FFFFFF" />) : (
+                                {item.icon === "contacts" ? (
+                                    <IconAnt name={item.icon} size={27} color="#FFFFFF" />
+                                ) : (
                                     <Icon name={item.icon} size={27} color="#FFFFFF" />
                                 )}
                             </View>
-                            </TouchableOpacity>
-                        </View>
+                        </TouchableOpacity>
+                    </View>
                 ))}
             </View>
 
             <View style={styles.logoutSection}>
                 <View style={styles.logoutContent}>
                     <Text style={styles.logoutText}>Log Out</Text>
-                    <IconMat name="logout" size={27} color="#FFFFFF" />
+                    <MaterialIcons name="logout" size={27} color="#FFFFFF" />
                 </View>
             </View>
         </View>

@@ -43,9 +43,13 @@ interface MappedPost {
   isEnabled: boolean;
 }
 
+interface ServicesProps {
+  selectedCategory: string | null;
+  setSelectedCategory: (category: string | null) => void;
+}
 
-const Services =  () => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCategory }) => {
   const [listType, setListType] = useState<string | null>(null);
   const [list, setlist] = useState(false);
   const [posts, setPosts] = useState<MappedPost[]>([]);
@@ -225,7 +229,6 @@ const Services =  () => {
                                     )
                                   ))
                               ) : (
-                                /* If neither is chosen, show all posts */
                                 posts.map(post => (
                                   post.isEnabled ? (
                                     <View key={post.id}>

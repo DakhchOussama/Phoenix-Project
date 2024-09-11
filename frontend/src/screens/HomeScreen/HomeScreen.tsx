@@ -8,6 +8,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import Services from "../Servicespost/Services";
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import LeftBar from "../../components/LeftBar";
+import { useNavigation } from '@react-navigation/native';
 
 
 interface User {
@@ -29,6 +30,9 @@ export default function HomeScreen(){
     const [profile, setProfile] = useState<User | null>(null);
     const [services, setServices] = useState<boolean>(false);
     const [leftbar, setLeftbar] = useState<boolean>(false);
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+    const navigation = useNavigation();
 
 
    useEffect(() => {
@@ -75,7 +79,10 @@ export default function HomeScreen(){
         return (
             <PanGestureHandler onGestureEvent={handleSwipeGesture} >
                 <View style={{flex: 1}}>
-                       <Services />
+                    <Services
+                        selectedCategory={selectedCategory}
+                        setSelectedCategory={setSelectedCategory}
+                    />
                 </View>
             </PanGestureHandler>
         );
@@ -95,7 +102,10 @@ export default function HomeScreen(){
     const content = 
         (
                 <View style={styles.homecontainer} >
-                {leftbar && (<LeftBar onPress={() => setLeftbar(false)} />)}
+                {leftbar && (<LeftBar 
+                        onPress={() => setLeftbar(false)}
+                        navigation={navigation} 
+                        />)}
                 <View  style={[styles.headerhomescreen, { height: headerHeight}]}>
                     <View style={styles.logoandicon}>
                         <View style={styles.headericon}><Icon name="bar-chart" size={27} color="#434752" onPress={() => setLeftbar(!leftbar)} /></View>
@@ -138,7 +148,7 @@ export default function HomeScreen(){
                         data={categories}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
-                            <TouchableOpacity >
+                            <TouchableOpacity onPress={() => { setSelectedCategory(item.name); setServices(true);}}>
                                 <View style={[styles.categorie, { borderColor: item.color }]}>
                                     <View style={styles.catogorieimg}>
                                         <Image style={{ width: 40, height: 40, marginLeft: 2, marginTop: 5 }} source={item.image} resizeMode="cover" />
@@ -370,7 +380,7 @@ const styles = StyleSheet.create({
       allword: {
         fontSize: 15,
         marginRight: 5,
-        color: '#B1B2C0',
+        color: '#a5a6b2',
       },
       categorieword: {
         color: '#434752',
