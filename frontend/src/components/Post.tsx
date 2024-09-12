@@ -10,7 +10,7 @@ import { likePost } from '../services/postService';
 
 interface Post {
     id: string;
-    title: "DEMAND" | "SERVICE";
+    title: "DEMAND" | "Offer";
     description: string;
     avatar: any; // Update this based on the type you use for avatars
     image: { uri: string } | null;
@@ -280,14 +280,14 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.1)', // Slightly darker overlay
+        backgroundColor: 'rgba(0, 0, 0, 0.02)',
     },
     modalContainer: {
         width: '80%',
         backgroundColor: '#FFFFFF',
         borderRadius: 10,
         overflow: 'hidden',
-        elevation: 10, // Higher elevation for a more prominent shadow effect
+        elevation: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
@@ -370,11 +370,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     avatar: {
-        width: 50,
-        height: 50,
-        borderWidth: 1,
-        borderRadius: 50,
-        borderColor: "#FBAE41",
+        width: 48,
+        height: 48,
+        // borderWidth: 1,
+        // borderRadius: 50,
+        // borderColor: "#FBAE41",
     },
     nameTextContainer: {
         justifyContent: 'center',
@@ -426,6 +426,7 @@ const styles = StyleSheet.create({
         color: "#3C404B",
         fontFamily: 'Urbanist-Bold',
         fontSize: 16,
+        marginLeft: 5
     },
     imageContainer: {
         marginTop: 10

@@ -90,7 +90,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
                             style={styles.input}
                         />
                         <TouchableOpacity onPress={handleAddComment}>
-                            <IoniconsIcons name='send' color={'#41A5EE'} size={25} />
+                            <IoniconsIcons name='send' color={'#41A5EE'} size={23} />
                         </TouchableOpacity>
                     </View>
                 </View>

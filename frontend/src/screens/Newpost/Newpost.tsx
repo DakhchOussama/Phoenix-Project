@@ -11,6 +11,8 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Toast from "react-native-toast-message";
 import { createPost, uploadImage } from "../../services/postService";
 import Loading from "../../components/Loading";
+import { useNavigation } from '@react-navigation/native';
+
 
 
 export default function Newpost() {
@@ -23,7 +25,7 @@ export default function Newpost() {
     const [isLoading, setIsLoading] = useState(false);
     
     
-    const type = ["Demand", "Service"];
+    const type = ["Demand", "Offer"];
     const categories = [
         'Carpooling & Courier',
         'Rentals & Sales',
@@ -121,6 +123,7 @@ export default function Newpost() {
                     type: 'success',
                     text1: 'Post created successfully!',
                 });
+               
             }
             
         } catch (error) {

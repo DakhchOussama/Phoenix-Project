@@ -8,11 +8,11 @@ import { StatusBar } from 'react-native';
 import Signin from '../screens/Signin';
 import WelcomePage from '../screens/WelcomePage';
 import HomePage from '../screens/HomePage';
-import RulesandTerms from '../screens/RulesandTerms';
 import FirstTime from '../screens/FirstTime';
 import Loading from '../components/Loading';
-import Services from '../screens/Servicespost/Services';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Setting from '../screens/Setting/Setting';
+import Contact from '../screens/Contact/Contact';
 
 const Stack = createNativeStackNavigator();
 

@@ -17,16 +17,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator();
-
-function HiddenScreensStack() {
-    return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="SettingsScreen" component={Setting} />
-            <Stack.Screen name="ContactScreen" component={Contact} />
-        </Stack.Navigator>
-    );
-}
 
 export default function HomePage() {
 
@@ -67,8 +57,8 @@ export default function HomePage() {
             <Tab.Screen name="Newpost" component={Newpost} options={{ headerShown: false }} />
             <Tab.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ headerShown: false }} />
             <Tab.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
-            {/* <Tab.Screen name="SettingsScreen" component={Setting} options={{ headerShown: false }} />
-            <Tab.Screen name="ContactScreen" component={Contact} options={{ headerShown: false }} /> */}
+            <Tab.Screen name="SettingsScreen" component={Setting} options={{ tabBarButton: () => null, headerShown: false }} />
+            <Tab.Screen name="ContactScreen" component={Contact} options={{ tabBarButton: () => null, headerShown: false }} />
         </Tab.Navigator>
     );
 };

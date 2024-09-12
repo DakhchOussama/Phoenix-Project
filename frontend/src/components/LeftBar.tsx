@@ -79,7 +79,7 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
                 <View style={styles.profileInfo}>
                     <View style={styles.imageContainer}>
                         <Image
-                            source={require('../assets/profile.png')}
+                            source={require('../assets/profile2.png')}
                             style={styles.profileImage}
                         />
                     </View>
@@ -159,11 +159,11 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     profileImage: {
-        width: 63,
-        height: 63,
-        borderWidth: 2,
-        borderColor: '#FFFFFF',
-        borderRadius: 50,
+        width: 60,
+        height: 60,
+        // borderWidth: 2,
+        // borderColor: '#FFFFFF',
+        // borderRadius: 50,
     },
     profileTextContainer: {
         justifyContent: 'center',

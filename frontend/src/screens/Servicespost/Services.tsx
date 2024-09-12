@@ -15,7 +15,7 @@ interface PostFromApi {
   ImgURL?: string;
   Title: string;
   Categories: string;
-  Type: "DEMAND" | "SERVICE";
+  Type: "DEMAND" | "Offer";
   isEnabled: boolean;
   Likes: number;
   createdAt: string;
@@ -30,7 +30,7 @@ interface PostFromApi {
 
 interface MappedPost {
   id: string;
-  title: "DEMAND" | "SERVICE";
+  title: "DEMAND" | "Offer";
   description: string;
   avatar: any;
   image: { uri: string } | null;
@@ -141,9 +141,9 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
                             </View>
                             {list && (
                               <View style={styles.dropdownContainer}>
-                                <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Service")}>
+                                <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Offer")}>
                                   <Icon name="tools" size={20} color="#4a4f5b" />
-                                  <Text style={styles.dropdownText}>Service</Text>
+                                  <Text style={styles.dropdownText}>Offer</Text>
                                 </TouchableOpacity>
                                 <View style={styles.divider} />
                                 <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Demand")}>
@@ -267,7 +267,12 @@ export default Services;
 
 const styles = StyleSheet.create({
     // ... (keep your existing styles)
-  
+
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+      position: 'relative', // Ensure the parent has relative positioning
+    },
     dropdownContainer: {
       backgroundColor: 'white',
       position: 'absolute',
