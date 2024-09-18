@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: '#FFFFFF',
-      position: 'relative', // Ensure the parent has relative positioning
+      position: 'relative',
     },
     dropdownContainer: {
       backgroundColor: 'white',

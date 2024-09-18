@@ -1,14 +1,65 @@
-import React, { useState } from "react";
-import { Image, Text, View, StyleSheet } from "react-native";
+import React, { useRef, useState } from "react";
+import { Image, Text, View, StyleSheet, PanResponder, GestureResponderEvent, PanResponderGestureState } from "react-native";
 import Iconfont from 'react-native-vector-icons/Fontisto';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import LeftBar from "../components/LeftBar";
+import { ScrollView } from "react-native-gesture-handler";
+import { StackNavigationProp } from "@react-navigation/stack";
+
+type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
+
+// Define a type for the stack navigator, including all screens
+type RootStackParamList = {
+  HomeScreen: undefined;
+  ShopScreen: undefined;
+  NotificationsScreen: undefined;
+  ProfileScreen: undefined;
+  Newpost: undefined;
+  SettingsScreen: undefined;  // Add other screens here as needed
+  ContactScreen: undefined;
+};
 
 export default function ProfileScreen() {
     const [leftbar, setLeftbar] = useState<boolean>(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
+
+
+    const [showDetails, setShowDetails] = useState(true);
+    const gestureStartX = useRef(0);
+
+    // Create a PanResponder to handle swipes
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: (evt: GestureResponderEvent) => {
+        gestureStartX.current = evt.nativeEvent.pageX; // Capture the initial touch point
+        },
+        onPanResponderRelease: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
+        const deltaX = evt.nativeEvent.pageX - gestureStartX.current;
+        if (deltaX < -50) {
+            // Swipe left
+            setShowDetails(false);
+        } else if (deltaX > 50) {
+            // Swipe right
+            setShowDetails(true);
+        }
+        },
+    });
+
+    const handlepress = (item: string) => {
+        switch (item){
+            case 'Setting':
+                navigation.navigate('SettingsScreen');
+                break ;
+            // case 'Share':
+                
+            //     break ;
+        }
+
+    };
+
 
     return (
         <View style={styles.container}>
@@ -30,7 +81,7 @@ export default function ProfileScreen() {
                     </View>
 
                     <View style={{flex: 1, justifyContent: 'flex-start'}}>
-                    <View style={{position: 'relative', bottom: 48}}>
+                    <View style={{position: 'relative', bottom: 52}}>
                         <View style={{marginLeft: 40}}>
                             <Image source={require('../assets/profile.png')} style={{width: 85, height: 85, borderRadius: 50}} />
                         </View>
@@ -53,10 +104,10 @@ export default function ProfileScreen() {
                 <View style={styles.footer}>
                     <View style={styles.iconRow}>
                         <View style={styles.iconWrapper}>
-                            <Icon name="setting" size={24} color={'#434752'} />
+                            <Icon name="setting" size={24} color={'#434752'} onPress={() => handlepress('Setting')} />
                         </View>
                         <View style={[styles.iconWrapper, styles.shareIcon]}>
-                            <Icon name="sharealt" size={23} color={'#FFFFFF'}/>
+                            <Icon name="sharealt" size={23} color={'#FFFFFF'} onPress={() => handlepress('Share')}/>
                         </View>
                     </View>
 
@@ -71,98 +122,99 @@ export default function ProfileScreen() {
             <View style={styles.detailsContainer}>
                 <View style={styles.detailsHeader}>
                     <View style={styles.detailsTitleWrapper}>
-                        <Text style={styles.detailsTitle}>Details</Text>
+                        <Text style={[styles.detailsTitle, showDetails ? styles.activeText : null]} onPress={() => setShowDetails(true)}>Details</Text>
+                        {showDetails && <View style={styles.indicatorLine} />}
                     </View>
                     <View style={styles.userActivityWrapper}>
-                        <Text style={styles.userActivityTitle}>User Activity</Text>
+                        <Text style={[styles.userActivityTitle, !showDetails ? styles.activeText : null]} onPress={() => setShowDetails(false)}>User Activity</Text>
+                        {!showDetails && <View style={styles.indicatorLine} />}
                     </View>
                 </View>
 
-                <View style={styles.detailsContent}>
-                    <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Username</Text>
-                        <View style={styles.detailValueWrapper}>
-                            <Text style={styles.detailValue}>Anna Jones</Text>
-                        </View>
-                    </View>
+                <View style={{flex: 1}} {...panResponder.panHandlers}>
+                    {showDetails ? (
+                        <View style={styles.detailsContent}>
+                                 <View style={styles.detailItem}>
+                                     <Text style={styles.detailLabel}>Username</Text>
+                                     <View style={styles.detailValueWrapper}>
+                                         <Text style={styles.detailValue}>Anna Jones</Text>
+                                     </View>
+                                 </View>
+             
+                                 <View style={styles.detailItem}>
+                                     <Text style={styles.detailLabel}>Phone number</Text>
+                                     <View style={styles.detailValueWrapper}>
+                                         <Text style={styles.detailValue}>0600721995</Text>
+                                     </View>
+                                 </View>
+             
+                                 <View style={styles.detailItem}>
+                                     <Text style={styles.detailLabel}>Email</Text>
+                                     <View style={styles.detailValueWrapper}>
+                                         <Text style={styles.detailValue}>randommail@gmail.com</Text>
+                                     </View>
+                                 </View>
+             
+                                 <View style={styles.detailItem}>
+                                     <Text style={styles.detailLabel}>Department</Text>
+                                     <View style={styles.detailValueWrapper}>
+                                         <Text style={styles.detailValue}>1337</Text>
+                                     </View>
+                                 </View>
+                             </View>
+                    ) : (
+                      <>
+                          {/* User Activity */}
+                          <ScrollView>
+                                <View style={styles.activityContainer}>
+                                    {/* Offers Uploaded */}
+                                    <View style={styles.activityItem}>
+                                        <View style={styles.iconWrapper2}>
+                                            <Image source={require('../assets/upload.png')} style={styles.iconImage} />
+                                        </View>
+                                        <View style={styles.textWrapper}>
+                                            <Text style={styles.countText}>10</Text>
+                                            <Text style={styles.descriptionText}>Offers Uploaded</Text>
+                                        </View>
+                                    </View>
 
-                    <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Phone number</Text>
-                        <View style={styles.detailValueWrapper}>
-                            <Text style={styles.detailValue}>0600721995</Text>
-                        </View>
-                    </View>
+                                    {/* Demands Uploaded */}
+                                    <View style={styles.activityItem}>
+                                        <View style={styles.iconWrapper2}>
+                                            <Icon name="shoppingcart" size={30} color="#434752" />
+                                        </View>
+                                        <View style={styles.textWrapper}>
+                                            <Text style={styles.countText}>5</Text>
+                                            <Text style={styles.descriptionText}>Demands Uploaded</Text>
+                                        </View>
+                                    </View>
 
-                    <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Email</Text>
-                        <View style={styles.detailValueWrapper}>
-                            <Text style={styles.detailValue}>randommail@gmail.com</Text>
-                        </View>
-                    </View>
+                                    {/* Likes Received */}
+                                    <View style={styles.activityItem}>
+                                        <View style={styles.iconWrapper2}>
+                                            <Image source={require('../assets/peace.png')} style={styles.iconImage} />
+                                        </View>
+                                        <View style={styles.textWrapper}>
+                                            <Text style={styles.countText}>45</Text>
+                                            <Text style={styles.descriptionText}>Likes Received</Text>
+                                        </View>
+                                    </View>
 
-                    <View style={styles.detailItem}>
-                        <Text style={styles.detailLabel}>Department</Text>
-                        <View style={styles.detailValueWrapper}>
-                            <Text style={styles.detailValue}>1337</Text>
-                        </View>
-                    </View>
+                                    {/* Followers Count */}
+                                    <View style={styles.activityItem}>
+                                        <View style={styles.iconWrapper2}>
+                                            <Image source={require('../assets/grouping.png')} style={styles.iconImage} />
+                                        </View>
+                                        <View style={styles.textWrapper}>
+                                            <Text style={styles.countText}>150</Text>
+                                            <Text style={styles.descriptionText}>Followers Count</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            </ScrollView>
+                      </>  
+                    )}
                 </View>
-
-                {/* User Activity */}
-                {/* <View style={{}}>
-                    <View style={{}}>
-                        <View style={{}}>
-                            <Image source={require('../assets/upload.png')} style={{width: 15, height: 15}} />
-                        </View>
-
-                        <View style={{}}>
-                            <Text>10</Text>
-                            <Text>Offers Uploaded</Text>
-                        </View>
-                    </View>
-
-
-                    <View style={{}}>
-                        <View style={{}}>
-                            <Icon name="shoppingcart" />
-                            
-                        </View>
-
-                        <View style={{}}>
-                            <Text>5</Text>
-                            <Text>Demands Uploaded</Text>
-                        </View>
-                    </View>
-
-               
-
-                    <View style={{}}>
-                        <View style={{}}>
-                            <Image source={require('../assets/peace.png')} style={{width: 15, height: 15}} />
-                            
-                        </View>
-
-                        <View style={{}}>
-                            <Text>45</Text>
-                            <Text>Likes Received</Text>
-                        </View>
-                    </View>
-
-      
-
-                    <View style={{}}>
-                        <View style={{}}>
-                            <Image source={require('../assets/grouping.png')} style={{width: 15, height: 15}}/>
-                        </View>
-
-                        <View style={{}}>
-                            <Text>150</Text>
-                            <Text>Followers Count</Text>
-                        </View>
-                    </View>
-
-
-                </View> */}
             </View>
         </View>
     )
@@ -277,16 +329,19 @@ const styles = StyleSheet.create({
         marginLeft: 15,
     },
     detailsTitle: {
-        fontFamily: 'Raleway-Bold',
+        fontFamily: 'Raleway-Medium',
         fontSize: 18,
-        color: '#434752',
+        color: '#434752'
+    },
+    activeText: {
+        fontWeight: '700'
     },
     userActivityWrapper: {
         marginRight: 18,
     },
     userActivityTitle: {
         fontFamily: 'Poppins-Medium',
-        fontSize: 18,
+        fontSize: 17,
         color: '#434752',
     },
     detailsContent: {
@@ -316,5 +371,58 @@ const styles = StyleSheet.create({
     },
     detailValue: {
         color: '#434752',
+    },
+    activityContainer: {
+        flexDirection: 'column',
+        justifyContent: 'space-around',
+        padding: 20,
+        backgroundColor: '#FFFFFF',
+        alignItems: 'center',
+    },
+    activityItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '80%',
+        marginVertical: 10,
+        padding: 20,
+        backgroundColor: '#F5F5F5',
+        borderRadius: 8,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#e1e1e1'
+    },
+    iconWrapper2: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 50,
+        height: 50,
+        marginRight: 10,
+        backgroundColor: '#E0E0E0',
+        borderRadius: 50,
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.2)',
+    },
+    iconImage: {
+        width: 30,
+        height: 30,
+    },
+    textWrapper: {
+        flexDirection: 'column',
+    },
+    countText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#434752',
+    },
+    descriptionText: {
+        fontSize: 15,
+        color: '#757575',
+    },
+    indicatorLine: {
+        height: 3,
+        backgroundColor: '#E94E2D',
+        marginTop: 5,
+        position: 'relative',
+        top: 5
     },
 });
