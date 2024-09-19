@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Image, Text, View, StyleSheet, PanResponder, GestureResponderEvent, PanResponderGestureState } from "react-native";
 import Iconfont from 'react-native-vector-icons/Fontisto';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -7,29 +7,47 @@ import { useNavigation } from '@react-navigation/native';
 import LeftBar from "../components/LeftBar";
 import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
+import { getprofileuser } from "../services/authService";
 
-type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
-
-// Define a type for the stack navigator, including all screens
 type RootStackParamList = {
   HomeScreen: undefined;
   ShopScreen: undefined;
   NotificationsScreen: undefined;
   ProfileScreen: undefined;
   Newpost: undefined;
-  SettingsScreen: undefined;  // Add other screens here as needed
+  SettingsScreen: undefined;
   ContactScreen: undefined;
 };
+
+interface User {
+    AvatarURL: string;
+    Ban: boolean;
+    Department: string;
+    Email: string;
+    Fname: string;
+    Phone: string;
+    Sname: string;
+    UserID: string;
+}
 
 export default function ProfileScreen() {
     const [leftbar, setLeftbar] = useState<boolean>(false);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
-
-
     const [showDetails, setShowDetails] = useState(true);
     const gestureStartX = useRef(0);
+    const [user, setUser] = useState<User | null>(null);
 
-    // Create a PanResponder to handle swipes
+    useEffect(() => {
+        const getprofile = async () => {
+            const data = await getprofileuser();
+            if (data) setUser(data);
+            else console.log('error');
+        }
+
+        getprofile();
+    }, []);
+
+    
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: () => true,
@@ -81,19 +99,24 @@ export default function ProfileScreen() {
                     </View>
 
                     <View style={{flex: 1, justifyContent: 'flex-start'}}>
-                    <View style={{position: 'relative', bottom: 52}}>
+                    <View style={{position: 'relative', bottom: 53}}>
                         <View style={{marginLeft: 40}}>
-                            <Image source={require('../assets/profile.png')} style={{width: 85, height: 85, borderRadius: 50}} />
+                            <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
+                            {/* {!user?.AvatarURL ? (
+                                <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
+                            ): (
+                                <Image source={require(`${user.AvatarURL}`)} style={{width: 90, height: 90, borderRadius: 50}} />
+                            )} */}
                         </View>
                         <View style={{marginLeft: 25, marginTop: 8}}>
                             <View style={{}}>
-                                <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#434752'}}>Anna Jones</Text>
+                                <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#434752'}}>{user?.Fname} {user?.Sname}</Text>
                                 {/* iCON */}
                             </View>
 
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <Iconfont name="email" size={16} color={'#434752'} />
-                                <Text style={{fontFamily: 'Sora-Medium', marginLeft: 5, marginBottom: 2, color: '#444854'}}>randome@gmail.com</Text>
+                                <Text style={{fontFamily: 'Sora-Medium', marginLeft: 5, marginBottom: 2, color: '#444854'}}>{user?.Email}</Text>
                             </View>
                         </View>
                     </View>
@@ -107,7 +130,9 @@ export default function ProfileScreen() {
                             <Icon name="setting" size={24} color={'#434752'} onPress={() => handlepress('Setting')} />
                         </View>
                         <View style={[styles.iconWrapper, styles.shareIcon]}>
-                            <Icon name="sharealt" size={23} color={'#FFFFFF'} onPress={() => handlepress('Share')}/>
+                            <View style={{marginRight: 3}}>
+                                <Icon name="sharealt" size={22} color={'#FFFFFF'} onPress={() => handlepress('Share')}/>
+                            </View>
                         </View>
                     </View>
 
@@ -137,28 +162,28 @@ export default function ProfileScreen() {
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Username</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>Anna Jones</Text>
+                                         <Text style={styles.detailValue}>{user?.Fname} {user?.Sname}</Text>
                                      </View>
                                  </View>
              
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Phone number</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>0600721995</Text>
+                                         <Text style={styles.detailValue}>{user?.Phone}</Text>
                                      </View>
                                  </View>
              
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Email</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>randommail@gmail.com</Text>
+                                         <Text style={styles.detailValue}>{user?.Phone}</Text>
                                      </View>
                                  </View>
              
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Department</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>1337</Text>
+                                         <Text style={styles.detailValue}>{user?.Department}</Text>
                                      </View>
                                  </View>
                              </View>

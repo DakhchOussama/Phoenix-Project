@@ -142,8 +142,6 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         borderRadius: 30,
-        borderWidth: 1,
-        borderColor: '#FBAE41',
     },
     nameTextContainer: {
         marginLeft: 10,
@@ -208,7 +206,7 @@ const styles = StyleSheet.create({
         fontFamily: 'Raleway-Bold',
     },
     commentBox: {
-        marginTop: 5,
+        marginTop: 10,
         backgroundColor: '#EEEEEE',
         padding: 15,
         borderRadius: 8,

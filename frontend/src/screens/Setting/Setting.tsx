@@ -1,147 +1,249 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/Entypo';
+import { getprofileuser } from "../../services/authService";
 
+interface User {
+    AvatarURL: string;
+    Ban: boolean;
+    Department: string;
+    Email: string;
+    Fname: string;
+    Phone: string;
+    Sname: string;
+    UserID: string;
+}
 
+export default function Setting() {
+    const [user, setUser] = useState<User | null>(null);
 
-export default function Setting(){
+    useEffect(() => {
+        const getprofile = async () => {
+            const data = await getprofileuser();
+            if (data) setUser(data);
+            else console.log('error');
+        }
+
+        getprofile();
+    }, []);
+    
     return (
-        <View>
+        <View style={styles.container}>
             {/* 1 */}
-            <View>
-                <View>
-                    <Text>Settings</Text>
-                    <TouchableOpacity>
-                        <Text>Confirm</Text>
-                    </TouchableOpacity>
+            <View style={styles.flexOne}>
+                <View style={styles.header}>
+                    <View>
+                        <Text style={styles.settingsText}>Settings</Text>
+                    </View>
+                    <View style={styles.confirmButtonContainer}>
+                        <TouchableOpacity>
+                            <Text style={styles.confirmButtonText}>Confirm</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
-                <View>
-                    <View>
+                <View style={styles.profileContainer}>
+                    <View style={styles.profileInnerContainer}>
                         <View>
-                            <Image source={require('../../assets/profile.png')} style={{width: 50, height: 50}} />
-                            <Icon name="edit" size={15} color={"#FFFFFF"} />
+                            <Image source={require('../../assets/profile.png')} style={styles.profileImage} />
+                            {/* {!user?.AvatarURL ? (
+                                <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
+                            ): (
+                                <Image source={require(`${user.AvatarURL}`)} style={{width: 90, height: 90, borderRadius: 50}} />
+                            )} */}
+                            <View style={styles.editIconContainer}>
+                                    <View style={styles.editIconBackground}>
+                                        <Icon name="edit" size={15} color={"#FFFFFF"} />
+                                </View>
+                            </View>
                         </View>
-                        <Text>Anna Jones</Text>
+                        <View style={styles.profileNameContainer}>
+                            <Text style={styles.profileName}>{user?.Fname} {user?.Sname}</Text>
+                        </View>
                     </View>
                 </View>
             </View>
             {/* 2 */}
-            <View>
-                <View>
-                    <Text>Email address</Text>
-                    <TextInput placeholder="randommail@gmail.com"></TextInput>
+            <View style={styles.flexTwo}>
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <Text style={styles.inputLabel}>Email address</Text>
+                        <TextInput
+                            placeholderTextColor='#4E5970'
+                            placeholder={user?.Email ? user.Email : 'Enter your email'}
+                            style={styles.textInput}
+                        />
+                    </View>
                 </View>
 
-                <View>
-                    <Text>Full name</Text>
-                    <View>
-                        <View>
-                            <TextInput placeholder="First name"></TextInput>
-                        </View>
-
-                        <View>
-                            <TextInput placeholder="Second name"></TextInput>
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <Text style={styles.inputLabel}>Full name</Text>
+                        <View style={styles.nameInputContainer}>
+                            <View style={styles.firstNameInput}>
+                                <TextInput placeholderTextColor={'#4E5970'} placeholder={user?.Fname ? user.Fname : 'Enter your first name'} />
+                            </View>
+                            <View style={styles.lastNameInput}>
+                                <TextInput placeholderTextColor={'#4E5970'} placeholder={user?.Sname ? user.Sname : 'Enter your second name'}  />
+                            </View>
                         </View>
                     </View>
                 </View>
 
-                <View>
-                    <Text>Phone number</Text>
-                    <TextInput placeholder="06000000000"></TextInput>
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <Text style={styles.inputLabel}>Phone number</Text>
+                        <TextInput
+                            placeholderTextColor={'#4E5970'}
+                            placeholder={user?.Phone ? user.Phone : 'Enter your phone number'}
+                            style={styles.textInput}
+                        />
+                    </View>
                 </View>
 
-                <View>
-                    <Text>Educational track</Text>
-                    <TextInput placeholder="1337"></TextInput>
+                <View style={styles.inputContainer}>
+                    <View style={styles.inputWrapper}>
+                        <Text style={styles.inputLabel}>Department</Text>
+                        <TextInput
+                            placeholderTextColor={'#4E5970'}
+                            placeholder={user?.Department ? user.Department : 'Enter your department'}
+                            style={styles.textInput}
+                        />
+                    </View>
                 </View>
             </View>
         </View>
-    )
-};
-
+    );
+}
 
 const styles = StyleSheet.create({
-    detailsContent: {
-        flex: 1,
-        flexDirection: 'column',
-        paddingLeft: 45,
-        paddingTop: 15,
-    },
-    detailItem: {
-        flex: 1,
-        flexDirection: 'column',
-    },
-    detailLabel: {
-        fontFamily: 'Raleway-Bold',
-        fontSize: 15,
-        marginBottom: 10,
-        color: '#5e6475',
-    },
-    detailValueWrapper: {
-        borderWidth: 1,
-        borderColor: '#CBCECE',
-        marginLeft: 15,
-        padding: 10,
-        borderRadius: 8,
-        width: 350,
-        paddingLeft: 20,
-    },
-    detailValue: {
-        color: '#434752',
-    },
-    activityContainer: {
-        flexDirection: 'column',
-        justifyContent: 'space-around',
-        padding: 20,
+    container: {
         backgroundColor: '#FFFFFF',
-        alignItems: 'center',
-    },
-    activityItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        width: '80%',
-        marginVertical: 10,
+        flex: 1,
         padding: 20,
-        backgroundColor: '#F5F5F5',
-        borderRadius: 8,
-        marginBottom: 20,
-        borderWidth: 1,
-        borderColor: '#e1e1e1'
     },
-    iconWrapper2: {
+    flexOne: {
+        flex: 1,
+    },
+    header: {
+        height: 80,
+        flexDirection: 'row',
         justifyContent: 'center',
-        alignItems: 'center',
-        width: 50,
-        height: 50,
-        marginRight: 10,
-        backgroundColor: '#E0E0E0',
-        borderRadius: 50,
-        borderWidth: 1,
-        borderColor: 'rgba(0, 0, 0, 0.2)',
+        alignItems: 'flex-end',
     },
-    iconImage: {
-        width: 30,
-        height: 30,
-    },
-    textWrapper: {
-        flexDirection: 'column',
-    },
-    countText: {
-        fontSize: 20,
-        fontWeight: 'bold',
+    settingsText: {
         color: '#434752',
+        fontFamily: 'Sora-Medium',
+        fontSize: 20,
     },
-    descriptionText: {
-        fontSize: 15,
-        color: '#757575',
+    confirmButtonContainer: {
+        position: 'absolute',
+        right: 0,
+        bottom: 5
     },
-    indicatorLine: {
-        height: 3,
-        backgroundColor: '#E94E2D',
-        marginTop: 5,
-        position: 'relative',
-        top: 5
+    confirmButtonText: {
+        fontFamily: 'Sora-Medium',
+        color: '#DD644A',
+        fontSize: 16
     },
-})
+    profileContainer: {
+        alignItems: 'center',
+        marginVertical: 30,
+    },
+    profileInnerContainer: {
+        alignItems: 'center',
+    },
+    profileImage: {
+        width: 100,
+        height: 100,
+        borderRadius: 55,
+        backgroundColor: '#FFFFFF',
+        borderWidth: 3,
+        borderColor: '#FFFFFF',
+    },
+    editIconContainer: {
+        position: 'absolute',
+        bottom: 7,
+        right: 5,
+        backgroundColor: '#434752',
+        padding: 2,
+        borderRadius: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    editIconBackground: {
+        padding: 4,
+    },
+    profileNameContainer: {
+        marginTop: 12,
+    },
+    profileName: {
+        fontSize: 20,
+        fontFamily: 'Lato-Bold',
+        color: '#2F3C4F',
+    },
+    flexTwo: {
+        flex: 2,
+    },
+    inputContainer: {
+        marginVertical: 15,
+    },
+    inputWrapper: {
+        marginLeft: 15,
+    },
+    inputLabel: {
+        fontFamily: 'Raleway-SemiBold',
+        fontSize: 16,
+        color: '#2F3C4F',
+        marginBottom: 13,
+    },
+    textInput: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#D1D5DB',
+        borderRadius: 12,
+        padding: 14,
+        width: '100%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    nameInputContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    firstNameInput: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#D1D5DB',
+        borderRadius: 12,
+        padding: 14,
+        width: '48%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+        height: '90%'
+    },
+    lastNameInput: {
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderColor: '#D1D5DB',
+        borderRadius: 12,
+        padding: 14,
+        width: '48%',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+        height: '90%'
+    },
+});
