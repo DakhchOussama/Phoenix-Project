@@ -9,6 +9,8 @@ import { BASE_URL } from "@env";
 import Loading from "../../components/Loading";
 import PostDetails from "./PostDetails";
 import Toast from "react-native-toast-message";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 
 interface PostFromApi {
   PostID: string;
@@ -23,7 +25,7 @@ interface PostFromApi {
   userId: string;
   fname: string;
   sname: string;
-  userAvatar: string;
+  avatar: string;
   translates?: string;
   userHasLiked: boolean;
 }
@@ -55,43 +57,41 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   const [posts, setPosts] = useState<MappedPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-    
-
-    useEffect(() => {
-      const fetchPosts = async () => {
-        try {
-          setIsLoading(true);
-          const fetchedPosts: PostFromApi[] = await getPosts();
-          const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
-            id: post.PostID,
-            title: post.Type,
-            description: post.Title,
-            avatar: require('../../assets/profile.png'),
-            image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
-            username: `${post.fname} ${post.sname}`,
-            time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            likes: post.Likes,
-            translate: post.translates,
-            userHasLiked: post.userHasLiked || false,
-            Categories: post.Categories,
-            isEnabled: post.isEnabled
-          }));
-          setPosts(mappedPosts);
-        } catch (error) {
-          Toast.show({
-            type: 'error',
-            text1: 'An error occurred',
-            text2: 'Failed to fetch posts , please try again.',
-        });
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      
   
-      fetchPosts();
-    }, []);
-
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setIsLoading(true);
+        const fetchedPosts: PostFromApi[] = await getPosts();
+        const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
+          id: post.PostID,
+          title: post.Type,
+          description: post.Title,
+          avatar: post.avatar,
+          image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
+          username: `${post.fname} ${post.sname}`,
+          time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          likes: post.Likes,
+          translate: post.translates,
+          userHasLiked: post.userHasLiked || false,
+          Categories: post.Categories,
+          isEnabled: post.isEnabled
+        }));
+        setPosts(mappedPosts);
+      } catch (error) {
+        Toast.show({
+          type: 'error',
+          text1: 'An error occurred',
+          text2: 'Failed to fetch posts , please try again.',
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    
+    fetchPosts();
+  }, []);
     
     if (isLoading) {
       return <Loading />;
@@ -124,11 +124,13 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
         setListType(listType === type ? null : type);
       };
   
+      // console.log('post : ', posts);
 
     return (
       <>
       <Toast />
       <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <MaterialIcons name="arrow-back-ios" size={30} color="#aaaaaa" style={styles.arrowbottom} />
           {selectedPost ?  <PostDetails post={selectedPost} onBack={handleBack} /> : (
             <>
               <CategoryItem selectedCategory={selectedCategory} handlePress={handlePress} />
@@ -266,8 +268,11 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
 export default Services;
 
 const styles = StyleSheet.create({
-    // ... (keep your existing styles)
-
+    arrowbottom: {
+        position: 'absolute',
+        left: 10,
+        top: 35
+    },
     container: {
       flex: 1,
       backgroundColor: '#FFFFFF',

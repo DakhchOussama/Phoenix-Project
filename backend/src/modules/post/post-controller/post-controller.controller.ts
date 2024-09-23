@@ -17,6 +17,7 @@ export class PostControllerController {
     async getPost(@Request() req, @Res() res) {
         try {
             const Posts = await this.PostService.getPost();
+
             return res.status(200).json(Posts); // Use res to send a response
         } catch (error) {
             console.log('error:', error);

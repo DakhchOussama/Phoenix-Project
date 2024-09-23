@@ -4,11 +4,12 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
 import { getprofileuser } from "../services/authService";
+import { BASE_URL } from "@env";
 
 // Update the interface to include navigation
 interface LeftBarProps {
     onPress: (event: GestureResponderEvent) => void;
-    navigation: any; // Use any if you don't want to specify types
+    navigation: any;
 }
 
 interface User {
@@ -78,10 +79,15 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
 
                 <View style={styles.profileInfo}>
                     <View style={styles.imageContainer}>
-                        <Image
+                        {/* <Image
                             source={require('../assets/profile2.png')}
                             style={styles.profileImage}
-                        />
+                        /> */}
+                         {!user?.AvatarURL ? (
+                                        <Image source={require('../assets/profile.png')} style={styles.profileImage}/>
+                                    ): (
+                                        <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }}  style={styles.profileImage} />
+                        )}
                     </View>
 
                     <View style={styles.profileTextContainer}>
@@ -163,7 +169,7 @@ const styles = StyleSheet.create({
         height: 60,
         // borderWidth: 2,
         // borderColor: '#FFFFFF',
-        // borderRadius: 50,
+        borderRadius: 50,
     },
     profileTextContainer: {
         justifyContent: 'center',

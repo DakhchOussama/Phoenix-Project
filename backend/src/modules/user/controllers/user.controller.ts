@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
@@ -30,7 +30,9 @@ export class UserController {
   @Post('create')
   async createUser(@Body() userdto: Userdto){
       try {
+        console.log('user dto : ', userdto);
         const user = await this.userService.CreateUser(userdto.fname, userdto.sname, userdto.email, userdto.phonenumber, new Date(`${userdto.birthday}`), userdto.department, userdto.password);
+        console.log('user : ', user);
         if (user){
           const token = await this.authService.login(user);
           return {
@@ -40,13 +42,41 @@ export class UserController {
           }
         }
       } catch (error){
+        console.log('error : ', error);
           return {
             success: false,
             message: error.response?.message,
-            errorCode: error.response?.code, // Optionally include an error code
+            errorCode: error.response?.code,
           };
       }
-    return { success: false, message: 'User creation failed' };
+      return { success: false, message: 'User creation failed' };
+  }
+
+  @Post('update')
+  @UseGuards(JwtAuthGuard)
+  async updateUser(@Request() req, @Body() user: UpdateUserdto){
+      try {
+        // console.log('Request:', req);
+        const userId = req.user?.UserID;
+        if (!userId) {
+          throw new Error('User not authenticated');
+      }
+        const updatedUser = await this.userService.updateUser(user, userId);
+
+        console.log('update : ', updatedUser);
+
+        return {
+          success: true,
+          message: 'User updated successfully',
+          data: updatedUser,
+        };
+      } catch (error){
+          return {
+            success: false,
+            message: error.response?.message,
+            errorCode: error.response?.code,
+          };
+      }
   }
 
     // @UseGuards(JwtAuthGuard)

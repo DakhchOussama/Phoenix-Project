@@ -7,6 +7,7 @@ import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getprofileuser } from '../services/authService';
 import { likePost } from '../services/postService';
+import { BASE_URL } from '@env';
 
 interface Post {
     id: string;
@@ -41,7 +42,10 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
             tension: 100,
             useNativeDriver: true,
         }).start();
-    }, [like])
+    }, [like]);
+
+
+    // console.log('avatar : ', post.avatar);
 
 
     useEffect(() => {
@@ -126,7 +130,12 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 {/* name and img */}
                 <View style={styles.nameImgContainer}>
                     <View style={styles.avatarContainer}>
-                        <Image source={post.avatar} style={styles.avatar} />
+                        {/* <Image source={post.avatar} style={styles.avatar} /> */}
+                        {!post?.avatar ? (
+                                        <Image source={require('../assets/profile.png')} style={styles.avatar} />
+                                    ): (
+                                        <Image source={{ uri: `${BASE_URL}/posts/image/${post?.avatar}` }}  style={styles.avatar} />
+                        )}
                     </View>
                     <View style={styles.nameTextContainer}>
                         {/* name and min */}
@@ -373,7 +382,7 @@ const styles = StyleSheet.create({
         width: 48,
         height: 48,
         // borderWidth: 1,
-        // borderRadius: 50,
+        borderRadius: 50,
         // borderColor: "#FBAE41",
     },
     nameTextContainer: {

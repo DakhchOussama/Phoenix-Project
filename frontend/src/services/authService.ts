@@ -10,6 +10,22 @@ type LoginResponse = {
     errorCode?: string;
 };
 
+interface UserProfile {
+    email?: string;
+    fname?: string;
+    sname?: string;
+    phonenumber?: string;
+    department?: string;
+    imageUri?: string;
+    password?: string;
+}
+
+interface ApiResponse {
+    success: boolean;
+    data?: any;
+    error?: string;
+}
+
 
 const instance = axios.create({
     baseURL: BASE_URL,
@@ -189,5 +205,25 @@ export const checkStoredItems = async () => {
         const expiryTime = await AsyncStorage.getItem('expiryTime');
     } catch (error) {
         console.error('Error checking stored items:', error);
+    }
+};
+
+export const updateUserProfile = async (updatedUserData: UserProfile): Promise<ApiResponse> => {
+    try {
+        const token = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+        
+        const response = await instance.post('/user/update', updatedUserData, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return { success: true, data: response.data };
+    } catch (error) {
+        return { success: false, error: (error as Error).message || 'Network error' };  // Handle errors
     }
 };

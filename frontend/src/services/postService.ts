@@ -84,7 +84,7 @@ export const getPosts = async () => {
                 'Authorization': `Bearer ${token}`,
             }
         });
-
+        
         if (response.status === 200) {
             return response.data;
         } else {

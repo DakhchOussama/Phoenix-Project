@@ -7,3 +7,13 @@ interface Userdto{
     department: string;
     password: string
 }
+
+interface UpdateUserdto {
+    email?: string;
+    fname?: string;
+    sname?: string;
+    phonenumber?: string;
+    department?: string;
+    imageUri?: string;
+    password?: string;
+}

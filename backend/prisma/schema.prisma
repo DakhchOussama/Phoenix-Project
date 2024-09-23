@@ -23,7 +23,7 @@ model User {
   Birthday   DateTime
   Department String
   Password   String
-  AvatarURL  String
+  AvatarURL  String?
   Ban        Boolean? @default(false)
   isAdmin    Boolean? @default(false)
   createdAt  DateTime @default(now())

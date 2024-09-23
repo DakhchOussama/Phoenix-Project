@@ -8,6 +8,7 @@ import LeftBar from "../components/LeftBar";
 import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { getprofileuser } from "../services/authService";
+import { BASE_URL } from "@env";
 
 type RootStackParamList = {
   HomeScreen: undefined;
@@ -101,12 +102,12 @@ export default function ProfileScreen() {
                     <View style={{flex: 1, justifyContent: 'flex-start'}}>
                     <View style={{position: 'relative', bottom: 53}}>
                         <View style={{marginLeft: 40}}>
-                            <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
-                            {/* {!user?.AvatarURL ? (
+                            {/* <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} /> */}
+                            {!user?.AvatarURL ? (
                                 <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
                             ): (
-                                <Image source={require(`${user.AvatarURL}`)} style={{width: 90, height: 90, borderRadius: 50}} />
-                            )} */}
+                                <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }} style={{width: 90, height: 90, borderRadius: 50}} />
+                            )}
                         </View>
                         <View style={{marginLeft: 25, marginTop: 8}}>
                             <View style={{}}>
@@ -176,7 +177,7 @@ export default function ProfileScreen() {
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Email</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{user?.Phone}</Text>
+                                         <Text style={styles.detailValue}>{user?.Email}</Text>
                                      </View>
                                  </View>
              

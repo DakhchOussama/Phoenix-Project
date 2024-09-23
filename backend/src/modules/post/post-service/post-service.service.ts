@@ -40,8 +40,6 @@ export class PostServiceService {
             translates: post.translates,
         }));
 
-        console.log('posts : ', formattedPosts);
-
         // const UserId = post.userId;
 
         // const user = this.prisma.user.findUnique({

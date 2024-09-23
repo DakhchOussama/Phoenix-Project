@@ -14,7 +14,6 @@ export class JwtAuthGuard extends AuthGuard('jwt'){
     async canActivate(context: ExecutionContext): Promise<boolean>{
         const request = context.switchToHttp().getRequest();
         const token = request.headers.authorization?.split(' ')[1];
-        // console.log('token : ', token);
         if (!token)
             throw new UnauthorizedException('No token provided');
         try{
