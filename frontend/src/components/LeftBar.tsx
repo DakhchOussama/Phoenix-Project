@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     },
     profileName: {
         fontFamily: 'Raleway-SemiBold',
-        fontSize: 19,
+        fontSize: 21,
         color: '#FFFFFF',
         letterSpacing: 1,
         marginBottom: 2,
@@ -185,6 +185,7 @@ const styles = StyleSheet.create({
     profileEmail: {
         fontFamily: 'Lato-Regular',
         color: '#FFFFFF',
+        fontSize: 15
     },
     separator: {
         borderBottomWidth: 1,
@@ -209,10 +210,9 @@ const styles = StyleSheet.create({
     },
     menuText: {
         fontFamily: 'Lato-Regular',
-        fontSize: 17,
-        marginLeft: 5,
-        color: '#FFFFFF',
-        marginTop: 4,
+        fontSize: 19,
+        marginLeft: 10,
+        color: '#FFFFFF'
     },
     logoutSection: {
         height: 90,

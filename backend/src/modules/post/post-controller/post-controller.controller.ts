@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res, Param, Response, Query  } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res, Param, Response, Query, Delete, InternalServerErrorException  } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'; // Import diskStorage from multer
 import { extname, join } from 'path';
@@ -16,14 +16,19 @@ export class PostControllerController {
     @UseGuards(JwtAuthGuard)
     async getPost(@Request() req, @Res() res) {
         try {
-            const Posts = await this.PostService.getPost();
+            const currentUserId = req.user.UserID;
+            console.log('userID : ', req.user.UserID);
+            const posts = await this.PostService.getPost(currentUserId);
 
-            return res.status(200).json(Posts); // Use res to send a response
+            console.log('posts : ', posts);
+
+            return res.status(200).json(posts);
         } catch (error) {
             console.log('error:', error);
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
+
 
     @Post('create')
     @UseGuards(JwtAuthGuard)
@@ -87,12 +92,44 @@ export class PostControllerController {
     async likePost(
         @Param('postId') postId: string,
         @Query('userId') userId: string,
-    ): Promise<void>
+    ): Promise<boolean>
     {
         try{
-            await this.PostService.likedpost(postId, userId);
+            const check = await this.PostService.likedpost(postId, userId);
+            if (check)
+                return true;
         } catch (error){
-            return error; // change this 
+            return false; // change this 
+        }
+    }
+
+
+    @Get(':postId/like/check')
+    @UseGuards(JwtAuthGuard)
+    async CheckPost(
+        @Param('postId') postId: string,
+        @Query('userId') userId: string,
+    ): Promise<boolean>
+    {
+        try{
+            const check = await this.PostService.checkpost(postId, userId); // change return of checkpost
+            return check;
+        } catch (error){
+            throw new InternalServerErrorException('Failed to like post');
+        }
+    }
+
+    @Delete(':postId/removepost')
+    @UseGuards(JwtAuthGuard)
+    async RemovePost(
+        @Param('postId') postId: string,
+    ): Promise<{ success: boolean; message?: string }>
+    {
+        try{
+            await this.PostService.removepost(postId);
+            return {success: true};
+        } catch (error){
+            throw new InternalServerErrorException('Failed to remove post');
         }
     }
 }

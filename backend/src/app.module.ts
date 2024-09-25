@@ -11,10 +11,11 @@ import { JwtService } from '@nestjs/jwt';
 import { PostControllerController } from './modules/post/post-controller/post-controller.controller';
 import { PostServiceService } from './modules/post/post-service/post-service.service';
 import { PostModuleModule } from './modules/post/post.module';
+import { AppGateway } from './modules/Socket/app.gateway';
 
 @Module({
   imports: [AuthModule, UserModule, PostModuleModule],
   controllers: [AppController, UserController, PostControllerController],
-  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService],
+  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService, AppGateway],
 })
 export class AppModule {}

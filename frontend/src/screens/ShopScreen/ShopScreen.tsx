@@ -153,13 +153,17 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     postContainer: {
-        flexDirection: 'column',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,  
+        padding: 16,
+        marginVertical: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 3,
         borderWidth: 1,
-        borderColor: '#BFBFBF',
-        padding: 10,
-        paddingTop: 20,
-        marginBottom: 20,
-        borderRadius: 8,
+        borderColor: '#ECECEC',
     },
     nameLikeContainer: {
         flexDirection: 'row',
@@ -176,9 +180,6 @@ const styles = StyleSheet.create({
     avatar: {
         width: 50,
         height: 50,
-        borderWidth: 2,
-        borderRadius: 50,
-        borderColor: "#FBAE41",
     },
     nameTextContainer: {
         justifyContent: 'center',

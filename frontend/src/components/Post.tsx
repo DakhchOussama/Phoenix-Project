@@ -6,8 +6,9 @@ import Iconoct from 'react-native-vector-icons/Octicons';
 import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getprofileuser } from '../services/authService';
-import { likePost } from '../services/postService';
+import { CheckPost, likePost } from '../services/postService';
 import { BASE_URL } from '@env';
+import RemovePostComponent from './RemovePostComponent';
 
 interface Post {
     id: string;
@@ -19,6 +20,7 @@ interface Post {
     time: string;
     likes: number;
     translate?: string;
+    isOwnPost: boolean;
 }
 
 interface PostItemProps {
@@ -28,11 +30,12 @@ interface PostItemProps {
 }
 
 const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
-    
+
     const [like, setlike] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [translate, settranslate] = useState(false);
+    const [removePostVisible, setRemovePostVisible] = useState(false);
 
 
     useEffect(() => {
@@ -44,29 +47,40 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         }).start();
     }, [like]);
 
+    const fetchData = async () => {
+        try {
+            // Fetch user data
+            const User = await getprofileuser();
+            const userId = User.UserID;
 
-    // console.log('avatar : ', post.avatar);
-
+            // // Check the like status
+            const check = await likePost(post.id, userId);
+            if (check.message)
+                setlike(true);
+        } catch (error) {
+            console.error('Error in useEffect:', error);
+        }
+    };
 
     useEffect(() => {
 
-        const fetchData = async () => {
+        const checkData = async () => {
             try {
                 // Fetch user data
                 const User = await getprofileuser();
                 const userId = User.UserID;
     
-                // Check the like status
-                const check = await likePost(post.id, userId);
-                if (!check)
+                // // Check the like status
+                const check = await CheckPost(post.id, userId);
+                if (check)
                     setlike(true);
             } catch (error) {
                 console.error('Error in useEffect:', error);
             }
         };
-    
-        fetchData();
-    }, [ ]);
+
+        checkData();
+    }, []);
 
     const handleShareClick = () => {
         const message = `🚀 **New ${post.title}:**\n\n` +
@@ -119,8 +133,17 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     
     const handleLikeClick = async () => {
         setlike(!like);
+        fetchData();
         onLikeToggle(post.id, !like);
-    }
+    };
+
+    const handleRemovePostClick = () => {
+        setRemovePostVisible(true);
+    };
+
+    const handleRemovePost = () => {
+            
+    };
 
     return (
         <>
@@ -150,14 +173,21 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
 
                 {/* like and delete */}
                 <View style={styles.likeDeleteContainer}>
-                    <View style={styles.deleteIconContainer}>
-                        <Iconoct name="kebab-horizontal"
-                            size={20} color={"#A4A3A3"}
-                            style={styles.kebabIcon}
-                            onPress={() => setModalVisible(true)}
-                        />
-                        {/* <Iconfont name="remove" size={20} color={"#c8c8c8"} /> */}
-                    </View>
+                    
+                        {post.isOwnPost ? (
+                            <View style={styles.deleteIconContainer}>
+                                <Iconoct name="kebab-horizontal"
+                                size={20} color={"#A4A3A3"}
+                                style={styles.kebabIcon}
+                                onPress={() => setModalVisible(true)}/>
+                            </View>
+                            ) : (
+                            <View style={[styles.deleteIconContainer, {left: 4, bottom: 5}]}>
+                                <TouchableOpacity onPress={handleRemovePost}>
+                                    <Iconfont name="remove" size={25} color={"#adacac"} />
+                                </TouchableOpacity> 
+                            </View>
+                         )}
                     {/* like */}
                     <View style={styles.likeIconContainer}>
                         <Text style={styles.likesCount}>{post.likes}</Text>
@@ -248,39 +278,48 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 onRequestClose={() => setModalVisible(false)}
             >
              <Pressable style={styles.modalBackground} onPress={() => setModalVisible(false)}>
-    <View style={styles.modalContainer}>
-        <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Post Options</Text>
-            <Text style={styles.modalDescription}>
-                Select an option to manage your post. Choose from translating, modifying, or removing your content.
-            </Text>
-        </View>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalHeader}>
+                        <Text style={styles.modalTitle}>Post Options</Text>
+                        <Text style={styles.modalDescription}>
+                            Select an option to manage your post. Choose from translating, modifying, or removing your content.
+                        </Text>
+                    </View>
 
-        <View style={styles.modalOptions}>
-            <TouchableOpacity style={styles.modalButton}>
-                <IconMaterial name='google-translate' size={24} color="#007BFF" />
-                <Text style={styles.modalButtonText}>Translate</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.modalButton}>
-                <Iconfont name='edit' size={24} color="#28A745" />
-                <Text style={styles.modalButtonText}>Modify</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.modalButton, styles.removeButton]}>
-                <Iconfeather name='trash' size={24} color="#DC3545" />
-                <Text style={styles.modalButtonText}>Remove Post</Text>
-            </TouchableOpacity>
-        </View>
+                    <View style={styles.modalOptions}>
+                        <TouchableOpacity style={styles.modalButton}>
+                            <IconMaterial name='google-translate' size={24} color="#007BFF" />
+                            <Text style={styles.modalButtonText}>Translate</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.modalButton}>
+                            <Iconfont name='edit' size={24} color="#28A745" />
+                            <Text style={styles.modalButtonText}>Modify</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.modalButton, styles.removeButton]} onPress={handleRemovePostClick}>
+                            <Iconfeather name='trash' size={24} color="#DC3545" />
+                            <Text style={styles.modalButtonText}>Remove post</Text>
+                        </TouchableOpacity>
+                    </View>
 
-        <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
-            <Text style={styles.modalCloseText}>Close</Text>
-        </TouchableOpacity>
-    </View>
-</Pressable>
-
-
-
+                    <TouchableOpacity style={styles.modalCloseButton} onPress={() => setModalVisible(false)}>
+                        <Text style={styles.modalCloseText}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Pressable>
             </Modal>
-        </>    
+
+            <Modal
+                transparent={true}
+                visible={removePostVisible}
+                onRequestClose={() => setRemovePostVisible(false)}
+            >
+                <RemovePostComponent
+                    visible={removePostVisible} 
+                    postId={post.id}
+                    onClose={() => setRemovePostVisible(false)} 
+                />
+            </Modal>
+        </>
 );
 };
 
@@ -289,7 +328,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.02)',
+        backgroundColor: 'rgba(0, 0, 0, 0.2)',
     },
     modalContainer: {
         width: '80%',
@@ -358,13 +397,18 @@ const styles = StyleSheet.create({
         color: '#DD644A',
         fontWeight: '600',
     },
-    postContainer: {
-        flexDirection: 'column',
+     postContainer: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,  
+        padding: 16,
+        marginVertical: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 3,
         borderWidth: 1,
-        borderColor: '#BFBFBF',
-        padding: 10,
-        marginBottom: 20,
-        borderRadius: 8,
+        borderColor: '#ECECEC',
     },
     nameLikeContainer: {
         flexDirection: 'row',
@@ -392,6 +436,8 @@ const styles = StyleSheet.create({
     username: {
         fontFamily: 'Raleway-SemiBold',
         color: '#1E1E1E',
+        fontWeight: '600',
+        fontSize: 16,
     },
     time: {
         fontFamily: 'Sora-SemiBold',
@@ -432,19 +478,21 @@ const styles = StyleSheet.create({
         padding: 14,
     },
     description: {
-        color: "#3C404B",
         fontFamily: 'Urbanist-Bold',
         fontSize: 16,
-        marginLeft: 5
+        marginLeft: 5,
+        lineHeight: 20,
+        color: '#434752',
     },
     imageContainer: {
         marginTop: 10
     },
     postImage: {
         width: '100%',
-        height: 190,
-        borderRadius: 6
-    },
+        height: 200,
+        borderRadius: 10,
+        marginTop: 10,
+    },    
     sidebarContainer: {
         padding: 3
     },

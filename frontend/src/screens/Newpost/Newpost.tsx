@@ -23,6 +23,7 @@ export default function Newpost() {
     const [Type, setType] = useState("Demand");
     const [isEnabled, setIsEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const navigation = useNavigation();
     
     
     const type = ["Demand", "Offer"];
@@ -123,7 +124,7 @@ export default function Newpost() {
                     type: 'success',
                     text1: 'Post created successfully!',
                 });
-               
+                // navigation.navigate('Services');
             }
             
         } catch (error) {
@@ -207,7 +208,12 @@ export default function Newpost() {
                         <View style={styles.categorySection}>
                             <Text style={styles.sectionTitle}>Categories :</Text>
                             <View style={styles.selectionContainer}>
-                                <SelectionTextInput placeholder={"Event"} data={categories} icon={false} setCategorie={setCategorie} setType={setType}/>
+                                <SelectionTextInput 
+                                    placeholder={"Event"}
+                                    data={categories}
+                                    icon={false}
+                                    setCategorie={setCategorie}
+                                    setType={setType}/>
                             </View>
                         </View>
 

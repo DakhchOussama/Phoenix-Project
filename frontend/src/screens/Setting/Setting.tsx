@@ -34,7 +34,6 @@ export default function Setting() {
 
     const navigation = useNavigation();
 
-
     useEffect(() => {
         const getprofile = async () => {
             const data = await getprofileuser();
@@ -66,7 +65,6 @@ export default function Setting() {
 
     const handlePressSetting = async () => {
         if (email || fname || sname || phonenumber || department || imgUri){
-            console.log('imguri : ', imgUri);
             if (email == user?.Email && fname == user?.Fname && sname == user?.Sname && phonenumber == user?.Phone && department == user?.Department && imgUri == null){
                     Toast.show({
                         type: 'error',
@@ -174,11 +172,15 @@ export default function Setting() {
                     <View style={styles.profileContainer}>
                         <View style={styles.profileInnerContainer}>
                             <TouchableOpacity onPress={openImagePicker}>
-                                   {!user?.AvatarURL ? (
-                                        <Image source={require('../../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
-                                    ): (
-                                        <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }} style={{width: 90, height: 90, borderRadius: 50}} />
-                                    )}
+                            {imgUri ? (
+                                <Image source={{ uri: imgUri }} style={{ width: 90, height: 90, borderRadius: 50 }} />
+                            ) : (
+                                !user?.AvatarURL ? (
+                                <Image source={require('../../assets/profile.png')} style={{ width: 90, height: 90, borderRadius: 50 }} />
+                                ) : (
+                                <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }} style={{ width: 90, height: 90, borderRadius: 50 }} />
+                                )
+                            )}
                                 {/* {!user?.AvatarURL ? (
                                     <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
                                     ): (
@@ -323,8 +325,8 @@ const styles = StyleSheet.create({
     },
     editIconContainer: {
         position: 'absolute',
-        bottom: 7,
-        right: 5,
+        bottom: 4,
+        right: 2,
         backgroundColor: '#434752',
         padding: 2,
         borderRadius: 20,

@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
         borderColor: '#E0E1E3',
         flexDirection: 'row',
         borderRadius: 5,
-        width: 400
+        width: 400,
     },
     placeholderContainer: {
         flexDirection: 'row',
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     dropdownStyle: {
         borderRadius: 5,
         borderColor: '#E0E1E3',
-        backgroundColor: '#FFFFFF'
+        backgroundColor: '#FFFFFF',
     },
     dropdownContainer: {
         width: 355,

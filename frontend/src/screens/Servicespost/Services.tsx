@@ -3,7 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import PostItem from "../../components/Post";
 import CategoryItem from "../../components/Categories";
-import { ScrollView } from 'react-native-gesture-handler';
+import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { getPosts, likePost } from "../../services/postService";
 import { BASE_URL } from "@env";
 import Loading from "../../components/Loading";
@@ -28,6 +28,7 @@ interface PostFromApi {
   avatar: string;
   translates?: string;
   userHasLiked: boolean;
+  isOwnPost: boolean;
 }
 
 interface MappedPost {
@@ -43,6 +44,7 @@ interface MappedPost {
   userHasLiked: boolean;
   Categories: string;
   isEnabled: boolean;
+  isOwnPost: boolean;
 }
 
 interface ServicesProps {
@@ -57,44 +59,52 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   const [posts, setPosts] = useState<MappedPost[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
   
+  const fetchPosts = async () => {
+    try {
+      setIsLoading(true);
+      const fetchedPosts: PostFromApi[] = await getPosts();
+      const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
+        id: post.PostID,
+        title: post.Type,
+        description: post.Title,
+        avatar: post.avatar,
+        image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
+        username: `${post.fname} ${post.sname}`,
+        time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        likes: post.Likes,
+        translate: post.translates,
+        userHasLiked: post.userHasLiked || false,
+        Categories: post.Categories,
+        isEnabled: post.isEnabled,
+        isOwnPost: post.isOwnPost
+      }));
+      setPosts(mappedPosts);
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'An error occurred',
+        text2: 'Failed to fetch posts , please try again.',
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setIsLoading(true);
-        const fetchedPosts: PostFromApi[] = await getPosts();
-        const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
-          id: post.PostID,
-          title: post.Type,
-          description: post.Title,
-          avatar: post.avatar,
-          image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
-          username: `${post.fname} ${post.sname}`,
-          time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          likes: post.Likes,
-          translate: post.translates,
-          userHasLiked: post.userHasLiked || false,
-          Categories: post.Categories,
-          isEnabled: post.isEnabled
-        }));
-        setPosts(mappedPosts);
-      } catch (error) {
-        Toast.show({
-          type: 'error',
-          text1: 'An error occurred',
-          text2: 'Failed to fetch posts , please try again.',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    
     fetchPosts();
   }, []);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchPosts();
+    setRefreshing(false);
+  };
+  
     
-    if (isLoading) {
-      return <Loading />;
+  if (isLoading && !refreshing) {
+    return <Loading />;
   }
 
 
@@ -103,7 +113,6 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   };
 
     const handleLikeToggle = async (postId: any, liked: any) => {
-    
       setPosts(posts.map(post => 
           post.id === postId
               ? { ...post, likes: liked ? post.likes + 1 : post.likes - 1 }
@@ -130,21 +139,31 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
       <>
       <Toast />
       <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-        <MaterialIcons name="arrow-back-ios" size={30} color="#aaaaaa" style={styles.arrowbottom} />
+        <MaterialIcons name="arrow-back-ios" size={30} color="#606677" style={styles.arrowbottom} />
           {selectedPost ?  <PostDetails post={selectedPost} onBack={handleBack} /> : (
             <>
               <CategoryItem selectedCategory={selectedCategory} handlePress={handlePress} />
 
                 <View style={{ flex: 2 }}>
                     <View style={{ flex: 1, flexDirection: 'row' }}>
-                        <ScrollView horizontal={false} style={{ marginTop: 10 }}>
-                            <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
-                                <Icon name="list" size={27} style={{ marginRight: 10, color: "#4a4f5b" }} onPress={() => setlist(!list)} />
-                            </View>
-                            {list && (
+                    <ScrollView
+                        horizontal={false}
+                        style={{ marginTop: 10 }}
+                        refreshControl={
+                          <RefreshControl
+                            refreshing={refreshing}
+                            onRefresh={onRefresh}
+                            colors={['#D84B2C']}
+                            tintColor={'#D84B2C'}
+                          />
+                        }
+                      >
+                                <View>
+                          {list && (
+                       
                               <View style={styles.dropdownContainer}>
                                 <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Offer")}>
-                                  <Icon name="tools" size={20} color="#4a4f5b" />
+                                  <Icon name="bell" size={22} color="#4a4f5b" />
                                   <Text style={styles.dropdownText}>Offer</Text>
                                 </TouchableOpacity>
                                 <View style={styles.divider} />
@@ -153,7 +172,15 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
                                   <Text style={styles.dropdownText}>Demand</Text>
                                 </TouchableOpacity>
                               </View>
-                            )}
+                        )}
+                          </View>
+                          <View>
+
+                          </View>
+                            <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
+                                <Icon name="list" size={27} style={{ marginRight: 10, color: "#4a4f5b" }} onPress={() => setlist(!list)} />
+                            </View>
+                            
                             <View style={{ margin: 21, marginTop: 12 }}>
                               {/* If both listType and selectedCategory are chosen, filter by both */}
                               {listType !== null && selectedCategory !== null ? (
@@ -183,7 +210,7 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
                               ) : listType !== null ? (
                                 /* If only listType is chosen */
                                 posts
-                                  .filter(post => post.title === listType)
+                                  .filter(post => post.title.toUpperCase() === listType.toUpperCase())
                                   .map(post => (
                                     post.isEnabled ? (
                                       <View key={post.id}>
@@ -282,7 +309,8 @@ const styles = StyleSheet.create({
       backgroundColor: 'white',
       position: 'absolute',
       right: 30,
-      top: 30,
+      top: 25,
+      // right: 5,
       zIndex: 999,
       width: 180,
       borderRadius: 12,

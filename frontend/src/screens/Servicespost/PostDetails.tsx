@@ -3,6 +3,7 @@ import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from 'reac
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import IoniconsIcons from 'react-native-vector-icons/Ionicons';
 import { ScrollView } from 'react-native-gesture-handler';
+import { BASE_URL } from '@env';
 
 interface PostDetailsProps {
     post: {
@@ -21,6 +22,8 @@ interface PostDetailsProps {
 
 const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
     const [comment, setComment] = useState('');
+
+    console.log('post : ', post);
 
     const handleAddComment = () => {
         // Implement your logic to add a comment here
@@ -47,21 +50,20 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
                         </Text>
                         <Text style={styles.title}>{post.title}</Text>
                     </View>
+                    <View style={styles.messageContainer}>
+                        {!post?.avatar ? (
+                                <Image source={require('../../assets/profile.png')} style={styles.avatar} />
+                        ): (
+                                <Image source={{ uri: `${BASE_URL}/posts/image/${post?.avatar}` }}  style={styles.avatar} />
+                        )}
+                    </View>
                 </View>
 
-                <View style={styles.messageContainer}>
-                    <Text style={styles.description}>{post.description}</Text>
-                    {post.image && (
-                        <View style={styles.imageContainer}>
-                            <Image style={styles.postImage} source={post.image} />
-                        </View>
-                    )}
-                </View>
 
                 <View>
                     <Text style={styles.commentsTitle}>Comments :</Text>
                     <View style={styles.commentRow}>
-                        <Image source={post.avatar} style={[styles.avatar, styles.smallAvatar]} />
+                        <Image source={require('../../assets/profile.png')} style={[styles.avatar, {width: 50, height: 50,}]} />
                         <View style={styles.commentTextContainer}>
                             <Text style={styles.commentUser}>Olivia Brown</Text>
                             <View style={styles.commentBox}>
@@ -71,7 +73,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
                     </View>
 
                     <View style={styles.commentRow}>
-                        <Image source={post.avatar} style={[styles.avatar, styles.smallAvatar]} />
+                        <Image source={require('../../assets/profile.png')} style={[styles.avatar, {width: 50, height: 50,}]} />
                         <View style={styles.commentTextContainer}>
                             <Text style={styles.commentUser}>Ava Jones</Text>
                             <View style={styles.commentBox}>
@@ -135,34 +137,35 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     nameImgContainer: {
-        flexDirection: 'row',
+        flexDirection: 'row-reverse',
         alignItems: 'center',
+        justifyContent: 'flex-end',
+        padding: 10
     },
     avatar: {
-        width: 50,
-        height: 50,
+        width: 60,
+        height: 60,
         borderRadius: 30,
     },
     nameTextContainer: {
         marginLeft: 10,
     },
     username: {
-        fontSize: 16,
+        fontSize: 18,
         color: '#1E1E1E',
         fontFamily: 'Raleway-SemiBold'
     },
     time: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#8C8B8B',
         fontFamily: 'Sora-SemiBold',
     },
     title: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: 'bold',
         color: '#DD644A',
     },
     messageContainer: {
-        paddingVertical: 10,
     },
     description: {
         fontSize: 16,

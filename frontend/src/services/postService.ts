@@ -1,12 +1,31 @@
 import axios from "axios";
 import { BASE_URL } from '@env';
 import { getToken } from "./authService";
+import io from 'socket.io-client';
 
 
 const instance = axios.create({
     baseURL: BASE_URL,
     timeout: 10000,
 });
+
+// const socket = io(BASE_URL, {
+//     transports: ['websocket'], // Use WebSocket transport
+//     // You can add additional options here
+// });
+
+// socket.on('connect', () => {
+//     console.log('Connected to WebSocket server');
+// });
+
+// socket.on('disconnect', () => {
+//     console.log('Disconnected from WebSocket server');
+// });
+
+// // Optional: Listen for specific messages
+// socket.on('message', (msg) => {
+//     console.log('Message received:', msg);
+// });
 
 
 export const uploadImage = async (uri: string) => {
@@ -108,4 +127,39 @@ export const likePost = async (postId: string, userId: string) => {
     } catch (error) {
       return false;
     }
-  };
+};
+
+export const CheckPost = async (postId: string, userId: string) => {
+    try {
+        const token = await getToken();
+        const response = await instance.get(`/posts/${postId}/like/check`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+            params: { userId },
+        });
+      return response.data;
+    } catch (error) {
+      return false;
+    }
+};
+
+export const removePost = async (postId: string) => {
+    try {
+        const token = await getToken();
+        const response = await instance.delete(`/posts/${postId}/removepost`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
+        });
+        
+        if (response.status === 200) {
+            return { success: true, message: 'Post removed successfully.' };
+        } else {
+            return { success: false, message: 'Failed to remove post.' };
+        }
+    } catch (error) {
+        console.error('Error removing post:', error);
+        return { success: false, message:  'An error occurred.' };
+    }
+};

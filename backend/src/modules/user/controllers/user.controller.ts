@@ -30,9 +30,7 @@ export class UserController {
   @Post('create')
   async createUser(@Body() userdto: Userdto){
       try {
-        console.log('user dto : ', userdto);
         const user = await this.userService.CreateUser(userdto.fname, userdto.sname, userdto.email, userdto.phonenumber, new Date(`${userdto.birthday}`), userdto.department, userdto.password);
-        console.log('user : ', user);
         if (user){
           const token = await this.authService.login(user);
           return {
@@ -62,8 +60,6 @@ export class UserController {
           throw new Error('User not authenticated');
       }
         const updatedUser = await this.userService.updateUser(user, userId);
-
-        console.log('update : ', updatedUser);
 
         return {
           success: true,

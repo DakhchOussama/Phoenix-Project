@@ -43,17 +43,18 @@ export default function ProfileScreen() {
             const data = await getprofileuser();
             if (data) setUser(data);
             else console.log('error');
-        }
+        };
+
 
         getprofile();
-    }, []);
+    }, [user]);
 
     
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
         onMoveShouldSetPanResponder: () => true,
         onPanResponderGrant: (evt: GestureResponderEvent) => {
-        gestureStartX.current = evt.nativeEvent.pageX; // Capture the initial touch point
+        gestureStartX.current = evt.nativeEvent.pageX;
         },
         onPanResponderRelease: (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         const deltaX = evt.nativeEvent.pageX - gestureStartX.current;
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
         marginLeft: 15,
         padding: 10,
         borderRadius: 8,
-        width: 350,
+        width: '83%',
         paddingLeft: 20,
     },
     detailValue: {
