@@ -5,11 +5,20 @@ import { extname, join } from 'path';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
 import { PostServiceService } from '../post-service/post-service.service';
 import { createReadStream } from 'fs';
+import { UserService } from 'src/modules/user/services/user.service';
+import { AppGateway } from 'src/modules/Socket/app.gateway';
+import { NotificationService } from 'src/modules/notification/notification.service';
 
 @Controller('posts')
 export class PostControllerController {
 
-    constructor(private readonly PostService: PostServiceService){}
+    constructor(
+        private readonly PostService: PostServiceService,
+        private readonly UserService: UserService,
+        private readonly appGateway: AppGateway,
+        private readonly NotificationService: NotificationService
+        
+    ){}
 
 
     @Get('postuser')
@@ -17,10 +26,7 @@ export class PostControllerController {
     async getPost(@Request() req, @Res() res) {
         try {
             const currentUserId = req.user.UserID;
-            console.log('userID : ', req.user.UserID);
             const posts = await this.PostService.getPost(currentUserId);
-
-            console.log('posts : ', posts);
 
             return res.status(200).json(posts);
         } catch (error) {
@@ -40,15 +46,161 @@ export class PostControllerController {
                 throw new Error('User not authenticated');
             }
 
-            const newPost = await this.PostService.createPost(post, userId);
+            const newComment = await this.PostService.createPost(post, userId);
 
-            return newPost;
+            return newComment;
+
+        } catch (error){
+            console.error('Error creating post:', error);
+            throw new Error('Error creating post');
+        }
+    };
+
+
+    @Post('getcomments')
+    @UseGuards(JwtAuthGuard)
+    async getComments(@Body() data, @Request() req) {
+        try {
+            const userId = req.user?.UserID;
+    
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+    
+            const comments = await this.PostService.getComments(data.postId);
+    
+            const filteredComments = comments.map(comment => ({
+                fname: comment.user.fname,
+                sname: comment.user.sname,
+                avatar: comment.user.avatar,
+                content: comment.content,
+            }));
+    
+            return { success: true, data: filteredComments };
+        } catch (error) {
+            console.error('Error retrieving comments:', error);
+            throw new Error('Error retrieving comments');
+        }
+    }    
+
+
+    @Post('addcomment')
+    @UseGuards(JwtAuthGuard)
+    async Addcomment(@Body() data, @Request() req){
+        try{
+            const userId =  req.user?.UserID;
+
+            if (!userId) {
+                throw new Error('User not authenticated');
+            }
+
+            const newComment = await this.PostService.createcomment(data, userId);
+
+            if (newComment) {
+                const user = await this.UserService.findById(userId);
+                const senddata = {
+                    username: `${user.Fname} ${user.Sname}`,
+                    avatar: user.AvatarURL,
+                    comment: data.comment
+                };
+
+                return senddata;
+            } else {
+                return false;
+            }
 
         } catch (error){
             console.error('Error creating post:', error);
             throw new Error('Error creating post');
         }
     }
+    
+    @Get(':postId/like')
+    @UseGuards(JwtAuthGuard)
+    async likePost(
+        @Param('postId') postId: string,
+        @Query('userId') userId: string,
+    ): Promise<boolean>
+    {
+        try{
+            const check = await this.PostService.likedpost(postId, userId);
+            if (check){
+                const post = await this.PostService.findPostById(postId);
+
+                if (post.userId != userId){
+                    const user = await this.UserService.findById(userId);
+                    
+                    const notification = await this.NotificationService.createNotification({
+                        NotificationType: 'like',
+                        FriendID: userId,
+                        UserID: post.userId,
+                    });
+
+                    const senddata = {
+                        notificationId: notification.NotificationID,
+                        notificationType: notification.NotificationType,
+                        username: `${user.Fname} ${user.Sname}`,
+                        avatar: user.AvatarURL,
+                    };
+
+                    this.appGateway.server.emit('Like', senddata);
+
+
+                    return true;
+
+                } 
+                
+                return true;
+            }
+        } catch (error){
+            return false; // change this 
+        }
+    }
+
+
+    @Get(':postId/like/check')
+    @UseGuards(JwtAuthGuard)
+    async CheckPost(
+        @Param('postId') postId: string,
+        @Query('userId') userId: string,
+    ): Promise<boolean>
+    {
+        try{
+            const check = await this.PostService.checkpost(postId, userId); // change return of checkpost
+            return check;
+        } catch (error){
+            throw new InternalServerErrorException('Failed to like post');
+        }
+    }
+
+    @Delete(':postId/removepost')
+    @UseGuards(JwtAuthGuard)
+    async RemovePost(
+        @Param('postId') postId: string,
+    ): Promise<{ success: boolean; message?: string }>
+    {
+        try{
+            await this.PostService.removepost(postId);
+            return {success: true};
+        } catch (error){
+            throw new InternalServerErrorException('Failed to remove post');
+        }
+    }
+
+    @Get('userdata')
+    @UseGuards(JwtAuthGuard)
+    async getuserPost(@Request() req, @Res() res) {
+        try {
+            const currentUserId = req.user.UserID;
+            const stats = await this.PostService.getUserPostsStatistics(currentUserId);
+
+            return res.status(200).json(stats);
+        } catch (error) {
+            console.log('error:', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
 
     @Post('image')
     @UseGuards(JwtAuthGuard)
@@ -85,51 +237,5 @@ export class PostControllerController {
         });
         
         filestream.pipe(res);
-    }
-    
-    @Get(':postId/like')
-    @UseGuards(JwtAuthGuard)
-    async likePost(
-        @Param('postId') postId: string,
-        @Query('userId') userId: string,
-    ): Promise<boolean>
-    {
-        try{
-            const check = await this.PostService.likedpost(postId, userId);
-            if (check)
-                return true;
-        } catch (error){
-            return false; // change this 
-        }
-    }
-
-
-    @Get(':postId/like/check')
-    @UseGuards(JwtAuthGuard)
-    async CheckPost(
-        @Param('postId') postId: string,
-        @Query('userId') userId: string,
-    ): Promise<boolean>
-    {
-        try{
-            const check = await this.PostService.checkpost(postId, userId); // change return of checkpost
-            return check;
-        } catch (error){
-            throw new InternalServerErrorException('Failed to like post');
-        }
-    }
-
-    @Delete(':postId/removepost')
-    @UseGuards(JwtAuthGuard)
-    async RemovePost(
-        @Param('postId') postId: string,
-    ): Promise<{ success: boolean; message?: string }>
-    {
-        try{
-            await this.PostService.removepost(postId);
-            return {success: true};
-        } catch (error){
-            throw new InternalServerErrorException('Failed to remove post');
-        }
     }
 }

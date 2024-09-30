@@ -20,11 +20,9 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Notification" (
     "NotificationID" TEXT NOT NULL,
-    "Time" TIMESTAMP(3) NOT NULL,
     "NotificationType" TEXT NOT NULL,
     "FriendID" TEXT NOT NULL,
     "UserID" TEXT NOT NULL,
-    "isRead" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Notification_pkey" PRIMARY KEY ("NotificationID")
@@ -73,6 +71,7 @@ CREATE TABLE "Comment" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "postId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("CommentID")
 );
@@ -93,6 +92,9 @@ CREATE UNIQUE INDEX "Friends_UserId_FriendId_key" ON "Friends"("UserId", "Friend
 ALTER TABLE "Notification" ADD CONSTRAINT "Notification_UserID_fkey" FOREIGN KEY ("UserID") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Notification" ADD CONSTRAINT "Notification_FriendID_fkey" FOREIGN KEY ("FriendID") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -109,3 +111,6 @@ ALTER TABLE "Friends" ADD CONSTRAINT "Friends_FriendId_fkey" FOREIGN KEY ("Frien
 
 -- AddForeignKey
 ALTER TABLE "Comment" ADD CONSTRAINT "Comment_postId_fkey" FOREIGN KEY ("postId") REFERENCES "Post"("PostID") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Comment" ADD CONSTRAINT "Comment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("UserID") ON DELETE RESTRICT ON UPDATE CASCADE;

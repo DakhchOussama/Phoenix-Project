@@ -291,9 +291,9 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                             <IconMaterial name='google-translate' size={24} color="#007BFF" />
                             <Text style={styles.modalButtonText}>Translate</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.modalButton}>
+                        <TouchableOpacity   style={styles.modalButton}>
                             <Iconfont name='edit' size={24} color="#28A745" />
-                            <Text style={styles.modalButtonText}>Modify</Text>
+                            <Text style={styles.modalButtonText}>Edit</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.modalButton, styles.removeButton]} onPress={handleRemovePostClick}>
                             <Iconfeather name='trash' size={24} color="#DC3545" />

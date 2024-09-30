@@ -10,6 +10,7 @@ module.exports = {
         allowlist: null,
         safe: false,
         allowUndefined: true,
+        verbose: false,
       },
     ],
   ],

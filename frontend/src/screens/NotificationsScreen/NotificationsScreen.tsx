@@ -1,65 +1,84 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, View, TouchableOpacity, FlatList, StyleSheet, Dimensions } from "react-native";
+import { connectSocket } from "../../services/socketService";
+import { BASE_URL } from "@env";
+import { fetchNotificationsData } from "../../services/notificationService";
 
 interface Notification {
-    id: string;
-    type: string;
-    user: string;
-    action: string;
-    time: string;
-    isFollowBack: boolean;
+    notificationId: string;
+    notificationType: string;
+    username: string;
+    avatar: string;
 }
 
-interface Section {
-    type: string;
-    data: Notification[];
+interface LikeSocket {
+    notificationId: string;
+    notificationType: string;
+    username: string;
+    avatar: string;
 }
 
 export default function NotificationsScreen() {
     const { width } = Dimensions.get("window");
+    const [notifications, setNotifications] = useState<Notification[]>([]);
 
-    // Original data
-    const rawData: Notification[] = [
-        { id: '1', type: 'New', user: 'Emma John', action: 'liked your post.', time: '2h', isFollowBack: false },
-        { id: '2', type: 'New', user: 'Emma John', action: 'posted a service.', time: '2h', isFollowBack: false },
-        { id: '3', type: 'New', user: 'Emma John', action: 'started following you.', time: '2h', isFollowBack: true },
-        { id: '4', type: 'Yesterday', user: 'Emma John', action: 'liked your post.', time: '1d', isFollowBack: false },
-        { id: '5', type: 'Yesterday', user: 'Emma John', action: 'posted a service.', time: '1d', isFollowBack: false },
-        { id: '6', type: 'Yesterday', user: 'Emma John', action: 'started following you.', time: '1d', isFollowBack: true },
-    ];
+    useEffect(() => {
 
-    // Group data by type
-    const groupedData: { [key: string]: Notification[] } = rawData.reduce((acc, item) => {
-        if (!acc[item.type]) {
-            acc[item.type] = [];
+        const fetchNotifications = async () => {
+            try {
+                const data = await fetchNotificationsData();
+                if (Array.isArray(data) && data.length > 0) {
+                    setNotifications(data);
+                }
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        fetchNotifications();
+        
+        const socket = connectSocket();
+
+        if (socket) {
+            // Listen for likes
+            socket.on('Like', (data: LikeSocket) => {
+                const newNotification: Notification = {
+                    notificationId: data.notificationId,
+                    notificationType: data.notificationType,
+                    username: data.username,
+                    avatar: data.avatar,
+                };
+    
+                setNotifications((prev) => [...prev, newNotification]);
+            });
         }
-        acc[item.type].push(item);
-        return acc;
-    }, {} as { [key: string]: Notification[] });
 
-    // Convert grouped data into an array of sections
-    const sections: Section[] = Object.keys(groupedData).map(type => ({
-        type,
-        data: groupedData[type],
-    }));
+        // Cleanup on unmount
+        return () => {
+            socket.off('Like');
+        };
+    }, []);
 
-    const renderItem = ({ item }: { item: Notification }) => (
-        <View style={styles.itemContainer}>
-            <Image source={require('../../assets/profile.png')} style={styles.profileImage} />
-            <Text style={styles.notificationText}>
-                <Text style={styles.userText}>{item.user}</Text> {item.action} <Text style={styles.timeText}>{item.time}</Text>
-            </Text>
-            {item.isFollowBack && (
-                <TouchableOpacity style={styles.followButton}>
-                    <Text style={styles.followButtonText}>Follow back</Text>
-                </TouchableOpacity>
-            )}
-        </View>
-    );
-
-    const renderSectionHeader = ({ section }: { section: Section }) => (
-        <Text style={styles.sectionHeader}>{section.type}</Text>
-    );
+    const renderItem = ({ item }: { item: Notification }) => {
+        const imageUri = item.avatar ? `${BASE_URL}/posts/image/${item.avatar}` : null;
+    
+        return (
+            <View style={styles.itemContainer}>
+                {!imageUri ? (
+                    <Image source={require('../../assets/profile.png')} style={styles.profileImage} />
+                ) : (
+                    <Image source={{ uri: imageUri }} style={styles.profileImage} />
+                )}
+                <Text style={styles.notificationText}>
+                    <Text style={styles.userText}>{item.username} </Text>
+                    {item.notificationType == 'like' && (<Text>liked your post.</Text>)}
+                    
+                </Text>
+            </View>
+        );
+    };
+    
+    
 
     return (
         <View style={styles.container}>
@@ -70,18 +89,9 @@ export default function NotificationsScreen() {
 
             <View style={styles.listContainer}>
                 <FlatList
-                    data={sections}
-                    keyExtractor={item => item.type}
-                    renderItem={({ item }) => (
-                        <>
-                            {renderSectionHeader({ section: item })}
-                            {item.data.map(notification => (
-                                <View key={notification.id}>
-                                    {renderItem({ item: notification })}
-                                </View>
-                            ))}
-                        </>
-                    )}
+                    data={notifications}
+                    keyExtractor={(item) => item.notificationId}
+                    renderItem={renderItem}
                     ListEmptyComponent={<Text style={styles.emptyText}>No notifications</Text>}
                 />
             </View>
@@ -109,20 +119,11 @@ const styles = StyleSheet.create({
         height: 3,
         borderRadius: 15,
         marginTop: 4,
-        width: 150
+        width: 150,
     },
     listContainer: {
         flex: 3,
         padding: 15,
-    },
-    sectionHeader: {
-        fontFamily: 'Raleway-Bold',
-        color: '#434752',
-        fontSize: 20,
-        marginBottom: 10,
-        marginTop: 20,
-        padding: 10,
-        borderRadius: 8,
     },
     itemContainer: {
         flexDirection: 'row',
@@ -137,12 +138,12 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         shadowOffset: { width: 0, height: 2 },
         borderWidth: 1,
-        borderColor: '#E0E1E3'
+        borderColor: '#E0E1E3',
     },
     profileImage: {
         width: 40,
         height: 40,
-        borderRadius: 20
+        borderRadius: 20,
     },
     notificationText: {
         fontFamily: 'Poppins-Regular',
@@ -155,9 +156,6 @@ const styles = StyleSheet.create({
         color: '#DD644A',
         fontFamily: 'Poppins-Bold',
         fontWeight: '700',
-    },
-    timeText: {
-        color: '#bdbbbb',
     },
     followButton: {
         backgroundColor: '#dc6c55',

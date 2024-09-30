@@ -12,10 +12,13 @@ import { PostControllerController } from './modules/post/post-controller/post-co
 import { PostServiceService } from './modules/post/post-service/post-service.service';
 import { PostModuleModule } from './modules/post/post.module';
 import { AppGateway } from './modules/Socket/app.gateway';
+import { NotificationModule } from './modules/notification/notification.module';
+import { NotificationController } from './modules/notification/notification.controller';
+import { NotificationService } from './modules/notification/notification.service';
 
 @Module({
-  imports: [AuthModule, UserModule, PostModuleModule],
-  controllers: [AppController, UserController, PostControllerController],
-  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService, AppGateway],
+  imports: [AuthModule, UserModule, PostModuleModule, NotificationModule],
+  controllers: [AppController, UserController, PostControllerController, NotificationController],
+  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService, AppGateway, NotificationService],
 })
 export class AppModule {}

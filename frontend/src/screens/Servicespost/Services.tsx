@@ -61,6 +61,7 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   const [selectedPost, setSelectedPost] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   
+  
   const fetchPosts = async () => {
     try {
       setIsLoading(true);
@@ -92,9 +93,12 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
     }
   };
 
+
+
   useEffect(() => {
     fetchPosts();
   }, []);
+
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -106,7 +110,6 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   if (isLoading && !refreshing) {
     return <Loading />;
   }
-
 
   const handlePress = (category: string) => {
     setSelectedCategory(selectedCategory === category ? null : category);
@@ -133,8 +136,7 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
         setListType(listType === type ? null : type);
       };
   
-      // console.log('post : ', posts);
-
+    
     return (
       <>
       <Toast />

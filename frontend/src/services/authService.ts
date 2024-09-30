@@ -26,17 +26,18 @@ interface ApiResponse {
     error?: string;
 }
 
-
 const instance = axios.create({
     baseURL: BASE_URL,
     timeout: 10000,
 });
 
 
+
 export const checkinfo = async (email: string, phonenumber: string)=> {
     try {
 
         const response = await instance.post('/user/checkinfo', {email, phonenumber});
+        // console.log('respones : ', response);
         if (response.data.success) {
             return { success: true, message: 'info successful!' };
         } else {
@@ -227,3 +228,30 @@ export const updateUserProfile = async (updatedUserData: UserProfile): Promise<A
         return { success: false, error: (error as Error).message || 'Network error' };  // Handle errors
     }
 };
+
+
+export const getservicedata = async () => {
+    try{
+        
+        const token = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+
+        const response = await instance.get('/posts/userdata', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = response.data;
+        if (data)
+            return data;
+        else
+            return false;
+    } catch (error){
+        console.log('error : ', error)
+        return false;
+    }
+};
+

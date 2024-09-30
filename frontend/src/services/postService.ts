@@ -1,31 +1,18 @@
 import axios from "axios";
 import { BASE_URL } from '@env';
 import { getToken } from "./authService";
-import io from 'socket.io-client';
-
+import { io } from "socket.io-client";
 
 const instance = axios.create({
     baseURL: BASE_URL,
-    timeout: 10000,
+    timeout: 30000,
 });
 
-// const socket = io(BASE_URL, {
-//     transports: ['websocket'], // Use WebSocket transport
-//     // You can add additional options here
-// });
-
-// socket.on('connect', () => {
-//     console.log('Connected to WebSocket server');
-// });
-
-// socket.on('disconnect', () => {
-//     console.log('Disconnected from WebSocket server');
-// });
-
-// // Optional: Listen for specific messages
-// socket.on('message', (msg) => {
-//     console.log('Message received:', msg);
-// });
+interface Comment {
+    username: string;
+    comment: string;
+    postId: string;
+}
 
 
 export const uploadImage = async (uri: string) => {
@@ -161,5 +148,46 @@ export const removePost = async (postId: string) => {
     } catch (error) {
         console.error('Error removing post:', error);
         return { success: false, message:  'An error occurred.' };
+    }
+};
+
+export const sendComments = async (data: Comment) => {
+    try {
+        const token = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+
+        const response = await instance.post('/posts/addcomment', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.log('error : ', error)
+        return false;
+    }
+}
+
+export const getComments = async (postId: string) => {
+    try {
+        const token = await getToken();
+
+        if (!token) throw new Error('No token found');
+
+        const response = await instance.post('/posts/getcomments', { postId }, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return { success: true, data: response.data };
+    } catch (error) {
+        console.log('error : ', error);
+        return false;
     }
 };

@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import LeftBar from "../components/LeftBar";
 import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { getprofileuser } from "../services/authService";
+import { getprofileuser, getservicedata } from "../services/authService";
 import { BASE_URL } from "@env";
 
 type RootStackParamList = {
@@ -31,23 +31,31 @@ interface User {
     UserID: string;
 }
 
+interface Userdata {
+    allLikes: number;
+    demandsUpload: number;
+    offersUpload: number;
+}
+
 export default function ProfileScreen() {
     const [leftbar, setLeftbar] = useState<boolean>(false);
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [showDetails, setShowDetails] = useState(true);
     const gestureStartX = useRef(0);
     const [user, setUser] = useState<User | null>(null);
+    const [userdata, setUserdata] = useState<Userdata>();
 
     useEffect(() => {
-        const getprofile = async () => {
+        const getdata = async () => {
             const data = await getprofileuser();
             if (data) setUser(data);
             else console.log('error');
+
+            const useracitvitydata = await getservicedata();
+            setUserdata(useracitvitydata);
         };
-
-
-        getprofile();
-    }, [user]);
+        getdata();
+    }, []);
 
     
     const panResponder = PanResponder.create({
@@ -80,6 +88,7 @@ export default function ProfileScreen() {
 
     };
 
+    const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
 
     return (
         <View style={styles.container}>
@@ -104,10 +113,10 @@ export default function ProfileScreen() {
                     <View style={{position: 'relative', bottom: 53}}>
                         <View style={{marginLeft: 40}}>
                             {/* <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} /> */}
-                            {!user?.AvatarURL ? (
+                            {!imageUri ? (
                                 <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
                             ): (
-                                <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }} style={{width: 90, height: 90, borderRadius: 50}} />
+                                <Image source={{ uri: imageUri }} style={{width: 90, height: 90, borderRadius: 50}} />
                             )}
                         </View>
                         <View style={{marginLeft: 25, marginTop: 8}}>
@@ -197,10 +206,10 @@ export default function ProfileScreen() {
                                     {/* Offers Uploaded */}
                                     <View style={styles.activityItem}>
                                         <View style={styles.iconWrapper2}>
-                                            <Image source={require('../assets/upload.png')} style={styles.iconImage} />
+                                            <Image source={require('../assets/upload.png')} style={[styles.iconImage, {marginLeft: 5}]} />
                                         </View>
                                         <View style={styles.textWrapper}>
-                                            <Text style={styles.countText}>10</Text>
+                                            <Text style={styles.countText}>{userdata?.offersUpload}</Text>
                                             <Text style={styles.descriptionText}>Offers Uploaded</Text>
                                         </View>
                                     </View>
@@ -211,7 +220,7 @@ export default function ProfileScreen() {
                                             <Icon name="shoppingcart" size={30} color="#434752" />
                                         </View>
                                         <View style={styles.textWrapper}>
-                                            <Text style={styles.countText}>5</Text>
+                                            <Text style={styles.countText}>{userdata?.demandsUpload}</Text>
                                             <Text style={styles.descriptionText}>Demands Uploaded</Text>
                                         </View>
                                     </View>
@@ -222,19 +231,8 @@ export default function ProfileScreen() {
                                             <Image source={require('../assets/peace.png')} style={styles.iconImage} />
                                         </View>
                                         <View style={styles.textWrapper}>
-                                            <Text style={styles.countText}>45</Text>
+                                            <Text style={styles.countText}>{userdata?.allLikes}</Text>
                                             <Text style={styles.descriptionText}>Likes Received</Text>
-                                        </View>
-                                    </View>
-
-                                    {/* Followers Count */}
-                                    <View style={styles.activityItem}>
-                                        <View style={styles.iconWrapper2}>
-                                            <Image source={require('../assets/grouping.png')} style={styles.iconImage} />
-                                        </View>
-                                        <View style={styles.textWrapper}>
-                                            <Text style={styles.countText}>150</Text>
-                                            <Text style={styles.descriptionText}>Followers Count</Text>
                                         </View>
                                     </View>
                                 </View>

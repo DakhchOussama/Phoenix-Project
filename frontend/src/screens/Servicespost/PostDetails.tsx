@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import IoniconsIcons from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Fix import for Ionicons
 import { ScrollView } from 'react-native-gesture-handler';
 import { BASE_URL } from '@env';
+import { getComments, sendComments } from '../../services/postService'; // Fix function name
 
 interface PostDetailsProps {
     post: {
         id: string;
-        title: "DEMAND" | "SERVICE";
+        title: "DEMAND" | "Offer";
         description: string;
         avatar: any; // Update based on the type you use for avatars
         image: { uri: string } | null;
@@ -20,19 +21,59 @@ interface PostDetailsProps {
     onBack: () => void;
 }
 
+interface Comment {
+    avatar: string;
+    username: string;
+    comment: string;
+}
+
 const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
     const [comment, setComment] = useState('');
+    const [comments, setComments] = useState<Comment[]>([]);
 
-    console.log('post : ', post);
+    useEffect(() => {
+        // Fetch all comments for the post
+        const fetchComments = async () => {
+            const response = await getComments(post.id);
+            if (response && response.success) {
+                const formattedComments = response.data.data.map((item: any) => ({
+                    username: `${item.fname} ${item.sname}`, // Assuming `user` has a `username` field
+                    avatar: item.avatar, // Assuming `user` has an `avatar` field
+                    comment: item.content,
+                }));
+                setComments(formattedComments);
+            }
+        };
 
-    const handleAddComment = () => {
-        // Implement your logic to add a comment here
-        console.log("Comment added:", comment);
-        setComment('');
+        fetchComments();
+    }, [post.id]);
+
+    const handleAddComment = async () => {
+        const data = {
+            username: post.username,
+            comment: comment,
+            postId: post.id,
+        };
+
+
+        if (data.comment.trim()) { // Ensure comment is not empty
+            const response = await sendComments(data); // Fix function name
+
+            if (response && response.success) {
+                setComments((prevComments) => {
+                    const updatedComments = Array.isArray(prevComments) ? [...prevComments, response.data] : [response.data];
+                    return updatedComments;
+                });
+                
+                setComment('');
+            }
+        }
     };
 
+    const imageUri = post.avatar ? `${BASE_URL}/posts/image/${post.avatar}` : null;
+
     return (
-        <ScrollView style={styles.container} horizontal={false} contentContainerStyle={{ flexGrow: 1 }}>
+        <ScrollView style={styles.container} contentContainerStyle={{ flexGrow: 1 }}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={onBack} style={styles.backButton}>
                     <MaterialIcons name="arrow-back-ios" size={30} color="#434752" />
@@ -43,44 +84,45 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
 
             <View style={styles.postContainer}>
                 <View style={styles.nameImgContainer}>
-                    <Image source={post.avatar} style={styles.avatar} />
+                    <Image source={imageUri ? { uri: imageUri } : require('../../assets/profile.png')} style={styles.avatar} />
                     <View style={styles.nameTextContainer}>
-                        <Text style={styles.username}>{post.username}
+                        <Text style={styles.username}>
+                            {post.username}
                             <Text style={styles.time}> · {post.time}</Text>
                         </Text>
                         <Text style={styles.title}>{post.title}</Text>
                     </View>
-                    <View style={styles.messageContainer}>
-                        {!post?.avatar ? (
-                                <Image source={require('../../assets/profile.png')} style={styles.avatar} />
-                        ): (
-                                <Image source={{ uri: `${BASE_URL}/posts/image/${post?.avatar}` }}  style={styles.avatar} />
-                        )}
-                    </View>
                 </View>
 
+                <View style={{ padding: 10, paddingLeft: 5 }}>
+                    <Text style={styles.description}>{post.description}</Text>
+                    {post.image && (
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.postImage} source={post.image} />
+                        </View>
+                    )}
+                </View>
 
                 <View>
-                    <Text style={styles.commentsTitle}>Comments :</Text>
-                    <View style={styles.commentRow}>
-                        <Image source={require('../../assets/profile.png')} style={[styles.avatar, {width: 50, height: 50,}]} />
-                        <View style={styles.commentTextContainer}>
-                            <Text style={styles.commentUser}>Olivia Brown</Text>
-                            <View style={styles.commentBox}>
-                                <Text style={styles.commentText}>Hi! Are you still looking for someone to help recharge your PayPal? How soon do you need it done?</Text>
-                            </View>
-                        </View>
-                    </View>
+                    <Text style={styles.commentsTitle}>Comments:</Text>
+                    {comments && comments.length > 0 && (
+                        comments.map((comment, index) => {
+                            const avatarUri = comment.avatar ? `${BASE_URL}/posts/image/${comment.avatar}` : null;
 
-                    <View style={styles.commentRow}>
-                        <Image source={require('../../assets/profile.png')} style={[styles.avatar, {width: 50, height: 50,}]} />
-                        <View style={styles.commentTextContainer}>
-                            <Text style={styles.commentUser}>Ava Jones</Text>
-                            <View style={styles.commentBox}>
-                                <Text style={styles.commentText}>Hi! Are you still looking for someone to help recharge your PayPal? How soon do you need it done?</Text>
-                            </View>
-                        </View>
-                    </View>
+                            return (
+                                <View key={index} style={styles.commentRow}>
+                                    <Image source={avatarUri ? { uri: avatarUri } : require('../../assets/profile.png')}  style={[styles.avatar, {width: 50, height: 50}]} />
+                                    <View style={styles.commentTextContainer}>
+                                        <Text style={styles.commentUser}>{comment.username}</Text>
+                                        <View style={styles.commentBox}>
+                                            <Text style={styles.commentText}>{comment.comment}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            );
+                        })
+                    )}
+
                 </View>
 
                 <View style={styles.commentSection}>
@@ -92,7 +134,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
                             style={styles.input}
                         />
                         <TouchableOpacity onPress={handleAddComment}>
-                            <IoniconsIcons name='send' color={'#41A5EE'} size={23} />
+                            <Ionicons name='send' color='#41A5EE' size={23} />
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -137,10 +179,10 @@ const styles = StyleSheet.create({
         marginVertical: 10,
     },
     nameImgContainer: {
-        flexDirection: 'row-reverse',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'flex-end',
-        padding: 10
+        justifyContent: 'flex-start',
+        padding: 10,
     },
     avatar: {
         width: 60,
@@ -153,7 +195,7 @@ const styles = StyleSheet.create({
     username: {
         fontSize: 18,
         color: '#1E1E1E',
-        fontFamily: 'Raleway-SemiBold'
+        fontFamily: 'Raleway-SemiBold',
     },
     time: {
         fontSize: 14,
@@ -165,15 +207,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#DD644A',
     },
-    messageContainer: {
-    },
     description: {
         fontSize: 16,
         color: '#3C404B',
         fontFamily: 'Urbanist-SemiBold',
         marginBottom: 4,
         marginLeft: 2,
-        marginTop: 5
+        marginTop: 5,
     },
     imageContainer: {
         marginTop: 10,
@@ -192,12 +232,7 @@ const styles = StyleSheet.create({
     commentRow: {
         flexDirection: 'row',
         marginBottom: 15,
-        paddingLeft: 7
-    },
-    smallAvatar: {
-        width: 45,
-        height: 45,
-        borderRadius: 50,
+        paddingLeft: 7,
     },
     commentTextContainer: {
         marginLeft: 10,
@@ -217,13 +252,13 @@ const styles = StyleSheet.create({
     commentText: {
         color: '#3C404B',
         fontSize: 15,
-        fontFamily: 'Urbanist-SemiBold'
+        fontFamily: 'Urbanist-SemiBold',
     },
     commentSection: {
         paddingTop: 17,
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
-        paddingBottom: 10
+        paddingBottom: 10,
     },
     commentInput: {
         height: 42,

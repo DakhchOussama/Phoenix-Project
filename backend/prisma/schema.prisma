@@ -1,11 +1,8 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "windows"]
 }
 
@@ -29,23 +26,24 @@ model User {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
-  notifications Notification[]
-  friendsAsUser Friends[] @relation("UserFriends")
-  friendsAsFriend Friends[] @relation("FriendFriends")
-  posts          Post[]
-  likes          Like[]  // Relation to Like model
+  notifications       Notification[] @relation("UserNotifications")
+  friendNotifications Notification[] @relation("FriendNotifications") // Add this line for friend notifications
+  friendsAsUser       Friends[]      @relation("UserFriends")
+  friendsAsFriend     Friends[]      @relation("FriendFriends")
+  posts               Post[]
+  likes               Like[] // Relation to Like model
+  comments            Comment[]
 }
 
 model Notification {
-  NotificationID    String       @id @default(uuid())
-  Time              DateTime
-  NotificationType  String
-  FriendID          String
-  UserID            String
-  isRead            Boolean   @default(false)
-  createdAt         DateTime  @default(now())
+  NotificationID   String   @id @default(uuid())
+  NotificationType String
+  FriendID         String
+  UserID           String
+  createdAt        DateTime @default(now())
 
-  user              User @relation(fields: [UserID], references: [UserID])
+  user   User @relation("UserNotifications", fields: [UserID], references: [UserID])
+  friend User @relation("FriendNotifications", fields: [FriendID], references: [UserID])
 }
 
 model Post {
@@ -54,47 +52,49 @@ model Post {
   Title      String
   Categories String
   Type       String
-  isEnabled  Boolean   @default(false)
-  Likes      Int       @default(0)
+  isEnabled  Boolean  @default(false)
+  Likes      Int      @default(0)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
   userId     String
-  user       User @relation(fields: [userId], references: [UserID])
+  user       User      @relation(fields: [userId], references: [UserID])
   translates String?
   comments   Comment[]
-  likes      Like[]  // Relation to Like model
+  likes      Like[] // Relation to Like model
 }
 
 model Like {
-  LikeID   String   @id @default(uuid())
-  postId   String
-  userId   String
+  LikeID    String   @id @default(uuid())
+  postId    String
+  userId    String
   createdAt DateTime @default(now())
 
-  post     Post @relation(fields: [postId], references: [PostID])
-  user     User @relation(fields: [userId], references: [UserID])
+  post Post @relation(fields: [postId], references: [PostID])
+  user User @relation(fields: [userId], references: [UserID])
 
   @@unique([postId, userId]) // Ensure that a user can only like a post once
 }
 
 model Friends {
-  FriendID String       @id @default(uuid())
+  FriendID String @id @default(uuid())
   UserId   String
   FriendId String
 
-  user     User @relation(name: "UserFriends", fields: [UserId], references: [UserID])
-  friend   User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
+  user   User @relation(name: "UserFriends", fields: [UserId], references: [UserID])
+  friend User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
 
   @@unique([UserId, FriendId])
 }
 
 model Comment {
-  CommentID  String       @id @default(uuid())
-  Content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  CommentID String   @id @default(uuid())
+  Content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  postId     String
-  post       Post @relation(fields: [postId], references: [PostID])
+  postId String
+  userId String
+  post   Post   @relation(fields: [postId], references: [PostID])
+  user   User   @relation(fields: [userId], references: [UserID])
 }

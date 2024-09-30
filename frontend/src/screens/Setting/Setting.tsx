@@ -151,6 +151,8 @@ export default function Setting() {
 
     if (isLoading)
         return <Loading />
+
+    const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
     
     return (
         <>
@@ -175,10 +177,10 @@ export default function Setting() {
                             {imgUri ? (
                                 <Image source={{ uri: imgUri }} style={{ width: 90, height: 90, borderRadius: 50 }} />
                             ) : (
-                                !user?.AvatarURL ? (
+                                !imageUri ? (
                                 <Image source={require('../../assets/profile.png')} style={{ width: 90, height: 90, borderRadius: 50 }} />
                                 ) : (
-                                <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }} style={{ width: 90, height: 90, borderRadius: 50 }} />
+                                <Image source={{ uri: imageUri }} style={{ width: 90, height: 90, borderRadius: 50 }} />
                                 )
                             )}
                                 {/* {!user?.AvatarURL ? (

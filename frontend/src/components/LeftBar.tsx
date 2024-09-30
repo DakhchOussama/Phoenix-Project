@@ -70,6 +70,9 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
         }
     };
 
+    const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
+
+
     return (
         <View style={styles.sidebar}>
             <View style={styles.profileSection}>
@@ -83,10 +86,10 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
                             source={require('../assets/profile2.png')}
                             style={styles.profileImage}
                         /> */}
-                         {!user?.AvatarURL ? (
-                                        <Image source={require('../assets/profile.png')} style={styles.profileImage}/>
-                                    ): (
-                                        <Image source={{ uri: `${BASE_URL}/posts/image/${user?.AvatarURL}` }}  style={styles.profileImage} />
+                         {!imageUri ? (
+                            <Image source={require('../assets/profile.png')} style={styles.profileImage}/>
+                            ): (
+                            <Image source={{ uri: imageUri }}  style={styles.profileImage} />
                         )}
                     </View>
 

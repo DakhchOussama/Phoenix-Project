@@ -168,5 +168,111 @@ export class PostServiceService {
         return true;
         
     }
+
+    async getUserPostsStatistics(userId: string) {
+        // Fetch all posts uploaded by the user
+        const userPosts = await this.prisma.post.findMany({
+            where: {
+                userId: userId,
+            },
+            include: {
+                likes: true,
+            },
+        });
+
+        let offersUpload = 0;
+        let demandsUpload = 0;
+        let totalLikes = 0;
+    
+        userPosts.forEach(post => {
+            if (post.Type === 'Offer') {
+                offersUpload += 1; // Count offers
+            } else if (post.Type === 'Demand') {
+                demandsUpload += 1; // Count demands
+            }
+            totalLikes += post.likes.length; // Count likes
+        });
+    
+        // Construct the return object
+        const data = {
+            offersUpload,
+            demandsUpload,
+            allLikes: totalLikes,
+        };
+    
+        return data;
+    }
+
+    async createcomment(data: CommentDto, userId: string) {
+        const { comment, postId } = data; // Removed username as it's not being used
+    
+        try {
+            // Create a new comment in the database with userId
+            const newComment = await this.prisma.comment.create({
+                data: {
+                    Content: comment,
+                    postId: postId,
+                    userId: userId, // Add userId here
+                },
+            });
+    
+            return newComment;
+        } catch (error) {
+            console.error('Error creating comment: ', error);
+            throw new Error('Failed to create comment');
+        }
+    }
+    
+
+    async getComments(postId: string) {
+        try {
+            // Fetch comments for the specified post
+            const comments = await this.prisma.comment.findMany({
+                where: { postId: postId },
+                orderBy: {
+                    createdAt: 'asc',
+                },
+            });
+    
+            // Fetch user details for each comment and format the response
+            const formattedComments = await Promise.all(comments.map(async (comment) => {
+                const user = await this.prisma.user.findUnique({
+                    where: { UserID: comment.userId },
+                });
+    
+                return {
+                    commentId: comment.CommentID,
+                    content: comment.Content,
+                    createdAt: comment.createdAt,
+                    user: {
+                        fname: user?.Fname,
+                        sname: user?.Sname,
+                        avatar: user?.AvatarURL,
+                    },
+                };
+            }));
+    
+            return formattedComments;
+    
+        } catch (error) {
+            console.error('Error fetching comments:', error);
+            throw new Error('Failed to fetch comments');
+        }
+    }
+
+    async findPostById(postId: string): Promise<Post | null> {
+        try {
+            const post = await this.prisma.post.findUnique({
+                where: { PostID: postId },
+            });
+            return post;
+        } catch (error) {
+            console.error('Error fetching post:', error);
+            return null;
+        }
+    }
+    
+    
+    
     
 }

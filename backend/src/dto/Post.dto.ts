@@ -15,5 +15,11 @@ interface Post {
     isEnabled: boolean;
     Likes: number;
     userId: string;
-  }
+}
+
+interface CommentDto {
+    username: string;
+    comment: string;
+    postId: string;
+}
   
