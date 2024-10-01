@@ -87,7 +87,7 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
                             style={styles.profileImage}
                         /> */}
                          {!imageUri ? (
-                            <Image source={require('../assets/profile.png')} style={styles.profileImage}/>
+                            <Image source={require('../assets/profile2.png')} style={styles.profileImage}/>
                             ): (
                             <Image source={{ uri: imageUri }}  style={styles.profileImage} />
                         )}

@@ -3,12 +3,14 @@ import { Image, Text, View, TouchableOpacity, FlatList, StyleSheet, Dimensions }
 import { connectSocket } from "../../services/socketService";
 import { BASE_URL } from "@env";
 import { fetchNotificationsData } from "../../services/notificationService";
+import Loading from "../../components/Loading";
 
 interface Notification {
     notificationId: string;
     notificationType: string;
     username: string;
     avatar: string;
+    createdAt: string;
 }
 
 interface LikeSocket {
@@ -16,17 +18,20 @@ interface LikeSocket {
     notificationType: string;
     username: string;
     avatar: string;
+    createdAt: string;
 }
 
 export default function NotificationsScreen() {
     const { width } = Dimensions.get("window");
     const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-
         const fetchNotifications = async () => {
             try {
+                setLoading(true);
                 const data = await fetchNotificationsData();
+                setLoading(false);
                 if (Array.isArray(data) && data.length > 0) {
                     setNotifications(data);
                 }
@@ -36,49 +41,68 @@ export default function NotificationsScreen() {
         };
 
         fetchNotifications();
-        
+
         const socket = connectSocket();
 
         if (socket) {
-            // Listen for likes
             socket.on('Like', (data: LikeSocket) => {
                 const newNotification: Notification = {
                     notificationId: data.notificationId,
                     notificationType: data.notificationType,
                     username: data.username,
                     avatar: data.avatar,
+                    createdAt: data.createdAt
                 };
-    
+
                 setNotifications((prev) => [...prev, newNotification]);
             });
         }
 
-        // Cleanup on unmount
         return () => {
             socket.off('Like');
         };
     }, []);
 
+    if (loading) return <Loading />;
+
+    const getTimeDifference = (createdAt: string) => {
+        const createdDate = new Date(createdAt);
+        const currentDate = new Date();
+        const timeDifference = Math.abs(currentDate.getTime() - createdDate.getTime());
+
+        const minutes = Math.floor(timeDifference / (1000 * 60));
+        const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+        const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+        if (days > 0) {
+            return `${days} day(s) ago`;
+        } else if (hours > 0) {
+            return `${hours} hour(s) ago`;
+        } else {
+            return `${minutes} minute(s) ago`;
+        }
+    };
+
     const renderItem = ({ item }: { item: Notification }) => {
         const imageUri = item.avatar ? `${BASE_URL}/posts/image/${item.avatar}` : null;
-    
+        const timeDifference = getTimeDifference(item.createdAt);
+
         return (
-            <View style={styles.itemContainer}>
-                {!imageUri ? (
-                    <Image source={require('../../assets/profile.png')} style={styles.profileImage} />
-                ) : (
-                    <Image source={{ uri: imageUri }} style={styles.profileImage} />
-                )}
-                <Text style={styles.notificationText}>
-                    <Text style={styles.userText}>{item.username} </Text>
-                    {item.notificationType == 'like' && (<Text>liked your post.</Text>)}
-                    
-                </Text>
-            </View>
+            <TouchableOpacity style={styles.itemContainer} activeOpacity={0.7}>
+                <Image 
+                    source={imageUri ? { uri: imageUri } : require('../../assets/profile.png')} 
+                    style={styles.profileImage} 
+                />
+                <View style={styles.textContainer}>
+                    <Text style={styles.notificationText}>
+                        <Text style={styles.userText}>{item.username} </Text>
+                        {item.notificationType === 'like' && <Text>liked your post.</Text>}
+                    </Text>
+                    <Text style={styles.timeText}>{timeDifference}</Text>
+                </View>
+            </TouchableOpacity>
         );
     };
-    
-    
 
     return (
         <View style={styles.container}>
@@ -86,7 +110,6 @@ export default function NotificationsScreen() {
                 <Text style={styles.headerText}>Notifications</Text>
                 <View style={styles.headerLine} />
             </View>
-
             <View style={styles.listContainer}>
                 <FlatList
                     data={notifications}
@@ -122,51 +145,48 @@ const styles = StyleSheet.create({
         width: 150,
     },
     listContainer: {
-        flex: 3,
+        flex: 1,
         padding: 15,
     },
     itemContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#FFFFFF',
-        paddingVertical: 10,
-        paddingHorizontal: 10,
+        paddingVertical: 12,
+        paddingHorizontal: 15,
         marginVertical: 5,
-        borderRadius: 10,
+        borderRadius: 12,
+        elevation: 3,
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 5,
-        shadowOffset: { width: 0, height: 2 },
-        borderWidth: 1,
-        borderColor: '#E0E1E3',
+        shadowOffset: { width: 0, height: 3 },
+        marginBottom: 15
     },
     profileImage: {
         width: 40,
         height: 40,
         borderRadius: 20,
+        marginRight: 10,
+    },
+    textContainer: {
+        flex: 1,
     },
     notificationText: {
         fontFamily: 'Poppins-Regular',
         color: '#434752',
-        marginLeft: 10,
         fontSize: 15,
-        flex: 1,
     },
     userText: {
         color: '#DD644A',
         fontFamily: 'Poppins-Bold',
         fontWeight: '700',
     },
-    followButton: {
-        backgroundColor: '#dc6c55',
-        paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 5,
-    },
-    followButtonText: {
-        color: '#FFFFFF',
-        fontFamily: 'Poppins-Bold',
+    timeText: {
+        fontFamily: 'Poppins-Regular',
+        color: '#9A9A9A',
         fontSize: 12,
+        marginTop: 5,
     },
     emptyText: {
         textAlign: 'center',

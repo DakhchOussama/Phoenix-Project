@@ -3,4 +3,5 @@ interface NotificationDto {
     notificationType: string;
     username: string;
     avatar: string;
+    createdAt: Date;
 }

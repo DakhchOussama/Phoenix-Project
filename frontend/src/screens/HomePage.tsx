@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from "./HomeScreen/HomeScreen";
 import Newpost from "./Newpost/Newpost";
@@ -12,6 +12,7 @@ import LeftBar from "../components/LeftBar";
 import Setting from "./Setting/Setting";
 import Contact from "./Contact/Contact";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { connectSocket } from "../services/socketService";
 
 // Define a type for the route names
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
@@ -19,6 +20,24 @@ type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'Prof
 const Tab = createBottomTabNavigator();
 
 export default function HomePage() {
+
+    const [notificationCount, setNotificationCount] = useState(0);
+    const [badgeVisible, setBadgeVisible] = useState(true); // State to control badge visibility
+
+    useEffect(() => {
+        const socket = connectSocket();
+
+        if (socket) {
+            // Listen for the notification event
+            socket.on('Like', () => {
+                setNotificationCount(prevCount => prevCount + 1);
+            });
+        }
+
+        return () => {
+            socket.off('Like'); // Clean up socket listener
+        };
+    }, []);
 
     // Define icons with specific keys that match the TabRouteNames type
     const icons: Record<Exclude<TabRouteNames, 'Newpost'>, string> = {
@@ -28,6 +47,11 @@ export default function HomePage() {
         ProfileScreen: 'user',
     };
 
+    const handleNotificationPress = () => {
+        // Toggle badge visibility on press
+        setBadgeVisible(false);
+    };
+
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -35,10 +59,25 @@ export default function HomePage() {
                     const routeName = route.name as TabRouteNames;
 
                     if (routeName === 'Newpost') {
-                        return <MaterialIcon name="add-box" size={60} color="#E1674C" style={{width: 60}} />
+                        return <MaterialIcon name="add-box" size={60} color="#E1674C" style={{ width: 60 }} />;
                     }
 
-                    return icons[routeName] ? <Icon name={icons[routeName]} size={25} color={color} /> : null;
+                    if (routeName === 'NotificationsScreen') {
+                        return (
+                            <TouchableOpacity onPress={handleNotificationPress}>
+                                <View>
+                                    <Icon name={icons[routeName]} size={27} color={color} />
+                                    {badgeVisible && notificationCount > 0 && (
+                                        <View style={styles.badge}>
+                                            <Text style={styles.badgeText}>{notificationCount}</Text>
+                                        </View>
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    }
+
+                    return icons[routeName] ? <Icon name={icons[routeName]} size={27} color={color} /> : null;
                 },
                 tabBarActiveTintColor: '#DD644A',
                 tabBarInactiveTintColor: '#646F7A',
@@ -63,12 +102,22 @@ export default function HomePage() {
     );
 };
 
-
-
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: 'red',
+    badge: {
+        position: 'absolute',
+        right: -1,
+        top: -2,
+        backgroundColor: '#fa3758',
+        borderRadius: 15,
+        width: 15,
+        height: 15,
         justifyContent: 'center',
-    }
+        alignItems: 'center',
+    },
+    badgeText: {
+        color: 'white',
+        fontSize: 12,
+        fontWeight: '600',
+        textAlign: 'center', 
+    },
 });

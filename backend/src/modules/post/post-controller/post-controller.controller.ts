@@ -141,6 +141,7 @@ export class PostControllerController {
                         notificationType: notification.NotificationType,
                         username: `${user.Fname} ${user.Sname}`,
                         avatar: user.AvatarURL,
+                        createdAt: notification.createdAt
                     };
 
                     this.appGateway.server.emit('Like', senddata);
