@@ -1,6 +1,7 @@
 // socketService.ts
 import { io } from "socket.io-client";
 import { BASE_URL } from '@env';
+import { getprofileuser } from "./authService";
 
 let socket: any;
 
@@ -12,11 +13,21 @@ export const connectSocket = () => {
 
         socket.on('connect', () => {
             console.log('Connected to WebSocket server');
+            createRoom();
         });
 
         socket.on('disconnect', () => {
             console.log('Disconnected from WebSocket server');
         });
+
+        const createRoom = async () => {
+            const data = await getprofileuser();
+            if (data && data.UserID) {
+                // Join the user's specific room
+                socket.emit('joinRoom', data.UserID);
+            }
+        };
+
     }
 
     return socket;

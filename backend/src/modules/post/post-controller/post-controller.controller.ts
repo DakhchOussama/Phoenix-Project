@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res, Param, Response, Query, Delete, InternalServerErrorException  } from '@nestjs/common';
+import { Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors, Request, Get, Res, Param, Response, Query, Delete, InternalServerErrorException, Patch  } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer'; // Import diskStorage from multer
 import { extname, join } from 'path';
@@ -8,6 +8,7 @@ import { createReadStream } from 'fs';
 import { UserService } from 'src/modules/user/services/user.service';
 import { AppGateway } from 'src/modules/Socket/app.gateway';
 import { NotificationService } from 'src/modules/notification/notification.service';
+import { Server } from 'socket.io';
 
 @Controller('posts')
 export class PostControllerController {
@@ -81,7 +82,25 @@ export class PostControllerController {
             console.error('Error retrieving comments:', error);
             throw new Error('Error retrieving comments');
         }
-    }    
+    }
+
+    @Patch('edit')
+    @UseGuards(JwtAuthGuard)
+    async editpost(@Body() data, @Request() req){
+        try {
+            console.log('im here');
+
+            if (data){
+                const response = this.PostService.editPost(data);
+
+                if (response)
+                    console.log('im here');
+            }
+
+        } catch (error) {
+            
+        }
+    }
 
 
     @Post('addcomment')
@@ -144,7 +163,8 @@ export class PostControllerController {
                         createdAt: notification.createdAt
                     };
 
-                    this.appGateway.server.emit('Like', senddata);
+                    const socket: Server = this.appGateway.server;
+                    socket.to(post.userId).emit('Like', senddata);
 
 
                     return true;

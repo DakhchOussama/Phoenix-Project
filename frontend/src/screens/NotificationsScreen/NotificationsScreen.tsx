@@ -33,10 +33,13 @@ export default function NotificationsScreen() {
                 const data = await fetchNotificationsData();
                 setLoading(false);
                 if (Array.isArray(data) && data.length > 0) {
-                    setNotifications(data);
+                    // Sort notifications by createdAt in descending order
+                    const sortedNotifications = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                    setNotifications(sortedNotifications);
                 }
             } catch (error) {
                 console.error('Error fetching notifications:', error);
+                setLoading(false); // Ensure loading state is reset on error
             }
         };
 
@@ -54,7 +57,12 @@ export default function NotificationsScreen() {
                     createdAt: data.createdAt
                 };
 
-                setNotifications((prev) => [...prev, newNotification]);
+                setNotifications((prev) => {
+                    // Combine previous notifications and the new one
+                    const updatedNotifications = [...prev, newNotification];
+                    // Sort updated notifications by createdAt in descending order
+                    return updatedNotifications.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                });
             });
         }
 
@@ -74,12 +82,14 @@ export default function NotificationsScreen() {
         const hours = Math.floor(timeDifference / (1000 * 60 * 60));
         const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
-        if (days > 0) {
-            return `${days} day(s) ago`;
+        if (minutes < 1) {
+            return 'just now'; // Show "just now" for less than a minute
+        } else if (days > 0) {
+            return days === 1 ? '1 day ago' : `${days} days ago`; // Singular/plural for days
         } else if (hours > 0) {
-            return `${hours} hour(s) ago`;
+            return hours === 1 ? '1 hour ago' : `${hours} hours ago`; // Singular/plural for hours
         } else {
-            return `${minutes} minute(s) ago`;
+            return minutes === 1 ? '1 minute ago' : `${minutes} minutes ago`; // Singular/plural for minutes
         }
     };
 
@@ -96,9 +106,10 @@ export default function NotificationsScreen() {
                 <View style={styles.textContainer}>
                     <Text style={styles.notificationText}>
                         <Text style={styles.userText}>{item.username} </Text>
-                        {item.notificationType === 'like' && <Text>liked your post.</Text>}
+                        {item.notificationType === 'like' && <Text> liked your post.</Text>}
+                        {/* Display the time difference within the same line */}
+                        <Text style={styles.timeText}> {timeDifference}</Text>
                     </Text>
-                    <Text style={styles.timeText}>{timeDifference}</Text>
                 </View>
             </TouchableOpacity>
         );
@@ -151,17 +162,18 @@ const styles = StyleSheet.create({
     itemContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#FFFFFF',
-        paddingVertical: 12,
-        paddingHorizontal: 15,
-        marginVertical: 5,
-        borderRadius: 12,
-        elevation: 3,
+        backgroundColor: '#FAFAFA', // Light background for visual comfort
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        marginVertical: 8,
+        borderRadius: 15, // Slightly larger for a smoother look
+        elevation: 4, // Enhanced elevation for better shadow effect
         shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        shadowOffset: { width: 0, height: 3 },
-        marginBottom: 15
+        shadowOpacity: 0.2, // Increased shadow opacity for a more pronounced effect
+        shadowRadius: 8, // Increased shadow radius for a softer shadow
+        shadowOffset: { width: 0, height: 4 }, // Adjusted shadow offset
+        borderWidth: 1, // Added border for better definition
+        borderColor: '#DDDDDD', // Light gray border for subtle contrast
     },
     profileImage: {
         width: 40,

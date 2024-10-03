@@ -9,6 +9,8 @@ import { getprofileuser } from '../services/authService';
 import { CheckPost, likePost } from '../services/postService';
 import { BASE_URL } from '@env';
 import RemovePostComponent from './RemovePostComponent';
+import EditComponent from './EditComponent';
+import { useNavigation } from '@react-navigation/native';
 
 interface Post {
     id: string;
@@ -36,6 +38,9 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [translate, settranslate] = useState(false);
     const [removePostVisible, setRemovePostVisible] = useState(false);
+    const [editVisible, setEditVisible] = useState(false);
+    const navigation = useNavigation();
+
 
 
     useEffect(() => {
@@ -291,7 +296,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                             <IconMaterial name='google-translate' size={24} color="#007BFF" />
                             <Text style={styles.modalButtonText}>Translate</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity   style={styles.modalButton}>
+                        <TouchableOpacity   style={styles.modalButton} onPress={() => navigation.navigate('Edit', { post })}>
                             <Iconfont name='edit' size={24} color="#28A745" />
                             <Text style={styles.modalButtonText}>Edit</Text>
                         </TouchableOpacity>

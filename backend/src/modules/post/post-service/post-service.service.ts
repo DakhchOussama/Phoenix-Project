@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Repository } from 'typeorm';
 import { SocketIoService } from './socket-io.service';
+import { editDto } from 'src/dto/edit.dto';
 
 @Injectable()
 export class PostServiceService {
@@ -271,8 +272,22 @@ export class PostServiceService {
             return null;
         }
     }
-    
-    
-    
+
+    async editPost(data: editDto){
+        try {
+            await this.prisma.post.update({
+                where: {
+                    PostID: data.postId
+                },
+                data: {
+                    Title: data.title
+                }
+            });
+
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
     
 }

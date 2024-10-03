@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from "./HomeScreen/HomeScreen";
 import Newpost from "./Newpost/Newpost";
@@ -8,11 +8,10 @@ import NotificationsScreen from "./NotificationsScreen/NotificationsScreen";
 import ProfileScreen from "./ProfileScreen";
 import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
-import LeftBar from "../components/LeftBar";
 import Setting from "./Setting/Setting";
 import Contact from "./Contact/Contact";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { connectSocket } from "../services/socketService";
+import EditComponent from "../components/EditComponent";
 
 // Define a type for the route names
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
@@ -21,8 +20,7 @@ const Tab = createBottomTabNavigator();
 
 export default function HomePage() {
 
-    const [notificationCount, setNotificationCount] = useState(0);
-    const [badgeVisible, setBadgeVisible] = useState(true); // State to control badge visibility
+    const [badgeVisible, setBadgeVisible] = useState(false); // State to control badge visibility
 
     useEffect(() => {
         const socket = connectSocket();
@@ -30,12 +28,14 @@ export default function HomePage() {
         if (socket) {
             // Listen for the notification event
             socket.on('Like', () => {
-                setNotificationCount(prevCount => prevCount + 1);
+                setBadgeVisible(true);
             });
         }
 
         return () => {
-            socket.off('Like'); // Clean up socket listener
+            if (socket) {
+                socket.off('Like');
+            }
         };
     }, []);
 
@@ -48,9 +48,8 @@ export default function HomePage() {
     };
 
     const handleNotificationPress = () => {
-        // Toggle badge visibility on press
         setBadgeVisible(false);
-    };
+    }
 
     return (
         <Tab.Navigator
@@ -64,16 +63,12 @@ export default function HomePage() {
 
                     if (routeName === 'NotificationsScreen') {
                         return (
-                            <TouchableOpacity onPress={handleNotificationPress}>
-                                <View>
-                                    <Icon name={icons[routeName]} size={27} color={color} />
-                                    {badgeVisible && notificationCount > 0 && (
-                                        <View style={styles.badge}>
-                                            <Text style={styles.badgeText}>{notificationCount}</Text>
-                                        </View>
-                                    )}
-                                </View>
-                            </TouchableOpacity>
+                            <View>
+                                <Icon name={icons[routeName]} size={27} color={color} />
+                                {badgeVisible && (
+                                    <View style={styles.badge} />
+                                )}
+                            </View>
                         );
                     }
 
@@ -81,23 +76,33 @@ export default function HomePage() {
                 },
                 tabBarActiveTintColor: '#DD644A',
                 tabBarInactiveTintColor: '#646F7A',
-                tabBarLabel: '', // Ensuring no label is shown
+                tabBarLabel: '',
                 tabBarStyle: {
                     height: 85,
                     alignItems: 'center',
                     justifyContent: 'center',
                     borderTopWidth: 1,
                     borderColor: '#E9E9E9'
-                }
+                },
             })}
         >
             <Tab.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
             <Tab.Screen name="ShopScreen" component={ShopScreen} options={{ headerShown: false }} />
             <Tab.Screen name="Newpost" component={Newpost} options={{ headerShown: false }} />
-            <Tab.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ headerShown: false }} />
+            <Tab.Screen
+                name="NotificationsScreen"
+                component={NotificationsScreen}
+                options={{
+                    headerShown: false,
+                }}
+                listeners={{
+                    tabPress: handleNotificationPress,
+                }}
+            />
             <Tab.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
             <Tab.Screen name="SettingsScreen" component={Setting} options={{ tabBarButton: () => null, headerShown: false }} />
             <Tab.Screen name="ContactScreen" component={Contact} options={{ tabBarButton: () => null, headerShown: false }} />
+            <Tab.Screen name="Edit" component={EditComponent} options={{ tabBarButton: () => null, headerShown: false }} />
         </Tab.Navigator>
     );
 };

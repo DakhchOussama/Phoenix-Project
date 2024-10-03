@@ -191,3 +191,18 @@ export const getComments = async (postId: string) => {
         return false;
     }
 };
+
+export const editDescription = async (title : string, postId: string) => {
+    try {
+        const token = await getToken();
+
+        await instance.patch('/posts/edit', {title, postId}, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+    } catch (error) {
+        return false;
+    }
+}

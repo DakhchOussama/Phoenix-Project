@@ -5,7 +5,7 @@ import {
     OnGatewayConnection,
     OnGatewayDisconnect,
   } from '@nestjs/websockets';
-  import { Server } from 'socket.io';
+  import { Server, Socket } from 'socket.io';
   
   @WebSocketGateway({
     cors: {
@@ -27,6 +27,12 @@ import {
     @SubscribeMessage('message')
     handleMessage(client: any, payload: any): void {
       this.server.emit('message', payload);
+    }
+
+    @SubscribeMessage('joinRoom')
+    handleJoinRoom(client: Socket, userId: string) {
+      client.join(userId);
+      // console.log('done');
     }
   }
   
