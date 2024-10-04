@@ -48,7 +48,7 @@ export default function NotificationsScreen() {
         const socket = connectSocket();
 
         if (socket) {
-            socket.on('Like', (data: LikeSocket) => {
+            socket.on('notification', (data: LikeSocket) => {
                 const newNotification: Notification = {
                     notificationId: data.notificationId,
                     notificationType: data.notificationType,
@@ -67,7 +67,7 @@ export default function NotificationsScreen() {
         }
 
         return () => {
-            socket.off('Like');
+            socket.off('notification');
         };
     }, []);
 
@@ -107,6 +107,7 @@ export default function NotificationsScreen() {
                     <Text style={styles.notificationText}>
                         <Text style={styles.userText}>{item.username} </Text>
                         {item.notificationType === 'like' && <Text> liked your post.</Text>}
+                        {item.notificationType === 'Comment' && <Text> comment your post.</Text>}
                         {/* Display the time difference within the same line */}
                         <Text style={styles.timeText}> {timeDifference}</Text>
                     </Text>

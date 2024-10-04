@@ -29,14 +29,14 @@ export default function HomePage() {
 
         if (socket) {
             // Listen for the notification event
-            socket.on('Like', () => {
+            socket.on('notification', () => {
                 setBadgeVisible(true);
             });
         }
 
         return () => {
             if (socket) {
-                socket.off('Like');
+                socket.off('notification');
             }
         };
     }, []);
@@ -113,12 +113,12 @@ export default function HomePage() {
 const styles = StyleSheet.create({
     badge: {
         position: 'absolute',
-        right: -1,
-        top: -2,
+        right: 0,
+        top: -1,
         backgroundColor: '#fa3758',
         borderRadius: 15,
-        width: 15,
-        height: 15,
+        width: 13,
+        height: 13,
         justifyContent: 'center',
         alignItems: 'center',
     },

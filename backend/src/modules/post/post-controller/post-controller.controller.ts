@@ -135,6 +135,9 @@ export class PostControllerController {
     async Addcomment(@Body() data, @Request() req){
         try{
             const userId =  req.user?.UserID;
+            if (!userId) {
+                throw new Error('User not found');
+              }
 
             if (!userId) {
                 throw new Error('User not authenticated');
@@ -144,11 +147,34 @@ export class PostControllerController {
 
             if (newComment) {
                 const user = await this.UserService.findById(userId);
+                const post = await this.PostService.findPostById(data.postId);
+                if (post.userId != userId){
+                    const notification = await this.NotificationService.createNotification({
+                        NotificationType: 'Comment',
+                        FriendID: userId,
+                        UserID: post.userId
+                    });
+    
+                    if (notification){
+                        const senddata = {
+                            notificationId: notification.NotificationID,
+                            notificationType: notification.NotificationType,
+                            username: `${user.Fname} ${user.Sname}`,
+                                                avatar: user.AvatarURL,
+                            createdAt: notification.createdAt
+                        };
+    
+                        const post = await this.PostService.findPostById(data.postId);
+    
+                        const socket: Server = this.appGateway.server;
+                        socket.to(post.userId).emit('notification', senddata);
+                    }
+                }
                 const senddata = {
                     username: `${user.Fname} ${user.Sname}`,
                     avatar: user.AvatarURL,
                     comment: data.comment
-                };
+                };  
 
                 return senddata;
             } else {
@@ -182,24 +208,23 @@ export class PostControllerController {
                         UserID: post.userId,
                     });
 
-                    const senddata = {
-                        notificationId: notification.NotificationID,
-                        notificationType: notification.NotificationType,
-                        username: `${user.Fname} ${user.Sname}`,
-                        avatar: user.AvatarURL,
-                        createdAt: notification.createdAt
-                    };
+                    if (notification){
+                        
+                        const senddata = {
+                            notificationId: notification.NotificationID,
+                            notificationType: notification.NotificationType,
+                            username: `${user.Fname} ${user.Sname}`,
+                                                avatar: user.AvatarURL,
+                            createdAt: notification.createdAt
+                        };
 
-                    const socket: Server = this.appGateway.server;
-                    socket.to(post.userId).emit('Like', senddata);
-
-
-                    return true;
-
-                } 
-                
-                return true;
+                        const socket: Server = this.appGateway.server;
+                        socket.to(post.userId).emit('notification', senddata);
+                        
+                    }
+                }
             }
+            return true;
         } catch (error){
             return false; // change this 
         }

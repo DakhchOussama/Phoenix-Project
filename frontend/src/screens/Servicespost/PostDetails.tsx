@@ -47,6 +47,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
 
         fetchComments();
     }, [post.id]);
+    
 
     const handleAddComment = async () => {
         const data = {
@@ -122,7 +123,7 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
                                 );
                             })
                         ) : (
-                            <Text style={styles.noCommentsText}>You don't have any comments</Text>
+                            <Text style={styles.noCommentsText}>no comments</Text>
                         )}
                     </View>
                 </View>
