@@ -192,17 +192,38 @@ export const getComments = async (postId: string) => {
     }
 };
 
-export const editDescription = async (title : string, postId: string) => {
+export const editDescription = async (title: string, postId: string) => {
     try {
         const token = await getToken();
 
-        await instance.patch('/posts/edit', {title, postId}, {
+        await instance.patch('/posts/edit', { title, postId }, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
-            }
+                Authorization: `Bearer ${token}`,
+            },
         });
+
+        return true;
     } catch (error) {
+        console.error('Error editing description:', error);
         return false;
     }
-}
+};
+
+export const uploadTraduction = async (title: string, postId: string) => {
+    try {
+        const token = await getToken();
+
+        await instance.post('/posts/Traduction', { title, postId }, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return true;
+    } catch (error) {
+        console.error('Error editing description:', error);
+        return false;
+    }
+};

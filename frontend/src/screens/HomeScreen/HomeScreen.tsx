@@ -22,6 +22,13 @@ interface User {
     UserID: string;
 }
 
+interface Category {
+    name: string;
+    color: string;
+    image: any;
+    description: string;
+}
+
 export default function HomeScreen(){
 
     const { height } = Dimensions.get('window');
@@ -31,6 +38,9 @@ export default function HomeScreen(){
     const [services, setServices] = useState<boolean>(false);
     const [leftbar, setLeftbar] = useState<boolean>(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [search, setsearch ] = useState('');
+    const flatListRef = useRef<FlatList<Category>>(null);
+
 
     const navigation = useNavigation();
 
@@ -97,6 +107,38 @@ export default function HomeScreen(){
             }
         }
     };
+
+    const handlePress = () => {
+        console.log('Searching for:', search);
+        const index = categories.findIndex(item => item.name.toLowerCase().includes(search.toLowerCase()));
+        if (index !== -1) {
+            flatListRef.current?.scrollToIndex({ index, animated: true });
+        } else {
+            console.log('Word not found');
+        }
+    };
+
+
+    const handlesearch = (text: string) => {
+         setsearch(text)
+    }
+
+    const highlightText = (text: string, searchTerm: string, itemcolor: string) => {
+        if (!searchTerm) return <Text style={[styles.header, { color: itemcolor }]}>{text}</Text>;
+
+        const parts = text.split(new RegExp(`(${searchTerm})`, 'gi'));
+        return (
+            <Text>
+                {parts.map((part, index) => 
+                    part.toLowerCase() === searchTerm.toLowerCase() ? (
+                        <Text key={index} style={styles.highlight}>{part}</Text>
+                    ) : (
+                        <Text style={[styles.header, { color: itemcolor }]} key={index}>{part}</Text>
+                    )
+                )}
+            </Text>
+        );
+    }
     
 
     const content = 
@@ -122,6 +164,10 @@ export default function HomeScreen(){
                             <TextInput
                                 placeholder="Search"
                                 style={styles.textinput}
+                                value={search}
+                                onChangeText={handlesearch}
+                                onSubmitEditing={handlePress}
+                                returnKeyType="done"
                             ></TextInput>
                             <Icon name="search" size={15}  style={styles.inputicon}/>
                         </View>
@@ -144,6 +190,7 @@ export default function HomeScreen(){
 
                     <FlatList
                         horizontal
+                        ref={flatListRef}
                         showsHorizontalScrollIndicator={false}
                         data={categories}
                         keyExtractor={(item, index) => index.toString()}
@@ -155,7 +202,7 @@ export default function HomeScreen(){
                                     </View>
                                     <View style={styles.categorieinformation}>
                                         <View style={styles.categorietitle}>
-                                            <Text style={[styles.header, { color: item.color }]}>{item.name}</Text>
+                                            {highlightText(item.name, search, item.color)}
                                         </View>
                                         <View style={styles.categorietext}>
                                             <Text style={styles.title}>{item.description}</Text>
@@ -275,7 +322,12 @@ const styles = StyleSheet.create({
     homecontainer: {
         flex: 1,
         backgroundColor: 'white',
-      },
+    },
+    highlight: {
+        backgroundColor: 'yellow',
+        fontFamily: "Montserrat-SemiBold",
+        fontWeight: '700',
+    },
     headerhomescreen: {
         padding: 15,
         height: 250,
@@ -488,7 +540,7 @@ const styles = StyleSheet.create({
     timeText: {
         fontFamily: 'Raleway-Regular',
         fontSize: 12,
-        color: '#6A6B6C', // Lighter grey for the time
+        color: '#6A6B6C',
         marginLeft: 5,
     },
     scrollView: {

@@ -273,19 +273,38 @@ export class PostServiceService {
         }
     }
 
-    async editPost(data: editDto){
+    async editPost(data: editDto): Promise<boolean> {
         try {
             await this.prisma.post.update({
                 where: {
-                    PostID: data.postId
+                    PostID: data.postId,
                 },
                 data: {
-                    Title: data.title
-                }
+                    Title: data.title,
+                },
             });
-
+    
             return true;
         } catch (error) {
+            console.error('Error updating post:', error);
+            return false;
+        }
+    }
+
+    async addTraduction(data: editDto): Promise<boolean> {
+        try {
+            await this.prisma.post.update({
+                where: {
+                    PostID: data.postId,
+                },
+                data: {
+                    translates: data.title,
+                },
+            });
+    
+            return true;
+        } catch (error) {
+            console.error('Error updating post:', error);
             return false;
         }
     }

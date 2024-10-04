@@ -86,22 +86,49 @@ export class PostControllerController {
 
     @Patch('edit')
     @UseGuards(JwtAuthGuard)
-    async editpost(@Body() data, @Request() req){
+    async editpost(@Body() data) {
         try {
-            console.log('im here');
-
-            if (data){
-                const response = this.PostService.editPost(data);
-
-                if (response)
-                    console.log('im here');
+            if (data) {
+                const response = await this.PostService.editPost(data);
+                if (response) {
+                    return {
+                        message: 'Post updated successfully',
+                        success: true,
+                    };
+                } else {
+                    throw new Error('Failed to update the post');
+                }
             }
-
         } catch (error) {
-            
+            return {
+                message: 'An error occurred while updating the post',
+                success: false,
+            };
         }
     }
 
+    @Post('Traduction')
+    @UseGuards(JwtAuthGuard)
+    async uploadTraduction(@Body() data) {
+        try {
+            if (data) {
+                const response = await this.PostService.addTraduction(data);
+                if (response) {
+                    return {
+                        message: 'Post updated successfully',
+                        success: true,
+                    };
+                } else {
+                    throw new Error('Failed to update the post');
+                }
+            }
+        } catch (error) {
+            return {
+                message: 'An error occurred while updating the post',
+                success: false,
+            };
+        }
+    }
 
     @Post('addcomment')
     @UseGuards(JwtAuthGuard)

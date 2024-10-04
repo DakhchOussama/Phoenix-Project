@@ -23,6 +23,7 @@ interface Post {
     likes: number;
     translate?: string;
     isOwnPost: boolean;
+    daysAgo: number;
 }
 
 interface PostItemProps {
@@ -168,10 +169,16 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                     <View style={styles.nameTextContainer}>
                         {/* name and min */}
                         <View>
-                            <Text style={styles.username}>{post.username}
-                                <Text style={styles.time}>.{post.time}</Text>
+                            <Text style={styles.username}>
+                                {post.username}
+                                {post.daysAgo ? (
+                                    <Text style={styles.time}>. {post.daysAgo} day{post.daysAgo > 1 ? 's' : ''} ago</Text>
+                                ) : (
+                                    <Text style={styles.time}>. {post.time}</Text>
+                                )}
                             </Text>
                         </View>
+
                         <Text style={styles.title}>{post.title}</Text>
                     </View>
                 </View>
@@ -292,7 +299,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                     </View>
 
                     <View style={styles.modalOptions}>
-                        <TouchableOpacity style={styles.modalButton}>
+                        <TouchableOpacity style={styles.modalButton} onPress={() => navigation.navigate('Traduction', { post })}>
                             <IconMaterial name='google-translate' size={24} color="#007BFF" />
                             <Text style={styles.modalButtonText}>Translate</Text>
                         </TouchableOpacity>

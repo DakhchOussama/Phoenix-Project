@@ -12,9 +12,11 @@ import Setting from "./Setting/Setting";
 import Contact from "./Contact/Contact";
 import { connectSocket } from "../services/socketService";
 import EditComponent from "../components/EditComponent";
+import TraductionComponent from "../components/TraductionComponent";
 
 // Define a type for the route names
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -103,6 +105,7 @@ export default function HomePage() {
             <Tab.Screen name="SettingsScreen" component={Setting} options={{ tabBarButton: () => null, headerShown: false }} />
             <Tab.Screen name="ContactScreen" component={Contact} options={{ tabBarButton: () => null, headerShown: false }} />
             <Tab.Screen name="Edit" component={EditComponent} options={{ tabBarButton: () => null, headerShown: false }} />
+            <Tab.Screen name="Traduction" component={TraductionComponent} options={{ tabBarButton: () => null, headerShown: false }} />
         </Tab.Navigator>
     );
 };

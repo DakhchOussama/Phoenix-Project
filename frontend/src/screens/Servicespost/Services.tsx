@@ -45,6 +45,7 @@ interface MappedPost {
   Categories: string;
   isEnabled: boolean;
   isOwnPost: boolean;
+  daysAgo: number;
 }
 
 interface ServicesProps {
@@ -79,7 +80,8 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
         userHasLiked: post.userHasLiked || false,
         Categories: post.Categories,
         isEnabled: post.isEnabled,
-        isOwnPost: post.isOwnPost
+        isOwnPost: post.isOwnPost,
+        daysAgo: Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / (1000 * 3600 * 24))
       }));
       setPosts(mappedPosts);
     } catch (error) {
@@ -153,28 +155,28 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
                         style={{ marginTop: 10 }}
                         refreshControl={
                           <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                            colors={['#D84B2C']}
-                            tintColor={'#D84B2C'}
+                          refreshing={refreshing}
+                          onRefresh={onRefresh}
+                          colors={['#D84B2C']}
+                          tintColor={'#D84B2C'}
                           />
                         }
-                      >
+                        >
+                        {list && (
+                     
+                            <View style={styles.dropdownContainer}>
+                              <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Offer")}>
+                                <Icon name="bell" size={22} color="#4a4f5b" />
+                                <Text style={styles.dropdownText}>Offer</Text>
+                              </TouchableOpacity>
+                              <View style={styles.divider} />
+                              <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Demand")}>
+                                <Icon name="megaphone" size={20} color="#4a4f5b"  />
+                                <Text style={styles.dropdownText}>Demand</Text>
+                              </TouchableOpacity>
+                            </View>
+                      )}
                                 <View>
-                          {list && (
-                       
-                              <View style={styles.dropdownContainer}>
-                                <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Offer")}>
-                                  <Icon name="bell" size={22} color="#4a4f5b" />
-                                  <Text style={styles.dropdownText}>Offer</Text>
-                                </TouchableOpacity>
-                                <View style={styles.divider} />
-                                <TouchableOpacity style={styles.dropdownItem} onPress={() => handleListTypePress("Demand")}>
-                                  <Icon name="megaphone" size={20} color="#4a4f5b"  />
-                                  <Text style={styles.dropdownText}>Demand</Text>
-                                </TouchableOpacity>
-                              </View>
-                        )}
                           </View>
                           <View>
 

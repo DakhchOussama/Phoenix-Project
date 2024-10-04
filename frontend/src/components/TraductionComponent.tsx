@@ -2,11 +2,11 @@ import { BASE_URL } from '@env';
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
 import Iconfont from 'react-native-vector-icons/FontAwesome';
-import { editDescription } from '../services/postService';
+import { uploadTraduction } from '../services/postService';
 import Toast from 'react-native-toast-message';
 import Loading from './Loading';
 
-const EditComponent = ({ route, navigation }: { route: any; navigation: any }) => {
+const TraductionComponent = ({ route, navigation }: { route: any; navigation: any }) => {
     const { post } = route.params; // Get post data from navigation parameters
     const [title, setTitle] = useState(post.title);
     const [olddescription, setOldDescription] = useState('');
@@ -19,7 +19,7 @@ const EditComponent = ({ route, navigation }: { route: any; navigation: any }) =
         // onSave({ title, description });
         if (olddescription && description && description !== olddescription){
             try {
-                const success = await editDescription(description, post.id);
+                const success = await uploadTraduction(description, post.id);
                 if (success) {
                     setLoading(false);
                     navigation.goBack();
@@ -105,20 +105,23 @@ const EditComponent = ({ route, navigation }: { route: any; navigation: any }) =
                 {/* Animated Line */}
                 <Animated.View style={lineStyle} />
 
+                <View style={{paddingTop: 15, paddingBottom: 15}}>
+                    <Text style={{color: "#3C404B", fontSize: 17}}>{olddescription}</Text>
+                </View>
+
                 <View style={{ justifyContent: 'center', marginTop: 10 }}>
                     <TextInput
                         style={styles.descriptionInput}
-                        value={description}
-                        onChangeText={setDescription}
-                        placeholder="Description"
+                        onChangeText={(text) => setDescription(text)}
+                        placeholder="Add tradution"
                         multiline
-                        placeholderTextColor={'#3C404B'}
+                        placeholderTextColor={'#bbbbbb'}
                     />
                 </View>
 
                 <View style={{ justifyContent: 'center', alignItems: 'center' }}>
                     <TouchableOpacity style={styles.modifyButton} onPress={handleSave}>
-                        <Text style={styles.modifyButtonText}>Modify</Text>
+                        <Text style={styles.modifyButtonText}>Upload</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity onPress={handleCancel} style={styles.cancelButton}>
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
         borderColor: '#E0E0E0',
         borderWidth: 1,
         borderRadius: 5,
-        minHeight: 180,
+        minHeight: 140,
         textAlignVertical: 'top',
     },
     modifyButton: {
@@ -206,4 +209,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default EditComponent;
+export default TraductionComponent;

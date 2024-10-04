@@ -255,3 +255,12 @@ export const getservicedata = async () => {
     }
 };
 
+export const Logout = async () => {
+    try {
+        await removeToken();
+
+        return { success: true, message: 'Logout successful!' };
+    } catch (error) {
+        return { success: false, message: 'Logout failed. Please try again.' };
+    }
+};

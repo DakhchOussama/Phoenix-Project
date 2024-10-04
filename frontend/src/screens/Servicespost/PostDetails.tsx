@@ -55,7 +55,6 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
             postId: post.id,
         };
 
-
         if (data.comment.trim()) { // Ensure comment is not empty
             const response = await sendComments(data); // Fix function name
 
@@ -83,48 +82,50 @@ const PostDetails: React.FC<PostDetailsProps> = ({ post, onBack }) => {
             </View>
 
             <View style={styles.postContainer}>
-                <View style={styles.nameImgContainer}>
-                    <Image source={imageUri ? { uri: imageUri } : require('../../assets/profile.png')} style={styles.avatar} />
-                    <View style={styles.nameTextContainer}>
-                        <Text style={styles.username}>
-                            {post.username}
-                            <Text style={styles.time}> · {post.time}</Text>
-                        </Text>
-                        <Text style={styles.title}>{post.title}</Text>
-                    </View>
-                </View>
-
-                <View style={{ padding: 10, paddingLeft: 5 }}>
-                    <Text style={styles.description}>{post.description}</Text>
-                    {post.image && (
-                        <View style={styles.imageContainer}>
-                            <Image style={styles.postImage} source={post.image} />
+                <View style={{ flex: 1 }}>
+                    <View style={styles.nameImgContainer}>
+                        <Image source={imageUri ? { uri: imageUri } : require('../../assets/profile.png')} style={styles.avatar} />
+                        <View style={styles.nameTextContainer}>
+                            <Text style={styles.username}>
+                                {post.username}
+                                <Text style={styles.time}> · {post.time}</Text>
+                            </Text>
+                            <Text style={styles.title}>{post.title}</Text>
                         </View>
-                    )}
-                </View>
+                    </View>
 
-                <View>
-                    <Text style={styles.commentsTitle}>Comments:</Text>
-                    {comments && comments.length > 0 && (
-                        comments.map((comment, index) => {
-                            const avatarUri = comment.avatar ? `${BASE_URL}/posts/image/${comment.avatar}` : null;
+                    <View style={{ padding: 10, paddingLeft: 5 }}>
+                        <Text style={styles.description}>{post.description}</Text>
+                        {post.image && (
+                            <View style={styles.imageContainer}>
+                                <Image style={styles.postImage} source={post.image} />
+                            </View>
+                        )}
+                    </View>
 
-                            return (
-                                <View key={index} style={styles.commentRow}>
-                                    <Image source={avatarUri ? { uri: avatarUri } : require('../../assets/profile.png')}  style={[styles.avatar, {width: 50, height: 50}]} />
-                                    <View style={styles.commentTextContainer}>
-                                        <Text style={styles.commentUser}>{comment.username}</Text>
-                                        <View style={styles.commentBox}>
-                                            <Text style={styles.commentText}>{comment.comment}</Text>
+                    <View>
+                        <Text style={styles.commentsTitle}>Comments:</Text>
+                        {comments.length > 0 ? (
+                            comments.map((comment, index) => {
+                                const avatarUri = comment.avatar ? `${BASE_URL}/posts/image/${comment.avatar}` : null;
+
+                                return (
+                                    <View key={index} style={styles.commentRow}>
+                                        <Image source={avatarUri ? { uri: avatarUri } : require('../../assets/profile.png')} style={[styles.avatar, { width: 50, height: 50 }]} />
+                                        <View style={styles.commentTextContainer}>
+                                            <Text style={styles.commentUser}>{comment.username}</Text>
+                                            <View style={styles.commentBox}>
+                                                <Text style={styles.commentText}>{comment.comment}</Text>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
-                            );
-                        })
-                    )}
-
+                                );
+                            })
+                        ) : (
+                            <Text style={styles.noCommentsText}>You don't have any comments</Text>
+                        )}
+                    </View>
                 </View>
-
                 <View style={styles.commentSection}>
                     <View style={styles.commentInput}>
                         <TextInput
@@ -254,6 +255,12 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: 'Urbanist-SemiBold',
     },
+    noCommentsText: {
+        color: '#8C8B8B',
+        fontSize: 14.5,
+        textAlign: 'center',
+        marginTop: 10,
+    },
     commentSection: {
         paddingTop: 17,
         justifyContent: 'flex-end',
@@ -276,7 +283,7 @@ const styles = StyleSheet.create({
         height: '100%',
         paddingVertical: 0,
         paddingRight: 10,
-        fontSize: 14,
+        fontSize: 16,
     },
 });
 

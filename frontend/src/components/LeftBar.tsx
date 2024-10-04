@@ -3,7 +3,7 @@ import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
-import { getprofileuser } from "../services/authService";
+import { getprofileuser, Logout } from "../services/authService";
 import { BASE_URL } from "@env";
 
 // Update the interface to include navigation
@@ -70,6 +70,17 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
         }
     };
 
+
+    const handleLogout = async () => {
+        const response = await Logout();
+    if (response.success) {
+        navigation.navigate('Home');
+    } else {
+        // other
+        // console.log(response.message);
+    }
+    };
+
     const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
 
 
@@ -131,10 +142,10 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
             </View>
 
             <View style={styles.logoutSection}>
-                <View style={styles.logoutContent}>
-                    <Text style={styles.logoutText}>Log Out</Text>
-                    <MaterialIcons name="logout" size={27} color="#FFFFFF" />
-                </View>
+                    <TouchableOpacity style={styles.logoutContent} onPress={handleLogout}>
+                        <Text style={styles.logoutText}>Log Out</Text>
+                        <MaterialIcons name="logout" size={27} color="#FFFFFF" />
+                    </TouchableOpacity>
             </View>
         </View>
     );
