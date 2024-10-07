@@ -77,6 +77,23 @@ export class UserService {
     });
   };
 
+  async findUserByUsername(username: string): Promise<User | null> {
+    const [fname, sname] = username.split(' ');
+
+    if (!fname || !sname) {
+        throw new Error('Invalid username format. Please provide both first name and surname.');
+    }
+
+    const user = await this.prisma.user.findFirst({
+        where: {
+            Fname: fname,
+            Sname: sname,
+        },
+    });
+
+    return user || null;
+  }
+
   async findByPhonenumber(Phone: string): Promise<User | null>{
     return this.prisma.user.findUnique({
       where: {Phone}

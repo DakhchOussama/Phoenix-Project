@@ -172,8 +172,9 @@ const styles = StyleSheet.create({
     profileInfo: {
         flex: 1,
         flexDirection: 'row',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
+        marginLeft: 15
     },
     imageContainer: {
         marginRight: 10,

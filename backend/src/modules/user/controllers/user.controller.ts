@@ -75,6 +75,33 @@ export class UserController {
       }
   }
 
+  @Post('getuserdata')
+  @UseGuards(JwtAuthGuard)
+  async getuserdata(@Body() data) {
+
+      if (data.username){
+          const user = await this.userService.findUserByUsername(data.username);
+
+          if (user){
+              return {
+                success: true,
+                data: user,
+              };
+          } else {
+                return {
+                  success: false,
+                  message: 'User not found',
+              };
+          }
+      } else {
+            return {
+              success: false,
+              message: 'Username is required',
+          };
+      }
+
+  }
+
     // @UseGuards(JwtAuthGuard)
     // @Get('info')
     // async getinfouser(@Body() body){

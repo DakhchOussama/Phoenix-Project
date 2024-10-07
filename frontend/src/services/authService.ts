@@ -2,6 +2,7 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { BASE_URL } from '@env';
 import DeviceInfo from "react-native-device-info";
+import { useEffect } from "react";
 
 type LoginResponse = {
     success: boolean;
@@ -185,10 +186,9 @@ export const getprofileuser = async () => {
 
         const response = await instance.get('/auth/profile', {
             headers: {
-                Authorization: `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             }
         });
-
         const data = response.data;
         if (data)
             return data;
@@ -219,7 +219,7 @@ export const updateUserProfile = async (updatedUserData: UserProfile): Promise<A
         const response = await instance.post('/user/update', updatedUserData, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
+                'Authorization': `Bearer ${token}`
             }
         });
 
@@ -254,6 +254,31 @@ export const getservicedata = async () => {
         return false;
     }
 };
+
+
+export const getUserdata = async (username: string) => {
+    try {
+        const token = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+
+
+        const response = await instance.post('/user/getuserdata', {username}, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+
+        const data = response.data;
+        if (data)
+            return data;
+        else
+            return false;
+    } catch (error) {
+        return false;
+    }
+}
 
 export const Logout = async () => {
     try {

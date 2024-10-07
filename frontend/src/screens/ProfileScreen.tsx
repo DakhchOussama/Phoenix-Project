@@ -29,6 +29,7 @@ interface User {
     Phone: string;
     Sname: string;
     UserID: string;
+    isAdmin: boolean;
 }
 
 interface Userdata {
@@ -55,7 +56,7 @@ export default function ProfileScreen() {
             setUserdata(useracitvitydata);
         };
         getdata();
-    }, []);
+    }, [user]);
 
     
     const panResponder = PanResponder.create({
@@ -114,14 +115,15 @@ export default function ProfileScreen() {
                         <View style={{marginLeft: 40}}>
                             {/* <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} /> */}
                             {!imageUri ? (
-                                <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} />
+                                <Image source={require('../assets/profile.png')} style={{width: 88, height: 88, borderRadius: 50}} />
                             ): (
-                                <Image source={{ uri: imageUri }} style={{width: 90, height: 90, borderRadius: 50}} />
+                                <Image source={{ uri: imageUri }} style={{width: 88, height: 88, borderRadius: 50}} />
                             )}
                         </View>
                         <View style={{marginLeft: 25, marginTop: 8}}>
-                            <View style={{}}>
+                            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 2}}>
                                 <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#434752'}}>{user?.Fname} {user?.Sname}</Text>
+                                {user?.isAdmin && <Image source={require('../assets/admin-panel.png')} style={{width: 25, height: 25, marginLeft: 5, marginTop: 2}} />}
                                 {/* iCON */}
                             </View>
 

@@ -3,12 +3,14 @@ import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensi
 import Icon from 'react-native-vector-icons/Feather';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
-import { getprofileuser, getToken } from "../../services/authService";
+import { getprofileuser, getToken, getUserdata } from "../../services/authService";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Services from "../Servicespost/Services";
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import LeftBar from "../../components/LeftBar";
 import { useNavigation } from '@react-navigation/native';
+import Toast from "react-native-toast-message";
+import { BASE_URL } from "@env";
 
 
 interface User {
@@ -20,6 +22,7 @@ interface User {
     Phone: string;
     Sname: string;
     UserID: string;
+    isAdmin: string;
 }
 
 interface Category {
@@ -40,6 +43,7 @@ export default function HomeScreen(){
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [search, setsearch ] = useState('');
     const flatListRef = useRef<FlatList<Category>>(null);
+    const [userlist, setUserlist ] = useState<User | null>(null);
 
 
     const navigation = useNavigation();
@@ -108,13 +112,23 @@ export default function HomeScreen(){
         }
     };
 
-    const handlePress = () => {
-        console.log('Searching for:', search);
-        const index = categories.findIndex(item => item.name.toLowerCase().includes(search.toLowerCase()));
-        if (index !== -1) {
-            flatListRef.current?.scrollToIndex({ index, animated: true });
+    const handlePress = async () => {
+        if (!profile?.isAdmin) {
+            const index = categories.findIndex(item => item.name.toLowerCase().includes(search.toLowerCase()));
+            if (index !== -1) {
+                flatListRef.current?.scrollToIndex({ index, animated: true });
+            }
         } else {
-            console.log('Word not found');
+            const response = await getUserdata(search);
+
+            if (response.success){
+                setUserlist(response.data);
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'User not found',
+                });
+            }
         }
     };
 
@@ -138,7 +152,9 @@ export default function HomeScreen(){
                 )}
             </Text>
         );
-    }
+    };
+
+    const imageUri = userlist && userlist.AvatarURL ? `${BASE_URL}/posts/image/${userlist.AvatarURL}` : null;
     
 
     const content = 
@@ -171,6 +187,26 @@ export default function HomeScreen(){
                             ></TextInput>
                             <Icon name="search" size={15}  style={styles.inputicon}/>
                         </View>
+                        {userlist && (
+                            <View style={{position: 'relative', maxHeight: 200, zIndex: 1000}}>
+                                <View style={{backgroundColor: '#626877', padding: 10,  borderWidth: 1, borderColor: '#575C6A', borderRadius: 15, paddingLeft: 12, width: '95%', marginLeft: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
+                                    
+                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                                    {!imageUri ? (
+                                            <Image source={require('../../assets/profile2.png')} style={{width: 35, height: 35, marginRight: 5, borderRadius: 50}}/>
+                                            ): (
+                                            <Image source={{ uri: imageUri }}  style={{width: 40, height: 40, marginRight: 5, borderRadius: 50}} />
+                                        )}
+                                        <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 15, color: '#FFFFFF'}}>{userlist.Fname} {userlist.Sname}</Text>
+                                    </View>
+
+                                    <View style={{}}>
+                                        <MaterialIcons name="add-box" size={27} color={"#FFFFFF"} />
+                                    </View>
+                                    
+                                </View>
+                            </View>
+                        )}
                     </View>
                     </View>
                 </View>
@@ -304,6 +340,7 @@ export default function HomeScreen(){
                     </ScrollView>
 
                 </View>
+                <Toast />
             </View>
     )
 
