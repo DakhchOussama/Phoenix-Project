@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
         left: 0,
         top: 0,
         bottom: 0,
-        zIndex: 999,
+        zIndex: 1000,
     },
     profileSection: {
         height: 200,

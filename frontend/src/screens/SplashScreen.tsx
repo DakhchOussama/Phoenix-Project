@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Image } from "react-native";
 import { checkToken, getToken, getDeviceId } from "../services/authService";
+import { connectSocket } from "../services/socketService";
 
 const SplashScreen =  ({ navigation }: {navigation: any}) => {
    
@@ -13,6 +14,7 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
                     navigation.replace(deviceid ? 'Home' : 'Firsttime');
                 } else {
                     const validtoken = await checkToken(token);
+                    connectSocket();
                     navigation.replace(validtoken ? 'Homepage' : 'Home');
                 }
             } catch (error) {

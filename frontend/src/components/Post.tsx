@@ -26,6 +26,18 @@ interface Post {
     daysAgo: number;
 }
 
+interface User {
+    AvatarURL: string;
+    Ban: boolean;
+    Department: string;
+    Email: string;
+    Fname: string;
+    Phone: string;
+    Sname: string;
+    UserID: string;
+    isAdmin: boolean;
+}
+
 interface PostItemProps {
     post: Post;
     onLikeToggle: (postId: string, like: boolean) => void;
@@ -41,6 +53,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const [removePostVisible, setRemovePostVisible] = useState(false);
     const [editVisible, setEditVisible] = useState(false);
     const navigation = useNavigation();
+    const [user, setUser ] = useState<User | null>(null);
 
 
 
@@ -56,13 +69,15 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const fetchData = async () => {
         try {
             // Fetch user data
-            const User = await getprofileuser();
-            const userId = User.UserID;
+            
 
             // // Check the like status
-            const check = await likePost(post.id, userId);
-            if (check.message)
-                setlike(true);
+            if (user?.UserID){
+                const check = await likePost(post.id, user?.UserID);
+                if (check.message)
+                    setlike(true);
+
+            }
         } catch (error) {
             console.error('Error in useEffect:', error);
         }
@@ -74,6 +89,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
             try {
                 // Fetch user data
                 const User = await getprofileuser();
+                setUser(User);
                 const userId = User.UserID;
     
                 // // Check the like status
@@ -151,6 +167,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
             
     };
 
+
     return (
         <>
         <View style={styles.postContainer}>
@@ -186,20 +203,14 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 {/* like and delete */}
                 <View style={styles.likeDeleteContainer}>
                     
-                        {post.isOwnPost ? (
+                        {post.isOwnPost || user?.isAdmin && (
                             <View style={styles.deleteIconContainer}>
                                 <Iconoct name="kebab-horizontal"
                                 size={20} color={"#A4A3A3"}
                                 style={styles.kebabIcon}
                                 onPress={() => setModalVisible(true)}/>
                             </View>
-                            ) : (
-                            <View style={[styles.deleteIconContainer, {left: 4, bottom: 5}]}>
-                                <TouchableOpacity onPress={handleRemovePost}>
-                                    <Iconfont name="remove" size={25} color={"#adacac"} />
-                                </TouchableOpacity> 
-                            </View>
-                         )}
+                            ) }
                     {/* like */}
                     <View style={styles.likeIconContainer}>
                         <Text style={styles.likesCount}>{post.likes}</Text>

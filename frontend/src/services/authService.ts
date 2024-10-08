@@ -280,6 +280,28 @@ export const getUserdata = async (username: string) => {
     }
 }
 
+export const makeUserAdmin = async (userId: string) => {
+    try {
+      const token = await getToken();
+  
+      if (!token) throw new Error('No token found');
+  
+      const response = await instance.post(
+        '/user/changetoadmin',
+        { userId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
 export const Logout = async () => {
     try {
         await removeToken();

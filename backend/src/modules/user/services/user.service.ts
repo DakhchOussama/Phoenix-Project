@@ -77,22 +77,22 @@ export class UserService {
     });
   };
 
-  async findUserByUsername(username: string): Promise<User | null> {
+  async findUserByUsername(username: string): Promise<User[] | null> {
     const [fname, sname] = username.split(' ');
 
     if (!fname || !sname) {
         throw new Error('Invalid username format. Please provide both first name and surname.');
     }
 
-    const user = await this.prisma.user.findFirst({
+    const users = await this.prisma.user.findMany({
         where: {
             Fname: fname,
             Sname: sname,
         },
     });
 
-    return user || null;
-  }
+    return users.length > 0 ? users : null; // Return users if found, otherwise null
+}
 
   async findByPhonenumber(Phone: string): Promise<User | null>{
     return this.prisma.user.findUnique({
@@ -142,4 +142,19 @@ export class UserService {
     }
   }
 
+  async makeadmin(userId: string) {
+    try {
+      const updatedUser = await this.prisma.user.update({
+        where: {
+          UserID: userId,
+        },
+        data: {
+          isAdmin: true,
+        },
+      });
+      return updatedUser; // Return the updated user
+    } catch (error) {
+      throw new Error(`User update failed: ${error.message}`);
+    }
+  }
 }

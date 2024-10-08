@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Setting from "./Setting/Setting";
 import Contact from "./Contact/Contact";
-import { connectSocket } from "../services/socketService";
+import { getSocket } from "../services/socketService";
 import EditComponent from "../components/EditComponent";
 import TraductionComponent from "../components/TraductionComponent";
 
@@ -25,7 +25,7 @@ export default function HomePage() {
     const [badgeVisible, setBadgeVisible] = useState(false); // State to control badge visibility
 
     useEffect(() => {
-        const socket = connectSocket();
+        const socket = getSocket();
 
         if (socket) {
             // Listen for the notification event

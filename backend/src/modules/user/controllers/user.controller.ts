@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request, Res } from '@nestjs/common';
 import { UserService } from '../services/user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
@@ -56,9 +56,10 @@ export class UserController {
       try {
         // console.log('Request:', req);
         const userId = req.user?.UserID;
+
         if (!userId) {
           throw new Error('User not authenticated');
-      }
+        }
         const updatedUser = await this.userService.updateUser(user, userId);
 
         return {
@@ -78,29 +79,60 @@ export class UserController {
   @Post('getuserdata')
   @UseGuards(JwtAuthGuard)
   async getuserdata(@Body() data) {
+    if (data.username) {
+        const users = await this.userService.findUserByUsername(data.username);
 
-      if (data.username){
-          const user = await this.userService.findUserByUsername(data.username);
-
-          if (user){
-              return {
+        if (users && users.length > 0) {
+            return {
                 success: true,
-                data: user,
-              };
-          } else {
-                return {
+                data: users, // Return all found users
+            };
+        } else {
+            return {
                   success: false,
                   message: 'User not found',
               };
           }
       } else {
-            return {
+          return {
               success: false,
               message: 'Username is required',
           };
       }
-
   }
+
+
+  @Post('changetoadmin')
+  @UseGuards(JwtAuthGuard)
+  async changeUserAdmin(@Request() req, @Body() body, @Res() res) {
+    const userId = req.user?.UserID;
+
+    // Check if the authenticated user is valid
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
+
+    // Retrieve the authenticated user's data
+    const user = await this.userService.findById(userId);
+
+    // Check if the user is already an admin
+    if (!user.isAdmin) {
+      return res.status(403).json({ message: 'Only admins can change user roles' });
+    }
+
+    // Call the service method to promote the target user to admin
+    try {
+      const admin = await this.userService.makeadmin(body.userId);
+      if (admin) {
+        return res.status(200).json({ message: 'User has been successfully promoted to admin' });
+      } else {
+        return res.status(400).json({ message: 'Failed to update user' });
+      }
+    } catch (error) {
+      return res.status(500).json({ message: `Error: ${error.message}` });
+    }
+  }
+
 
     // @UseGuards(JwtAuthGuard)
     // @Get('info')

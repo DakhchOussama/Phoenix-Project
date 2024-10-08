@@ -3,7 +3,7 @@ import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensi
 import Icon from 'react-native-vector-icons/Feather';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
-import { getprofileuser, getToken, getUserdata } from "../../services/authService";
+import { getprofileuser, getToken, getUserdata, makeUserAdmin } from "../../services/authService";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Services from "../Servicespost/Services";
 import { PanGestureHandler } from 'react-native-gesture-handler';
@@ -22,7 +22,7 @@ interface User {
     Phone: string;
     Sname: string;
     UserID: string;
-    isAdmin: string;
+    isAdmin: boolean;
 }
 
 interface Category {
@@ -43,7 +43,8 @@ export default function HomeScreen(){
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
     const [search, setsearch ] = useState('');
     const flatListRef = useRef<FlatList<Category>>(null);
-    const [userlist, setUserlist ] = useState<User | null>(null);
+    const [userlist, setUserlist] = useState<User[]>([]);
+    const [dropcontainer, setDropcontainer ] = useState<boolean>(false);
 
 
     const navigation = useNavigation();
@@ -87,8 +88,6 @@ export default function HomeScreen(){
         { name: 'Information & Resources', color: '#41c1f5', image: require('../../assets/InformationResources.png'), description: 'Access vital information and resources to stay informed and make well-informed decisions.' },
     ];
 
-    
-
     if (services) {
         return (
             <PanGestureHandler onGestureEvent={handleSwipeGesture} >
@@ -113,28 +112,38 @@ export default function HomeScreen(){
     };
 
     const handlePress = async () => {
-        if (!profile?.isAdmin) {
-            const index = categories.findIndex(item => item.name.toLowerCase().includes(search.toLowerCase()));
-            if (index !== -1) {
-                flatListRef.current?.scrollToIndex({ index, animated: true });
-            }
-        } else {
-            const response = await getUserdata(search);
-
-            if (response.success){
-                setUserlist(response.data);
+        if (search){
+            if (!profile?.isAdmin) {
+                const index = categories.findIndex(item => item.name.toLowerCase().includes(search.toLowerCase()));
+                if (index !== -1) {
+                    flatListRef.current?.scrollToIndex({ index, animated: true });
+                }
             } else {
-                Toast.show({
-                    type: 'error',
-                    text1: 'User not found',
-                });
+                try {
+                    const userData = await getUserdata(search);
+                    if (userData && userData.success) {
+                        setUserlist(userData.data);
+                        setDropcontainer(true);
+                    } else {
+                        Toast.show({
+                            type: 'error',
+                            text1: 'User not found',
+                        });
+                        setDropcontainer(false);
+                    }
+                } catch (error) {
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Error fetching user data',
+                    });
+                }
             }
         }
     };
 
-
     const handlesearch = (text: string) => {
-         setsearch(text)
+        setDropcontainer(false);
+         setsearch(text);
     }
 
     const highlightText = (text: string, searchTerm: string, itemcolor: string) => {
@@ -154,8 +163,55 @@ export default function HomeScreen(){
         );
     };
 
-    const imageUri = userlist && userlist.AvatarURL ? `${BASE_URL}/posts/image/${userlist.AvatarURL}` : null;
+    const addAsAdmin = async (userId: string, isAdmin: boolean) => {
+        try {
+            if (isAdmin){
+                Toast.show({
+                    type: 'error',
+                    text1: 'User is already an admin',
+                });
+                return ;
+            }
+          const response = await makeUserAdmin(userId);
+          if (response) {
+            Toast.show({
+                type: 'success',
+                text1: 'User successfully promoted to admin',
+            });
+          }
+        } catch (error) {
+            Toast.show({
+                type: 'error',
+                text1: 'Failed to add user as admin',
+            });
+        }
+      };
+
+    const renderdropDown = ({item}: {item: User}) => {
+        const imageUri = item && item.AvatarURL ? `${BASE_URL}/posts/image/${item.AvatarURL}` : null;
     
+        return (
+            <View style={styles.dropdownItem}>
+                <View style={styles.userInfo}>
+                    {!imageUri ? (
+                        <Image source={require('../../assets/profile.png')} style={styles.avatarImage} />
+                    ) : (
+                        <Image source={{ uri: imageUri }} style={styles.avatarImage} />
+                    )}
+                    <View style={styles.userInfoText}>
+                        <Text style={styles.userName}>{item.Fname} {item.Sname}</Text>
+                        <Text style={styles.userEmail}>{item.Email}</Text>
+                    </View>
+                </View>
+                <TouchableOpacity style={styles.addAdminButton} onPress={() => addAsAdmin(item.UserID, item.isAdmin)}>
+                    <Text style={styles.addAdminButtonText}>Add</Text>
+                </TouchableOpacity>
+
+                
+                
+            </View>
+        )
+    };
 
     const content = 
         (
@@ -187,26 +243,15 @@ export default function HomeScreen(){
                             ></TextInput>
                             <Icon name="search" size={15}  style={styles.inputicon}/>
                         </View>
-                        {userlist && (
-                            <View style={{position: 'relative', maxHeight: 200, zIndex: 1000}}>
-                                <View style={{backgroundColor: '#626877', padding: 10,  borderWidth: 1, borderColor: '#575C6A', borderRadius: 15, paddingLeft: 12, width: '95%', marginLeft: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-                                    
-                                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                    {!imageUri ? (
-                                            <Image source={require('../../assets/profile2.png')} style={{width: 35, height: 35, marginRight: 5, borderRadius: 50}}/>
-                                            ): (
-                                            <Image source={{ uri: imageUri }}  style={{width: 40, height: 40, marginRight: 5, borderRadius: 50}} />
-                                        )}
-                                        <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 15, color: '#FFFFFF'}}>{userlist.Fname} {userlist.Sname}</Text>
-                                    </View>
-
-                                    <View style={{}}>
-                                        <MaterialIcons name="add-box" size={27} color={"#FFFFFF"} />
-                                    </View>
-                                    
-                                </View>
+                        {dropcontainer && (
+                            <View style={styles.dropdownContainer}>
+                                <FlatList 
+                                    data={userlist}
+                                    renderItem={renderdropDown}
+                                    keyExtractor={item => item.UserID}
+                                />
                             </View>
-                        )}
+                        ) }
                     </View>
                     </View>
                 </View>
@@ -583,5 +628,83 @@ const styles = StyleSheet.create({
     scrollView: {
         flexGrow: 1,
         justifyContent: 'center',
-      },
+    },
+    dropdownContainer: {
+        position: 'absolute',
+        top: 50,
+        width: '95%',
+        backgroundColor: '#FFFFFF',
+        borderRadius: 10,
+        padding: 5,
+        paddingLeft: 10,
+        paddingRight: 10,
+        marginHorizontal: 10,
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 2 },
+        shadowRadius: 8,
+        elevation: 5,
+        zIndex: 999,
+        borderColor: '#E0E0E0',
+        borderWidth: 1,
+        maxHeight: 200,
+        overflow: 'hidden',
+    },
+    dropdownItem: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    userInfo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    userInfoText: {
+        marginLeft: 10,
+    },
+    userName: {
+        fontFamily: 'Raleway-SemiBold',
+        fontSize: 15,
+        color: '#434752',
+    },
+    userEmail: {
+        fontFamily: 'Raleway-Regular',
+        fontSize: 12,
+        color: '#6A6B6C',
+    },
+    avatarPlaceholder: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: 10,
+    },
+    avatarImage: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginLeft: 5
+    },
+    addAdminButton: {
+        backgroundColor: '#4CAF50',
+        padding: 7,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 50,
+        height: 33,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    addAdminButtonText: {
+        fontFamily: 'Raleway-SemiBold',
+        fontSize: 13,
+        color: '#FFFFFF',
+    },
 })

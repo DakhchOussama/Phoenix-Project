@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Image, Text, View, TouchableOpacity, FlatList, StyleSheet, Dimensions } from "react-native";
-import { connectSocket } from "../../services/socketService";
+import { connectSocket, getSocket } from "../../services/socketService";
 import { BASE_URL } from "@env";
 import { fetchNotificationsData } from "../../services/notificationService";
 import Loading from "../../components/Loading";
@@ -45,7 +45,7 @@ export default function NotificationsScreen() {
 
         fetchNotifications();
 
-        const socket = connectSocket();
+        const socket = getSocket();
 
         if (socket) {
             socket.on('notification', (data: LikeSocket) => {
