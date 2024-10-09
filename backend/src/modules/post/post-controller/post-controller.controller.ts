@@ -273,7 +273,20 @@ export class PostControllerController {
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
+    
+    @Post('ban')
+    @UseGuards(JwtAuthGuard)
+    async banUser(@Body() data, @Res() res){
+        try {
+            const post = await this.PostService.findPostById(data.postId);
 
+            await this.UserService.banUser(post.userId);
+
+            return res.status(200).json(true);
+        } catch (error) {
+            return res.status(500).json(true)
+        }
+    }
 
     @Post('image')
     @UseGuards(JwtAuthGuard)
@@ -311,4 +324,6 @@ export class PostControllerController {
         
         filestream.pipe(res);
     }
+
+
 }

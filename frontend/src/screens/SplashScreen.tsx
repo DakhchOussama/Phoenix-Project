@@ -14,7 +14,8 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
                     navigation.replace(deviceid ? 'Home' : 'Firsttime');
                 } else {
                     const validtoken = await checkToken(token);
-                    connectSocket();
+                    if (validtoken)
+                        connectSocket();
                     navigation.replace(validtoken ? 'Homepage' : 'Home');
                 }
             } catch (error) {

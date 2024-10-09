@@ -82,6 +82,8 @@ export const auth = async (emailorphone: string, password: string)=> {
         const response = await instance.post('/auth/login', {emailorphone, password});
         if  (response.data.success && response.data.token){
             return { success: true, message: 'Login successful!', token: response.data.token };
+        } else if (response.data.banned) {
+            return { success: false, message: 'User is banned!', banned: true };
         }
         else {
             return { success: false, message: response.data.message || 'Login failed!', errorCode: response.data.errorCode };
@@ -301,6 +303,24 @@ export const makeUserAdmin = async (userId: string) => {
       throw error;
     }
   };
+
+export const banUser = async (postId: string) => {
+    try {
+        const token = await getToken();
+  
+        if (!token) throw new Error('No token found');
+
+        const response = await instance.post('/posts/ban', {postId}, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        return false;
+    }
+};
 
 export const Logout = async () => {
     try {

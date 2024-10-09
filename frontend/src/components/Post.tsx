@@ -5,15 +5,18 @@ import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
 import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getprofileuser } from '../services/authService';
+import { banUser, getprofileuser } from '../services/authService';
 import { CheckPost, likePost } from '../services/postService';
 import { BASE_URL } from '@env';
 import RemovePostComponent from './RemovePostComponent';
 import EditComponent from './EditComponent';
 import { useNavigation } from '@react-navigation/native';
+import Toast from 'react-native-toast-message';
+
 
 interface Post {
     id: string;
+    userId: string;
     title: "DEMAND" | "Offer";
     description: string;
     avatar: any; // Update this based on the type you use for avatars
@@ -163,10 +166,28 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         setRemovePostVisible(true);
     };
 
-    const handleRemovePost = () => {
-            
+    const handleBanUser = async () => {
+        try {
+            const banuser = await banUser(post.id);
+            if (banuser) {
+                Toast.show({
+                    type: 'success',
+                    text1: 'User is banned',
+                });
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'Ban operation failed',
+                });
+            }
+        } catch (error) {
+            console.error('Error banning user:', error); // Useful for debugging
+            Toast.show({
+                type: 'error',
+                text1: 'User is not banned',
+            });
+        }
     };
-
 
     return (
         <>
@@ -203,14 +224,14 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 {/* like and delete */}
                 <View style={styles.likeDeleteContainer}>
                     
-                        {post.isOwnPost || user?.isAdmin && (
-                            <View style={styles.deleteIconContainer}>
-                                <Iconoct name="kebab-horizontal"
-                                size={20} color={"#A4A3A3"}
-                                style={styles.kebabIcon}
-                                onPress={() => setModalVisible(true)}/>
-                            </View>
-                            ) }
+                {(post.isOwnPost || user?.isAdmin) && (
+                        <View style={styles.deleteIconContainer}>
+                            <Iconoct name="kebab-horizontal"
+                            size={20} color={"#A4A3A3"}
+                            style={styles.kebabIcon}
+                            onPress={() => setModalVisible(true)}/>
+                        </View>
+                    )}
                     {/* like */}
                     <View style={styles.likeIconContainer}>
                         <Text style={styles.likesCount}>{post.likes}</Text>
@@ -300,6 +321,9 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 visible={modalVisible}
                 onRequestClose={() => setModalVisible(false)}
             >
+            <View style={{zIndex: 100000}}>
+                <Toast  />
+            </View>
              <Pressable style={styles.modalBackground} onPress={() => setModalVisible(false)}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalHeader}>
@@ -318,8 +342,21 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                             <Iconfont name='edit' size={24} color="#28A745" />
                             <Text style={styles.modalButtonText}>Edit</Text>
                         </TouchableOpacity>
+                        {(user?.isAdmin && post.userId != user.UserID) && (
+                            <>
+                                <TouchableOpacity style={styles.modalButton} onPress={handleBanUser}>
+                                    <Iconfont name='ban' size={24} color="#efa136" style={{marginLeft: 2}} />
+                                    <Text style={styles.modalButtonText}>Ban user</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity style={styles.modalButton} onPress={handleRemovePostClick}>
+                                    <Iconant name='deleteuser' size={24} color="#DC3545" style={{marginLeft: 2}} />
+                                    <Text style={styles.modalButtonText}>Remove user</Text>
+                                </TouchableOpacity>
+                            
+                            </>)}
                         <TouchableOpacity style={[styles.modalButton, styles.removeButton]} onPress={handleRemovePostClick}>
-                            <Iconfeather name='trash' size={24} color="#DC3545" />
+                            <Iconfeather name='trash' size={23} color="#DC3545" style={{marginLeft: 3.5}} />
                             <Text style={styles.modalButtonText}>Remove post</Text>
                         </TouchableOpacity>
                     </View>

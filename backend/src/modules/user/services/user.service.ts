@@ -157,4 +157,26 @@ export class UserService {
       throw new Error(`User update failed: ${error.message}`);
     }
   }
+
+  async banUser(userId: string){
+    try {
+        const user = await this.prisma.user.update({
+          where: {
+              UserID: userId
+          },
+          data: {
+              Ban: true
+          }
+        });
+
+        return true;
+    } catch (error) {
+        return false;
+    }
+  }
+
+  // async isUserBanned(userId: string): Promise<boolean> {
+  //   const user = await this.prisma.user.findUnique({ where: { UserID: userId } });
+  //   return user?.Ban ?? false;
+  // }
 }

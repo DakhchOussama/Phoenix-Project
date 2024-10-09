@@ -27,7 +27,7 @@ model User {
   updatedAt  DateTime @updatedAt
 
   notifications       Notification[] @relation("UserNotifications")
-  friendNotifications Notification[] @relation("FriendNotifications") // Add this line for friend notifications
+  friendNotifications Notification[] @relation("FriendNotifications")
   friendsAsUser       Friends[]      @relation("UserFriends")
   friendsAsFriend     Friends[]      @relation("FriendFriends")
   posts               Post[]

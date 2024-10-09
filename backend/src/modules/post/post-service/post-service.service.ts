@@ -31,6 +31,7 @@ export class PostServiceService {
 
         const formattedPosts = posts.map(post => ({
             PostID: post.PostID,
+            userId: post.userId,
             ImgURL: post.ImgURL,
             Title: post.Title,
             Categories: post.Categories,
@@ -308,5 +309,4 @@ export class PostServiceService {
             return false;
         }
     }
-    
 }

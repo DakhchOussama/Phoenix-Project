@@ -1,7 +1,6 @@
 import { BASE_URL } from '@env';
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, TouchableOpacity, Text, StyleSheet, Image, Animated, Easing } from 'react-native';
-import Iconfont from 'react-native-vector-icons/FontAwesome';
 import { uploadTraduction } from '../services/postService';
 import Toast from 'react-native-toast-message';
 import Loading from './Loading';

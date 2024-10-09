@@ -14,6 +14,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 interface PostFromApi {
   PostID: string;
+  userId: string;
   ImgURL?: string;
   Title: string;
   Categories: string;
@@ -22,7 +23,6 @@ interface PostFromApi {
   Likes: number;
   createdAt: string;
   updatedAt: string;
-  userId: string;
   fname: string;
   sname: string;
   avatar: string;
@@ -33,6 +33,7 @@ interface PostFromApi {
 
 interface MappedPost {
   id: string;
+  userId: string;
   title: "DEMAND" | "Offer";
   description: string;
   avatar: any;
@@ -69,6 +70,7 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
       const fetchedPosts: PostFromApi[] = await getPosts();
       const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
         id: post.PostID,
+        userId: post.userId,
         title: post.Type,
         description: post.Title,
         avatar: post.avatar,

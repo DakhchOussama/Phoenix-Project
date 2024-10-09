@@ -24,7 +24,19 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
                 if (login.success){
                         await storeToken(login.token, isSelected);
                         navigation.replace('Homepage');
-                } else {
+                } else if (login.banned) {
+                    setIsLoading(false);
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Account Banned!',
+                        text2: 'Your account has been banned. Please contact support.',
+                        position: 'top',
+                        visibilityTime: 4000,
+                        autoHide: true,
+                        bottomOffset: 50,
+                    });
+                }
+                else {
                     setIsLoading(false);
                     Toast.show({
                         type: 'error',

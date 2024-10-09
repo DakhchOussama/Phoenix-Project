@@ -10,8 +10,12 @@ export class AuthController {
     @Post('login')
     async login(@Body() loginDto: loginDto){
         const user = await this.authService.validateUser(loginDto.emailorphone, loginDto.password);
-        if (user)
+        if (user){
+            if (user.Ban) {
+                return { success: false, message: 'User is banned!', banned: true };
+            }
             return {success: true, message: 'login done', token: await this.authService.login(user)}
+        }
         return { message: 'Invalid credentials'};
     }
 
