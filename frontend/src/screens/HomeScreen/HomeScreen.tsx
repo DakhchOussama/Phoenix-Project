@@ -1,16 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image, StyleSheet, Text, View, TextInput, ScrollView, FlatList, Dimensions, PanResponder } from "react-native";
+import { Image, StyleSheet, Text, View, TextInput, ScrollView, Dimensions, PanResponder } from "react-native";
 import Icon from 'react-native-vector-icons/Feather';
 import Foundation from 'react-native-vector-icons/Foundation';
 import MaterialIcons  from 'react-native-vector-icons/MaterialIcons';
-import { getprofileuser, getToken, getUserdata, makeUserAdmin } from "../../services/authService";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {  getUserdata, makeUserAdmin } from "../../services/authService";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import Services from "../Servicespost/Services";
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import LeftBar from "../../components/LeftBar";
 import { useNavigation } from '@react-navigation/native';
 import Toast from "react-native-toast-message";
 import { BASE_URL } from "@env";
+import { getPostsadmin } from "../../services/postService";
+import { useUserProfile } from "../../store/UserProfileProvider";
 
 
 interface User {
@@ -32,12 +34,17 @@ interface Category {
     description: string;
 }
 
+interface PostData {
+    PostID: string;
+    Title: string;
+    createdAt: string;
+}
+
 export default function HomeScreen(){
 
     const { height } = Dimensions.get('window');
     const isSmallPhone = height < 600;
     const headerHeight = isSmallPhone ? height * 0.4 : height * 0.3;
-    const [profile, setProfile] = useState<User | null>(null);
     const [services, setServices] = useState<boolean>(false);
     const [leftbar, setLeftbar] = useState<boolean>(false);
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -45,23 +52,27 @@ export default function HomeScreen(){
     const flatListRef = useRef<FlatList<Category>>(null);
     const [userlist, setUserlist] = useState<User[]>([]);
     const [dropcontainer, setDropcontainer ] = useState<boolean>(false);
+    const [servicesdata, setServicesdata] = useState<PostData[]>([]);
+    const { profile } = useUserProfile();
 
 
     const navigation = useNavigation();
 
 
-   useEffect(() => {
-        const getprofile = async () => {
-            const data = await getprofileuser();
-            if (data)
-                setProfile(data);
-            else{
-                console.log('error');
-            }
-        }
+ 
 
-        getprofile();
-    }, []);
+    const fetchPosts = async () => {
+        try {
+            const response = await getPostsadmin();
+            if (response) {
+                setServicesdata(response);
+            }
+        } catch (error) {
+            console.error('Error fetching posts:', error);
+        }
+    };
+
+    fetchPosts();
 
     const handleSwipeGesture = (event: any) => {
         if (event.nativeEvent.translationX < 10) {
@@ -213,6 +224,31 @@ export default function HomeScreen(){
         )
     };
 
+    const renderService = ({ item }: {item: PostData}) => {
+
+        return (
+            <View style={styles.servicecontainer}>
+                <View style={styles.serviceslist}>
+                    <View style={styles.service}>
+                        <View style={styles.clientimg}>
+                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
+                        </View>
+                        <View style={styles.serviceuser}>
+                            <Text style={styles.username2}>Admin</Text>
+                            <Text style={styles.serviceText}>{item.Title}</Text>
+                        </View>
+                    </View>
+                    <View style={styles.servicetime}>
+                        <Text style={styles.timeText}>
+                            {`${new Date(item.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}`}
+                        </Text>
+                        <Foundation name="burst-new" size={25} color="#ED6D52" style={{marginLeft: 10}}/>
+                    </View>
+                </View>
+            </View>
+        )
+    }
+
     const content = 
         (
                 <View style={styles.homecontainer} >
@@ -301,89 +337,13 @@ export default function HomeScreen(){
                         <Text style={[styles.categorieword, {fontSize: 16, marginLeft: 7}]}>Discover New Services</Text>
                     </View>
 
-                    <ScrollView showsVerticalScrollIndicator={false} horizontal={false}>
-                        <View style={styles.newservices}>
-                            <View style={styles.servicecontainer}>
-                                <View style={styles.serviceslist}>
-                                    <View style={styles.service}>
-                                        <View style={styles.clientimg}>
-                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
-                                        </View>
-                                        <View style={styles.serviceuser}>
-                                            <Text style={styles.username2}>Admin</Text>
-                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.servicetime}>
-                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                        <Text style={styles.timeText}>21:00</Text>
-                                    </View>
-                                </View>
-                            </View>
-
-                            {/* 2 */}
-
-                            <View style={styles.servicecontainer}>
-                                <View style={styles.serviceslist}>
-                                    <View style={styles.service}>
-                                        <View style={styles.clientimg}>
-                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
-                                        </View>
-                                        <View style={styles.serviceuser}>
-                                            <Text style={styles.username2}>Admin</Text>
-                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.servicetime}>
-                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                        <Text style={styles.timeText}>21:00</Text>
-                                    </View>
-                                </View>
-                            </View>
-
-                            {/* 3 */}
-
-                            <View style={styles.servicecontainer}>
-                                <View style={styles.serviceslist}>
-                                    <View style={styles.service}>
-                                        <View style={styles.clientimg}>
-                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
-                                        </View>
-                                        <View style={styles.serviceuser}>
-                                            <Text style={styles.username2}>Admin</Text>
-                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.servicetime}>
-                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                        <Text style={styles.timeText}>21:00</Text>
-                                    </View>
-                                </View>
-                            </View>
-
-
-                            {/* 4 */}
-
-                            <View style={styles.servicecontainer}>
-                                <View style={styles.serviceslist}>
-                                    <View style={styles.service}>
-                                        <View style={styles.clientimg}>
-                                            <Image style={styles.clientImage} source={require('../../assets/bot.png')} resizeMode="cover" />
-                                        </View>
-                                        <View style={styles.serviceuser}>
-                                            <Text style={styles.username2}>Admin</Text>
-                                            <Text style={styles.serviceText}>Stay connected and informed! Check out the latest updates and ...</Text>
-                                        </View>
-                                    </View>
-                                    <View style={styles.servicetime}>
-                                        <Foundation name="burst-new" size={23} color="#ED6D52"/>
-                                        <Text style={styles.timeText}>21:00</Text>
-                                    </View>
-                                </View>
-                            </View>
-                        </View>
-                    </ScrollView>
-
+                    <View style={{padding: 10, flex: 1}}>
+                        <FlatList 
+                            data={servicesdata}
+                            renderItem={renderService}
+                            keyExtractor={(item) => item.PostID}
+                        />
+                    </View>
                 </View>
                 <Toast />
             </View>
@@ -617,13 +577,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         // backgroundColor: 'blue',
         justifyContent: 'space-between',
-        marginLeft: 5
     },
     timeText: {
         fontFamily: 'Raleway-Regular',
-        fontSize: 12,
+        fontSize: 13,
         color: '#6A6B6C',
-        marginLeft: 5,
     },
     scrollView: {
         flexGrow: 1,

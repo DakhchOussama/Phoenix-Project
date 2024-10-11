@@ -1,82 +1,86 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import CategoryItem from "../../components/Categories";
-import PostItem from "../../components/Post";
-import Iconfont from 'react-native-vector-icons/FontAwesome';
-import Iconant from 'react-native-vector-icons/AntDesign';
-import Iconoct from 'react-native-vector-icons/Octicons';
-import Iconfeather from 'react-native-vector-icons/Feather';
-import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-
-export default function ShopScreen(){
-
-    const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+import { getCollaboPosts } from "../../services/postService";
+import { BASE_URL } from "@env";
+import Loading from "../../components/Loading";
 
 
-    const posts = [
-        {
-            id: 1,
-            description: 'Exciting News! We’ve just formed a new partnership with [Partner Name], opening doors for innovative collaborations and opportunities.',
-            time: "2h",
-            likes: 10
-        },
-        {
-            id: 2,
-            description: 'Looking for a tutor to help me prepare for my upcoming exams. Need someone with experience in math and science.',
-            time: "2h",
-            likes: 20
-        },
-        {
-            id: 3,
-            description: 'Looking for a tutor to help me prepare for my upcoming exams. Need someone with experience in math and science.',
-            time: "2h",
-            likes: 120
-        }
-    ];
+export default function ShopScreen() {
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-    const handlePress = (index: number) => {
-        setSelectedCategory(selectedCategory === index ? null : index);
-    };
+  const getPostAdmin = async () => {
+    try {
+        setLoading(true);
+        const data = await getCollaboPosts();
+        setPosts(data);
+        setLoading(false);
+    } catch (error) {
+        console.error("Error fetching posts:", error);
+    }
+};
 
-    return (
-        <View style={{flex: 1, backgroundColor: 'white'}}>
-            <CategoryItem selectedCategory={selectedCategory} handlePress={handlePress} />
-            <View style={{flex: 2}}>
-                <ScrollView horizontal={false} style={{ marginTop: 10 }}>
-                <View style={{ margin: 21, marginTop: 20 }}>
-                    {posts.map((post) => (
-                        <View key={post.id}>
-                            <View style={styles.postContainer}>
-                                {/* name & like */}
-                                <View style={styles.nameLikeContainer}>
-                                    {/* name and img */}
-                                    <View style={styles.nameImgContainer}>
-                                        <View style={styles.avatarContainer}>
-                                            <Image source={require('../../assets/bot.png')} style={styles.avatar} />
-                                        </View>
-                                        <View style={styles.nameTextContainer}>
-                                            {/* name and min */}
-                                            <View>
-                                                <Text style={styles.username}>Admin
-                                                    <Text style={styles.time}>.{post.time}</Text>
-                                                </Text>
-                                            </View>
-                                            <Text style={styles.title}>Collaborations & Partnerships</Text>
-                                        </View>
-                                    </View>
-                                </View>
-                                {/* message */}
-                                <View style={styles.messageContainer}>
-                                    <Text style={styles.description}>{post.description}</Text>
-                                </View>
-                            </View>
+useEffect(() => {
+    getPostAdmin(); // Fetch posts on component mount
+}, []);
+
+  const handlePress = (index: number) => {
+    setSelectedCategory(selectedCategory === index ? null : index);
+  };
+
+  if (loading)
+    return <Loading />
+
+  return (
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <CategoryItem selectedCategory={selectedCategory} handlePress={handlePress} />
+      <View style={{ flex: 2 }}>
+        <ScrollView horizontal={false} style={{ marginTop: 10 }}>
+          <View style={{ margin: 21, marginTop: 20 }}>
+            {posts.map((post) => (
+              <View key={post.PostID}>
+                <View style={styles.postContainer}>
+                  {/* name & like */}
+                  <View style={styles.nameLikeContainer}>
+                    {/* name and img */}
+                    <View style={styles.nameImgContainer}>
+                      <View style={styles.avatarContainer}>
+                        <Image source={require('../../assets/bot.png')} style={styles.avatar} />
+                      </View>
+                      <View style={styles.nameTextContainer}>
+                        {/* name and min */}
+                        <View>
+                          <Text style={styles.username}>Admin
+                            <Text style={styles.time}> .{`${new Date(post.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}`}</Text>
+                          </Text>
                         </View>
-            ))}
+                        <Text style={styles.title}>Collaborations & Partnerships</Text>
+                      </View>
+                    </View>
+                  </View>
+                  {/* message */}
+                  <View style={styles.messageContainer}>
+                    <Text style={styles.description}>{post.Title}</Text>
+                  </View>
+
+                  {post.ImgURL !== null && post.ImgURL !== undefined && (
+                    <View style={styles.imageContainer}>
+                        <Image
+                            style={styles.postImage}
+                            source={{ uri: `${BASE_URL}/posts/image/${post.ImgURL}` }} // Corrected here
+                        />
+                    </View>
+                )}
                 </View>
-            </ScrollView>
-            </View>
-        </View>
-    )
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -188,16 +192,17 @@ const styles = StyleSheet.create({
     username: {
         fontFamily: 'Raleway-SemiBold',
         color: '#1E1E1E',
+        fontSize: 16
     },
     time: {
         fontFamily: 'Sora-SemiBold',
         color: '#8C8B8B',
-        fontSize: 12,
+        fontSize: 14,
     },
     title: {
         fontFamily: 'Rubik-Medium',
         color: '#DD644A',
-        fontSize: 13
+        fontSize: 14
     },
     likeDeleteContainer: {
         flexDirection: 'column',
@@ -231,7 +236,7 @@ const styles = StyleSheet.create({
     description: {
         color: "#3C404B",
         fontFamily: 'Urbanist-Bold',
-        fontSize: 16,
+        fontSize: 17,
     },
     imageContainer: {
         marginTop: 10,

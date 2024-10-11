@@ -2,11 +2,14 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { CronService } from 'src/cron/cron.service';
 
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
   
   async checkUser(email: string, phonenumber: string){
@@ -165,7 +168,8 @@ export class UserService {
               UserID: userId
           },
           data: {
-              Ban: true
+              Ban: true,
+              BanDate: new Date(),
           }
         });
 
@@ -174,6 +178,37 @@ export class UserService {
         return false;
     }
   }
+
+  async checkBanStatus(userId: string) {
+    try {
+
+        const user = await this.prisma.user.findUnique({
+            where: { UserID: userId },
+            select: { Ban: true, BanDate: true },
+        });
+
+        if (user && user.Ban && user.BanDate) {
+          const banEndDate = new Date(user.BanDate);
+          banEndDate.setMinutes(banEndDate.getDate() + 15);
+
+            const currentDate = new Date();
+
+            if (currentDate >= banEndDate) {
+                await this.prisma.user.update({
+                    where: { UserID: userId },
+                    data: { Ban: false, BanDate: null },
+                });
+                return { success: true, message: 'User unbanned after 15 days.' };
+            }
+        }
+
+        return { success: false, message: 'User is not banned or 15 days have not passed yet.' };
+    } catch (error) {
+        return { success: false, message: 'An error occurred while checking ban status.' };
+    }
+}
+
+
 
   // async isUserBanned(userId: string): Promise<boolean> {
   //   const user = await this.prisma.user.findUnique({ where: { UserID: userId } });

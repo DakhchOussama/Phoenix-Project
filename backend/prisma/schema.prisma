@@ -21,6 +21,7 @@ model User {
   Department String
   Password   String
   AvatarURL  String?
+  BanDate    DateTime?
   Ban        Boolean? @default(false)
   isAdmin    Boolean? @default(false)
   createdAt  DateTime @default(now())

@@ -3,8 +3,9 @@ import { GestureResponderEvent, Image, StyleSheet, Text, TouchableOpacity, View 
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Feather';
 import IconAnt from 'react-native-vector-icons/AntDesign';
-import { getprofileuser, Logout } from "../services/authService";
 import { BASE_URL } from "@env";
+import { UserProfileProvider, useUserProfile } from "../store/UserProfileProvider";
+import { Logout } from "../services/authService";
 
 // Update the interface to include navigation
 interface LeftBarProps {
@@ -12,20 +13,9 @@ interface LeftBarProps {
     navigation: any;
 }
 
-interface User {
-    AvatarURL: string;
-    Ban: boolean;
-    Department: string;
-    Email: string;
-    Fname: string;
-    Phone: string;
-    Sname: string;
-    UserID: string;
-}
-
 const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
     const [selectedItem, setSelectedItem] = useState<string | null>(null);
-    const [user, setUser] = useState<User | null>(null);
+    const { profile }= useUserProfile();
 
     const menuItems = [
         { id: 'home', title: 'Home', icon: "home" },
@@ -34,16 +24,6 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
         { id: 'setting', title: 'Setting', icon: "settings" },
         { id: 'contact', title: 'Contact us', icon: "contacts" }
     ];
-
-    useEffect(() => {
-        const getprofile = async () => {
-            const data = await getprofileuser();
-            if (data) setUser(data);
-            else console.log('error');
-        }
-
-        getprofile();
-    }, []);
 
     const handleMenuItemPress = (itemId: string) => {
         setSelectedItem(itemId);
@@ -81,73 +61,74 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
     }
     };
 
-    const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
+    const imageUri = profile && profile.AvatarURL ? `${BASE_URL}/posts/image/${profile.AvatarURL}` : null;
 
 
     return (
-        <View style={styles.sidebar}>
-            <View style={styles.profileSection}>
-                <View style={styles.arrowContainer}>
-                    <MaterialIcons name="arrow-back-ios" size={27} color="#ffffff" onPress={onPress} />
-                </View>
+            <View style={styles.sidebar}>
+                    <View style={styles.profileSection}>
+                        <View style={styles.arrowContainer}>
+                            <MaterialIcons name="arrow-back-ios" size={27} color="#ffffff" onPress={onPress} />
+                        </View>
 
-                <View style={styles.profileInfo}>
-                    <View style={styles.imageContainer}>
-                        {/* <Image
-                            source={require('../assets/profile2.png')}
-                            style={styles.profileImage}
-                        /> */}
-                         {!imageUri ? (
-                            <Image source={require('../assets/profile2.png')} style={styles.profileImage}/>
-                            ): (
-                            <Image source={{ uri: imageUri }}  style={styles.profileImage} />
-                        )}
-                    </View>
-
-                    <View style={styles.profileTextContainer}>
-                        <Text style={styles.profileName}>{user?.Fname} {user?.Sname}</Text>
-                        <Text style={styles.profileEmail}>{user?.Email}</Text>
-                    </View>
-                </View>
-
-                <View style={styles.separator} />
-            </View>
-
-            <View style={styles.menuSection}>
-                {menuItems.map((item) => (
-                    <View
-                        style={[
-                            styles.menuItem,
-                            selectedItem === item.id && styles.selectedMenuItem
-                        ]}
-                        key={item.id}
-                    >
-                        <TouchableOpacity
-                            style={{ flex: 1 }}
-                            onPress={() => handleMenuItemPress(item.id)}
-                        >
-                            <View style={styles.menuItemContent}>
-                                <View style={{ justifyContent: 'flex-start' }}>
-                                    <Text style={styles.menuText}>{item.title}</Text>
-                                </View>
-                                {item.icon === "contacts" ? (
-                                    <IconAnt name={item.icon} size={27} color="#FFFFFF" />
-                                ) : (
-                                    <Icon name={item.icon} size={27} color="#FFFFFF" />
+                        <View style={styles.profileInfo}>
+                            <View style={styles.imageContainer}>
+                                {/* <Image
+                                    source={require('../assets/profile2.png')}
+                                    style={styles.profileImage}
+                                /> */}
+                                {!imageUri ? (
+                                    <Image source={require('../assets/profile2.png')} style={styles.profileImage}/>
+                                    ): (
+                                    <Image source={{ uri: imageUri }}  style={styles.profileImage} />
                                 )}
                             </View>
-                        </TouchableOpacity>
-                    </View>
-                ))}
-            </View>
 
-            <View style={styles.logoutSection}>
-                    <TouchableOpacity style={styles.logoutContent} onPress={handleLogout}>
-                        <Text style={styles.logoutText}>Log Out</Text>
-                        <MaterialIcons name="logout" size={27} color="#FFFFFF" />
-                    </TouchableOpacity>
-            </View>
-        </View>
+                            <View style={styles.profileTextContainer}>
+                                <Text style={styles.profileName}>{profile?.Fname} {profile?.Sname}</Text>
+                                <Text style={styles.profileEmail}>{profile?.Email}</Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.separator} />
+                    </View>
+
+                    <View style={styles.menuSection}>
+                        {menuItems.map((item) => (
+                            <View
+                                style={[
+                                    styles.menuItem,
+                                    selectedItem === item.id && styles.selectedMenuItem
+                                ]}
+                                key={item.id}
+                            >
+                                <TouchableOpacity
+                                    style={{ flex: 1 }}
+                                    onPress={() => handleMenuItemPress(item.id)}
+                                >
+                                    <View style={styles.menuItemContent}>
+                                        <View style={{ justifyContent: 'flex-start' }}>
+                                            <Text style={styles.menuText}>{item.title}</Text>
+                                        </View>
+                                        {item.icon === "contacts" ? (
+                                            <IconAnt name={item.icon} size={27} color="#FFFFFF" />
+                                        ) : (
+                                            <Icon name={item.icon} size={27} color="#FFFFFF" />
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        ))}
+                    </View>
+
+                    <View style={styles.logoutSection}>
+                            <TouchableOpacity style={styles.logoutContent} onPress={handleLogout}>
+                                <Text style={styles.logoutText}>Log Out</Text>
+                                <MaterialIcons name="logout" size={27} color="#FFFFFF" />
+                            </TouchableOpacity>
+                    </View>
+                </View>
+        
     );
 };
 

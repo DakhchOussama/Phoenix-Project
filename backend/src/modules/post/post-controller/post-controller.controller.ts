@@ -28,11 +28,23 @@ export class PostControllerController {
         try {
             const currentUserId = req.user.UserID;
             const posts = await this.PostService.getPost(currentUserId);
-
+            
             return res.status(200).json(posts);
         } catch (error) {
             console.log('error:', error);
             return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+    
+    @Get('getadminposts')
+    @UseGuards(JwtAuthGuard)
+    async getAdminPosts() {
+        try {
+            const posts = await this.PostService.getCollaboPosts();
+            return posts; // Ensure you return the posts to the client
+        } catch (error) {
+            console.error("Error fetching admin posts:", error);
+            throw new Error('Failed to get admin posts');
         }
     }
 
@@ -186,7 +198,18 @@ export class PostControllerController {
             throw new Error('Error creating post');
         }
     }
-    
+
+    @Get('postsadmin')
+    @UseGuards(JwtAuthGuard)
+    async getPostsadmin(){
+        try {
+            const data = await this.PostService.getPostsAdmin();
+            return { success: true, data }; 
+        } catch (error) {
+            return { success: false, message: 'Failed to fetch admin posts' };
+        }
+    }
+
     @Get(':postId/like')
     @UseGuards(JwtAuthGuard)
     async likePost(

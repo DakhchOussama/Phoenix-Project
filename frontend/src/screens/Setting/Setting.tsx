@@ -2,27 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon from 'react-native-vector-icons/Entypo';
-import { getprofileuser, updateUserProfile } from "../../services/authService";
+import {  updateUserProfile } from "../../services/authService";
 import { launchImageLibrary } from "react-native-image-picker";
 import Toast from "react-native-toast-message";
 import Loading from "../../components/Loading";
 import { uploadImage } from "../../services/postService";
 import { useNavigation } from "@react-navigation/native";
 import { BASE_URL } from "@env";
+import { useUserProfile } from "../../store/UserProfileProvider";
 
-interface User {
-    AvatarURL: string;
-    Ban: boolean;
-    Department: string;
-    Email: string;
-    Fname: string;
-    Phone: string;
-    Sname: string;
-    UserID: string;
-}
 
 export default function Setting() {
-    const [user, setUser] = useState<User | null>(null);
     const [imgUri, setimage] = useState<string | null>(null);
     const [fname, setfname] = useState('');
     const [sname, setsname] = useState('');
@@ -31,18 +21,11 @@ export default function Setting() {
     const [department, setdepartment] = useState('');
     const [password, setpassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const { profile } = useUserProfile();
 
     const navigation = useNavigation();
 
-    useEffect(() => {
-        const getprofile = async () => {
-            const data = await getprofileuser();
-            if (data) setUser(data);
-            else console.log('error');
-        }
 
-        getprofile();
-    }, []);
 
     const openImagePicker = () => {
         launchImageLibrary({mediaType: 'photo', quality: 1}, response => {
@@ -65,7 +48,7 @@ export default function Setting() {
 
     const handlePressSetting = async () => {
         if (email || fname || sname || phonenumber || department || imgUri){
-            if (email == user?.Email && fname == user?.Fname && sname == user?.Sname && phonenumber == user?.Phone && department == user?.Department && imgUri == null){
+            if (email == profile?.Email && fname == profile?.Fname && sname == profile?.Sname && phonenumber == profile?.Phone && department == profile?.Department && imgUri == null){
                     Toast.show({
                         type: 'error',
                         text1: "Change something",
@@ -105,12 +88,12 @@ export default function Setting() {
                 }
                 
                 const updatedUserData = {
-                    email: email || user?.Email,
-                    fname: fname || user?.Fname,
-                    sname: sname || user?.Sname,
-                    phonenumber: phonenumber || user?.Phone,
-                    department: department || user?.Department,
-                    imageUri: imageUri || user?.AvatarURL,
+                    email: email || profile?.Email,
+                    fname: fname || profile?.Fname,
+                    sname: sname || profile?.Sname,
+                    phonenumber: phonenumber || profile?.Phone,
+                    department: department || profile?.Department,
+                    imageUri: imageUri || profile?.AvatarURL,
                     password: password || undefined,
                 };
                 
@@ -152,7 +135,7 @@ export default function Setting() {
     if (isLoading)
         return <Loading />
 
-    const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
+    const imageUri = profile && profile.AvatarURL ? `${BASE_URL}/posts/image/${profile.AvatarURL}` : null;
     
     return (
         <>
@@ -195,7 +178,7 @@ export default function Setting() {
                                 </View>
                             </TouchableOpacity>
                             <View style={styles.profileNameContainer}>
-                                <Text style={styles.profileName}>{user?.Fname} {user?.Sname}</Text>
+                                <Text style={styles.profileName}>{profile?.Fname} {profile?.Sname}</Text>
                             </View>
                         </View>
                     </View>
@@ -207,7 +190,7 @@ export default function Setting() {
                             <Text style={styles.inputLabel}>Email address</Text>
                             <TextInput
                                 placeholderTextColor='#4E5970'
-                                placeholder={user?.Email ? user.Email : 'Enter your email'}
+                                placeholder={profile?.Email ? profile.Email : 'Enter your email'}
                                 style={styles.textInput}
                                 onChangeText={(text) => setemail(text)}
                                 />
@@ -221,14 +204,14 @@ export default function Setting() {
                                 <View style={styles.firstNameInput}>
                                     <TextInput
                                         placeholderTextColor={'#4E5970'}
-                                        placeholder={user?.Fname ? user.Fname : 'Enter your first name'}
+                                        placeholder={profile?.Fname ? profile.Fname : 'Enter your first name'}
                                         onChangeText={(text) => setfname(text)}
                                         />
                                 </View>
                                 <View style={styles.lastNameInput}>
                                     <TextInput
                                         placeholderTextColor={'#4E5970'}
-                                        placeholder={user?.Sname ? user.Sname : 'Enter your second name'}
+                                        placeholder={profile?.Sname ? profile.Sname : 'Enter your second name'}
                                         onChangeText={(text) => setsname(text)}
                                         />
                                 </View>
@@ -241,7 +224,7 @@ export default function Setting() {
                             <Text style={styles.inputLabel}>Phone number</Text>
                             <TextInput
                                 placeholderTextColor={'#4E5970'}
-                                placeholder={user?.Phone ? user.Phone : 'Enter your phone number'}
+                                placeholder={profile?.Phone ? profile.Phone : 'Enter your phone number'}
                                 style={styles.textInput}
                                 onChangeText={(text) => setphonenumber(text)}
                                 />
@@ -266,7 +249,7 @@ export default function Setting() {
                             <Text style={styles.inputLabel}>Department</Text>
                             <TextInput
                                 placeholderTextColor={'#4E5970'}
-                                placeholder={user?.Department ? user.Department : 'Enter your department'}
+                                placeholder={profile?.Department ? profile.Department : 'Enter your department'}
                                 style={styles.textInput}
                                 onChangeText={(text) => setdepartment(text)}
                                 />

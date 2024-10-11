@@ -196,6 +196,9 @@ export const editDescription = async (title: string, postId: string) => {
     try {
         const token = await getToken();
 
+        if (!token)
+            throw new Error('No token found');
+
         await instance.patch('/posts/edit', { title, postId }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -214,6 +217,9 @@ export const uploadTraduction = async (title: string, postId: string) => {
     try {
         const token = await getToken();
 
+        if (!token)
+            throw new Error('No token found');
+
         await instance.post('/posts/Traduction', { title, postId }, {
             headers: {
                 'Content-Type': 'application/json',
@@ -227,3 +233,43 @@ export const uploadTraduction = async (title: string, postId: string) => {
         return false;
     }
 };
+
+export const getPostsadmin = async () => {
+    try {
+        const token = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+        const response = await instance.get('/posts/postsadmin', {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        const data = response.data.data;
+        return data;
+    } catch (error) {
+        return null;
+    }
+}
+
+export const getCollaboPosts = async () => {
+    try {
+        const token  = await getToken();
+
+        if (!token)
+            throw new Error('No token found');
+        const response = await instance.get('/posts/getadminposts', {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = response.data;
+        
+        return data;
+    } catch (error) {
+        
+    }
+}

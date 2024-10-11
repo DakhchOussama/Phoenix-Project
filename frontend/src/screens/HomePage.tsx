@@ -13,6 +13,7 @@ import Contact from "./Contact/Contact";
 import { getSocket } from "../services/socketService";
 import EditComponent from "../components/EditComponent";
 import TraductionComponent from "../components/TraductionComponent";
+import { UserProfileProvider } from "../store/UserProfileProvider";
 
 // Define a type for the route names
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
@@ -54,59 +55,62 @@ export default function HomePage() {
     }
 
     return (
-        <Tab.Navigator
-            screenOptions={({ route }) => ({
-                tabBarIcon: ({ color }) => {
-                    const routeName = route.name as TabRouteNames;
+        <UserProfileProvider>
+            <Tab.Navigator
+                screenOptions={({ route }) => ({
+                    tabBarIcon: ({ color }) => {
+                        const routeName = route.name as TabRouteNames;
 
-                    if (routeName === 'Newpost') {
-                        return <MaterialIcon name="add-box" size={60} color="#E1674C" style={{ width: 60 }} />;
-                    }
+                        if (routeName === 'Newpost') {
+                            return <MaterialIcon name="add-box" size={60} color="#E1674C" style={{ width: 60 }} />;
+                        }
 
-                    if (routeName === 'NotificationsScreen') {
-                        return (
-                            <View>
-                                <Icon name={icons[routeName]} size={27} color={color} />
-                                {badgeVisible && (
-                                    <View style={styles.badge} />
-                                )}
-                            </View>
-                        );
-                    }
+                        if (routeName === 'NotificationsScreen') {
+                            return (
+                                <View>
+                                    <Icon name={icons[routeName]} size={27} color={color} />
+                                    {badgeVisible && (
+                                        <View style={styles.badge} />
+                                    )}
+                                </View>
+                            );
+                        }
 
-                    return icons[routeName] ? <Icon name={icons[routeName]} size={27} color={color} /> : null;
-                },
-                tabBarActiveTintColor: '#DD644A',
-                tabBarInactiveTintColor: '#646F7A',
-                tabBarLabel: '',
-                tabBarStyle: {
-                    height: 85,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderTopWidth: 1,
-                    borderColor: '#E9E9E9'
-                },
-            })}
-        >
-            <Tab.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-            <Tab.Screen name="ShopScreen" component={ShopScreen} options={{ headerShown: false }} />
-            <Tab.Screen name="Newpost" component={Newpost} options={{ headerShown: false }} />
-            <Tab.Screen
-                name="NotificationsScreen"
-                component={NotificationsScreen}
-                options={{
-                    headerShown: false,
-                }}
-                listeners={{
-                    tabPress: handleNotificationPress,
-                }}
-            />
-            <Tab.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
-            <Tab.Screen name="SettingsScreen" component={Setting} options={{ tabBarButton: () => null, headerShown: false }} />
-            <Tab.Screen name="ContactScreen" component={Contact} options={{ tabBarButton: () => null, headerShown: false }} />
-            <Tab.Screen name="Edit" component={EditComponent} options={{ tabBarButton: () => null, headerShown: false }} />
-            <Tab.Screen name="Traduction" component={TraductionComponent} options={{ tabBarButton: () => null, headerShown: false }} />
-        </Tab.Navigator>
+                        return icons[routeName] ? <Icon name={icons[routeName]} size={27} color={color} /> : null;
+                    },
+                    tabBarActiveTintColor: '#DD644A',
+                    tabBarInactiveTintColor: '#646F7A',
+                    tabBarLabel: '',
+                    tabBarStyle: {
+                        height: 85,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderTopWidth: 1,
+                        borderColor: '#E9E9E9'
+                    },
+                })}
+            >
+                <Tab.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+                <Tab.Screen name="ShopScreen" component={ShopScreen} options={{ headerShown: false }} />
+                <Tab.Screen name="Newpost" component={Newpost} options={{ headerShown: false }} />
+                <Tab.Screen
+                    name="NotificationsScreen"
+                    component={NotificationsScreen}
+                    options={{
+                        headerShown: false,
+                    }}
+                    listeners={{
+                        tabPress: handleNotificationPress,
+                    }}
+                />
+                <Tab.Screen name="ProfileScreen" component={ProfileScreen} options={{ headerShown: false }} />
+                <Tab.Screen name="SettingsScreen" component={Setting} options={{ tabBarButton: () => null, headerShown: false }} />
+                <Tab.Screen name="ContactScreen" component={Contact} options={{ tabBarButton: () => null, headerShown: false }} />
+                <Tab.Screen name="Edit" component={EditComponent} options={{ tabBarButton: () => null, headerShown: false }} />
+                <Tab.Screen name="Traduction" component={TraductionComponent} options={{ tabBarButton: () => null, headerShown: false }} />
+            </Tab.Navigator>
+
+        </UserProfileProvider>
     );
 };
 

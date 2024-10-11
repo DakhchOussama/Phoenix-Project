@@ -7,8 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import LeftBar from "../components/LeftBar";
 import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { getprofileuser, getservicedata } from "../services/authService";
+import { getservicedata } from "../services/authService";
 import { BASE_URL } from "@env";
+import { useUserProfile } from "../store/UserProfileProvider";
 
 type RootStackParamList = {
   HomeScreen: undefined;
@@ -20,17 +21,6 @@ type RootStackParamList = {
   ContactScreen: undefined;
 };
 
-interface User {
-    AvatarURL: string;
-    Ban: boolean;
-    Department: string;
-    Email: string;
-    Fname: string;
-    Phone: string;
-    Sname: string;
-    UserID: string;
-    isAdmin: boolean;
-}
 
 interface Userdata {
     allLikes: number;
@@ -43,20 +33,18 @@ export default function ProfileScreen() {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
     const [showDetails, setShowDetails] = useState(true);
     const gestureStartX = useRef(0);
-    const [user, setUser] = useState<User | null>(null);
+    const { profile } = useUserProfile();
     const [userdata, setUserdata] = useState<Userdata>();
 
     useEffect(() => {
         const getdata = async () => {
-            const data = await getprofileuser();
-            if (data) setUser(data);
-            else console.log('error');
 
             const useracitvitydata = await getservicedata();
             setUserdata(useracitvitydata);
         };
         getdata();
-    }, [user]);
+    }, [userdata]);
+   
 
     
     const panResponder = PanResponder.create({
@@ -89,7 +77,7 @@ export default function ProfileScreen() {
 
     };
 
-    const imageUri = user && user.AvatarURL ? `${BASE_URL}/posts/image/${user.AvatarURL}` : null;
+    const imageUri = profile && profile.AvatarURL ? `${BASE_URL}/posts/image/${profile.AvatarURL}` : null;
 
     return (
         <View style={styles.container}>
@@ -122,14 +110,14 @@ export default function ProfileScreen() {
                         </View>
                         <View style={{marginLeft: 25, marginTop: 8}}>
                             <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 2}}>
-                                <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#434752'}}>{user?.Fname} {user?.Sname}</Text>
-                                {user?.isAdmin && <Image source={require('../assets/admin-panel.png')} style={{width: 25, height: 25, marginLeft: 5, marginTop: 2}} />}
+                                <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#434752'}}>{profile?.Fname} {profile?.Sname}</Text>
+                                {profile?.isAdmin && <Image source={require('../assets/admin-panel.png')} style={{width: 25, height: 25, marginLeft: 5, marginTop: 2}} />}
                                 {/* iCON */}
                             </View>
 
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
                                 <Iconfont name="email" size={16} color={'#434752'} />
-                                <Text style={{fontFamily: 'Sora-Medium', marginLeft: 5, marginBottom: 2, color: '#444854'}}>{user?.Email}</Text>
+                                <Text style={{fontFamily: 'Sora-Medium', marginLeft: 5, marginBottom: 2, color: '#444854'}}>{profile?.Email}</Text>
                             </View>
                         </View>
                     </View>
@@ -175,28 +163,28 @@ export default function ProfileScreen() {
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Username</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{user?.Fname} {user?.Sname}</Text>
+                                         <Text style={styles.detailValue}>{profile?.Fname} {profile?.Sname}</Text>
                                      </View>
                                  </View>
              
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Phone number</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{user?.Phone}</Text>
+                                         <Text style={styles.detailValue}>{profile?.Phone}</Text>
                                      </View>
                                  </View>
              
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Email</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{user?.Email}</Text>
+                                         <Text style={styles.detailValue}>{profile?.Email}</Text>
                                      </View>
                                  </View>
              
                                  <View style={styles.detailItem}>
                                      <Text style={styles.detailLabel}>Department</Text>
                                      <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{user?.Department}</Text>
+                                         <Text style={styles.detailValue}>{profile?.Department}</Text>
                                      </View>
                                  </View>
                              </View>

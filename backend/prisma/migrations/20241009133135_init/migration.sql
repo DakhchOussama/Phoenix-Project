@@ -9,6 +9,7 @@ CREATE TABLE "User" (
     "Department" TEXT NOT NULL,
     "Password" TEXT NOT NULL,
     "AvatarURL" TEXT,
+    "BanDate" TIMESTAMP(3),
     "Ban" BOOLEAN DEFAULT false,
     "isAdmin" BOOLEAN DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

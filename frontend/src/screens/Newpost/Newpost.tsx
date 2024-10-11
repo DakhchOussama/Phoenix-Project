@@ -11,7 +11,7 @@ import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Toast from "react-native-toast-message";
 import { createPost, uploadImage } from "../../services/postService";
 import Loading from "../../components/Loading";
-import { useNavigation } from '@react-navigation/native';
+import { useUserProfile } from "../../store/UserProfileProvider";
 
 
 
@@ -23,17 +23,23 @@ export default function Newpost() {
     const [Type, setType] = useState("Demand");
     const [isEnabled, setIsEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const navigation = useNavigation();
+    const { profile } = useUserProfile();
     
+    let type;
+
+    if (profile.isAdmin){
+        type = ["Demand", "Offer", "Collaborations & Partnerships"];
+        } else {
+        type = ["Demand", "Offer"];
+    }
     
-    const type = ["Demand", "Offer"];
     const categories = [
         'Carpooling & Courier',
         'Rentals & Sales',
         'Entertainment & Sports',
         'Lost & Found',
         'Food & Groceries',
-        'Health & Wellness' ,
+        'Health & Wellness',
         'Technology & Gadgets',
         'Learning & Tutoring',
         'Money Services',
@@ -257,7 +263,7 @@ export default function Newpost() {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: '#FFFFFF',
-        flex: 1
+        flex: 1,
     },
     progressContainer: {
         height: 80,

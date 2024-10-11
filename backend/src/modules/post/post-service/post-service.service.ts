@@ -12,8 +12,7 @@ export class PostServiceService {
         private readonly prisma: PrismaService,
     ){}
 
-    async getPost(userId: string){
-
+    async getPost(userId: string) {
         const posts = await this.prisma.post.findMany({
             include: {
                 user: {
@@ -21,15 +20,20 @@ export class PostServiceService {
                         Fname: true,
                         Sname: true,
                         AvatarURL: true,
+                        isAdmin: true,
                     },
                 },
+                
             },
             orderBy: {
                 createdAt: 'desc',
             },
         });
-
-        const formattedPosts = posts.map(post => ({
+    
+        // Filter out posts from admins
+        const normalUserPosts = posts.filter(post => !post.user.isAdmin);
+    
+        const formattedPosts = normalUserPosts.map(post => ({
             PostID: post.PostID,
             userId: post.userId,
             ImgURL: post.ImgURL,
@@ -44,17 +48,12 @@ export class PostServiceService {
             sname: post.user.Sname,
             avatar: post.user.AvatarURL,
             translates: post.translates,
-            isOwnPost: post.userId === userId
+            isOwnPost: post.userId === userId,
         }));
-
-        // const UserId = post.userId;
-
-        // const user = this.prisma.user.findUnique({
-        //     where: {UserId},
-        // });
-
-       return formattedPosts;
+    
+        return formattedPosts;
     }
+    
 
     async createPost(createPost: PostDto, userId: string): Promise<Post> {
         const { title, categorie, Type, isEnabled, imageUri } = createPost;
@@ -307,6 +306,51 @@ export class PostServiceService {
         } catch (error) {
             console.error('Error updating post:', error);
             return false;
+        }
+    }
+
+    async getPostsAdmin(){
+        const twentyFourHoursAgo = new Date();
+        twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
+        
+        try {
+            const posts = await this.prisma.post.findMany({
+                where: {
+                    createdAt: {
+                        gte: twentyFourHoursAgo
+                    },
+                    user: {
+                        isAdmin: true
+                    },
+                },
+                select: {
+                    PostID: true,
+                    Title: true,
+                    createdAt: true,
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                }
+            });
+
+            return posts;
+        } catch (error) {
+            throw new Error('Failed to retrieve admin posts');
+        }
+    }
+
+    async getCollaboPosts() {
+        try {
+            const posts = await this.prisma.post.findMany({
+                where: {
+                    Type: 'Collaborations & Partnerships'
+                }
+            });
+    
+            return posts; // Ensure you return the posts
+        } catch (error) {
+            console.error("Error fetching posts from database:", error);
+            throw new Error('Failed to get posts');
         }
     }
 }

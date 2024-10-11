@@ -5,13 +5,15 @@ import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
 import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import { banUser, getprofileuser } from '../services/authService';
+import { banUser} from '../services/authService';
 import { CheckPost, likePost } from '../services/postService';
 import { BASE_URL } from '@env';
 import RemovePostComponent from './RemovePostComponent';
 import EditComponent from './EditComponent';
 import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
+import { useUserProfile } from '../store/UserProfileProvider';
+import RemoveUserComponent from './RemoveUserComponent';
 
 
 interface Post {
@@ -29,18 +31,6 @@ interface Post {
     daysAgo: number;
 }
 
-interface User {
-    AvatarURL: string;
-    Ban: boolean;
-    Department: string;
-    Email: string;
-    Fname: string;
-    Phone: string;
-    Sname: string;
-    UserID: string;
-    isAdmin: boolean;
-}
-
 interface PostItemProps {
     post: Post;
     onLikeToggle: (postId: string, like: boolean) => void;
@@ -54,9 +44,9 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [translate, settranslate] = useState(false);
     const [removePostVisible, setRemovePostVisible] = useState(false);
-    const [editVisible, setEditVisible] = useState(false);
+    const [removeUserVisible, setRemoveUserVisible] = useState(false); 
     const navigation = useNavigation();
-    const [user, setUser ] = useState<User | null>(null);
+    const { profile } = useUserProfile();
 
 
 
@@ -75,8 +65,8 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
             
 
             // // Check the like status
-            if (user?.UserID){
-                const check = await likePost(post.id, user?.UserID);
+            if (profile?.UserID){
+                const check = await likePost(post.id, profile?.UserID);
                 if (check.message)
                     setlike(true);
 
@@ -91,12 +81,9 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         const checkData = async () => {
             try {
                 // Fetch user data
-                const User = await getprofileuser();
-                setUser(User);
-                const userId = User.UserID;
     
                 // // Check the like status
-                const check = await CheckPost(post.id, userId);
+                const check = await CheckPost(post.id, profile.UserID);
                 if (check)
                     setlike(true);
             } catch (error) {
@@ -163,8 +150,15 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     };
 
     const handleRemovePostClick = () => {
-        setRemovePostVisible(true);
+        try {
+            
+        } catch (error) {
+            
+        }
+        setRemoveUserVisible(true);
     };
+
+    
 
     const handleBanUser = async () => {
         try {
@@ -224,7 +218,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 {/* like and delete */}
                 <View style={styles.likeDeleteContainer}>
                     
-                {(post.isOwnPost || user?.isAdmin) && (
+                {(post.isOwnPost || profile?.isAdmin) && (
                         <View style={styles.deleteIconContainer}>
                             <Iconoct name="kebab-horizontal"
                             size={20} color={"#A4A3A3"}
@@ -342,7 +336,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                             <Iconfont name='edit' size={24} color="#28A745" />
                             <Text style={styles.modalButtonText}>Edit</Text>
                         </TouchableOpacity>
-                        {(user?.isAdmin && post.userId != user.UserID) && (
+                        {(profile?.isAdmin && post.userId != profile.UserID) && (
                             <>
                                 <TouchableOpacity style={styles.modalButton} onPress={handleBanUser}>
                                     <Iconfont name='ban' size={24} color="#efa136" style={{marginLeft: 2}} />
@@ -366,6 +360,14 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                     </TouchableOpacity>
                 </View>
             </Pressable>
+            </Modal>
+
+            <Modal visible={removeUserVisible} animationType="slide">
+                <RemoveUserComponent 
+                    userId={post.userId} // Pass the userId to the RemoveUserComponent
+                    onRemove={handleRemovePostClick}
+                    closeModal={() => setRemoveUserVisible(false)} 
+                />
             </Modal>
 
             <Modal

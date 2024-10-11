@@ -15,10 +15,11 @@ import { AppGateway } from './modules/Socket/app.gateway';
 import { NotificationModule } from './modules/notification/notification.module';
 import { NotificationController } from './modules/notification/notification.controller';
 import { NotificationService } from './modules/notification/notification.service';
+import { CronService } from './cron/cron.service';
 
 @Module({
   imports: [AuthModule, UserModule, PostModuleModule, NotificationModule],
   controllers: [AppController, UserController, PostControllerController, NotificationController],
-  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService, AppGateway, NotificationService],
+  providers: [AppService, PrismaService, UserService, AuthService, JwtService, PostServiceService, AppGateway, NotificationService, CronService],
 })
 export class AppModule {}
