@@ -8,12 +8,13 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
     useEffect(() => {
         const checkUserStatus = async () => {
             try {
-                const token = await getToken();
-                if (!token) {
+                const { accessToken } = await getToken();
+
+                if (!accessToken) {
                     const deviceid = await getDeviceId();
                     navigation.replace(deviceid ? 'Home' : 'Firsttime');
                 } else {
-                    const validtoken = await checkToken(token);
+                    const validtoken = await checkToken();
                     if (validtoken)
                         connectSocket();
                     navigation.replace(validtoken ? 'Homepage' : 'Home');
@@ -27,7 +28,7 @@ const SplashScreen =  ({ navigation }: {navigation: any}) => {
         const timer = setTimeout(checkUserStatus, 2000);
     
         return () => clearTimeout(timer);
-    }, [navigation]);
+    }, []);
  
     return (
         <View style={styles.container}>

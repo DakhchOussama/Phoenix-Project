@@ -5,7 +5,7 @@ import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
 import Iconfeather from 'react-native-vector-icons/Feather';
 import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons';
-import { banUser} from '../services/authService';
+import { banUser, removeUser} from '../services/authService';
 import { CheckPost, likePost } from '../services/postService';
 import { BASE_URL } from '@env';
 import RemovePostComponent from './RemovePostComponent';
@@ -149,13 +149,28 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         onLikeToggle(post.id, !like);
     };
 
-    const handleRemovePostClick = () => {
+    const handleRemovePostClick = async () => {
         try {
-            
+            const response = await removeUser(post.userId);
+
+            if (response){
+                Toast.show({
+                    type: 'success',
+                    text1: 'User has been deleted',
+                });
+            } else {
+                Toast.show({
+                    type: 'error',
+                    text1: 'User could not be deleted',
+                });
+            }
         } catch (error) {
-            
+            Toast.show({
+                type: 'error',
+                text1: 'An error occurred while trying to delete the user.',
+            });
         }
-        setRemoveUserVisible(true);
+        setRemoveUserVisible(false);
     };
 
     
@@ -343,7 +358,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                                     <Text style={styles.modalButtonText}>Ban user</Text>
                                 </TouchableOpacity>
 
-                                <TouchableOpacity style={styles.modalButton} onPress={handleRemovePostClick}>
+                                <TouchableOpacity style={styles.modalButton} onPress={() => setRemoveUserVisible(true)}>
                                     <Iconant name='deleteuser' size={24} color="#DC3545" style={{marginLeft: 2}} />
                                     <Text style={styles.modalButtonText}>Remove user</Text>
                                 </TouchableOpacity>

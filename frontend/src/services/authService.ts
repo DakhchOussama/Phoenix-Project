@@ -65,8 +65,11 @@ export const login = async (
             
             if (response.data.token) 
             {
-                removeToken();
-                await storeToken(response.data.token, false);
+                await removeToken();
+                const accessToken = response.data.token.accessToken;
+                const refreshToken = response.data.token.refreshToken;
+
+                await storeToken(accessToken, refreshToken, false);
                 await checkStoredItems();
                 return { success: true, message: 'Login successful!' };
             } else {
@@ -94,60 +97,71 @@ export const auth = async (emailorphone: string, password: string)=> {
 };
 
 export const getToken = async () => {
-    try{
-        const token = await AsyncStorage.getItem('authToken');
-        if (token !== null) {
-            return token;
+    const accessToken = await AsyncStorage.getItem('accessToken');
+    const refreshToken = await AsyncStorage.getItem('refreshToken');
+    return { accessToken, refreshToken };
+};
+
+export const removeToken = async () => {
+    await AsyncStorage.removeItem('accessToken');
+    await AsyncStorage.removeItem('refreshToken');
+};
+
+export const storeToken = async (accessToken: string, refreshToken: string, rememberMe: boolean) => {
+    try {
+        await AsyncStorage.setItem('accessToken', accessToken);
+        await AsyncStorage.setItem('refreshToken', refreshToken);
+    } catch (error) {
+        console.error('Error storing tokens', error);
+    }
+};
+
+export const checkToken = async (): Promise<boolean> => {
+    const { accessToken, refreshToken } = await getToken();
+
+    if (!accessToken || !refreshToken) {
+        return false;
+    }
+
+    try {
+        const response = await instance.get('auth/profile', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        });
+
+        if (response.data && response.data.success) {
+            return true; // Access token is valid
+        } else {
+            const newAccessToken = await refreshAccessToken(refreshToken);
+            return newAccessToken !== null;
+        }
+    } catch (error) {
+        if (axios.isAxiosError(error)) {
+            console.error('Error status:', error.response?.status);
+            console.error('Error data:', error.response?.data);
+        }
+        console.error('Error validating token', error);
+        await removeToken();
+        return false;
+    }
+};
+
+
+export const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
+    try {
+        const response = await instance.post('/auth/refresh', { refreshToken });
+
+        if (response.data && response.data.accessToken) {
+            await AsyncStorage.setItem('accessToken', response.data.accessToken);
+            return response.data.accessToken;
         } else {
             return null;
         }
     } catch (error) {
-        console.error('Error retrieving token:', error);
+        console.error('Failed to refresh access token', error);
+        await removeToken();
         return null;
-    };
-};
-
-export const removeToken = async () => {
-    try {
-      await AsyncStorage.removeItem('authToken');
-      await AsyncStorage.removeItem('expiryTime');
-    } catch (error) {
-      console.error('Error removing token:', error);
-    }
-};
-
-export const storeToken = async (token: string, rememberMe: boolean) => {
-    try {
-       
-        const expiryTime = rememberMe 
-        ? Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
-        : Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-        
-        await AsyncStorage.setItem('authToken', token);
-        await AsyncStorage.setItem('expiryTime', expiryTime.toString());
-        return true;
-    } catch (error) {
-      return false;
-    }
-};
-
-export const checkToken = async (token: string): Promise<boolean> => {
-    try {
-        const response = await instance.get('auth/profile', {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-        if (response.data) {
-            return true;
-        } else {
-            await AsyncStorage.removeItem('authToken');
-            return false;
-        }
-    } catch (error) {
-        await AsyncStorage.removeItem('authToken');
-        return false;
     }
 };
 
@@ -162,36 +176,37 @@ export const getDeviceId = async () => {
     return deviceId;
 };
 
-export const isTokenValid = async () => {
-    try {
-        const expiryTime = await AsyncStorage.getItem('expiryTime');
-        if (!expiryTime) return false;
+// export const isTokenValid = async () => {
+//     try {
+//         const expiryTime = await AsyncStorage.getItem('expiryTime');
+//         if (!expiryTime) return false;
 
-        const now = Date.now();
-        if (now > parseInt(expiryTime)) {
-            await removeToken();
-            return false;
-        }
-        return true;
-    } catch (error) {
-        console.error('Error checking token validity:', error);
-        return false;
-    }
-};
+//         const now = Date.now();
+//         if (now > parseInt(expiryTime)) {
+//             await removeToken();
+//             return false;
+//         }
+//         return true;
+//     } catch (error) {
+//         console.error('Error checking token validity:', error);
+//         return false;
+//     }
+// };
 
 export const getprofileuser = async () => {
     try{
-        const token = await getToken();
+        const { accessToken } = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
 
         const response = await instance.get('/auth/profile', {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${accessToken}`
             }
         });
         const data = response.data;
+
         if (data)
             return data;
         else
@@ -204,8 +219,12 @@ export const getprofileuser = async () => {
 
 export const checkStoredItems = async () => {
     try {
-        const token = await AsyncStorage.getItem('authToken');
-        const expiryTime = await AsyncStorage.getItem('expiryTime');
+        const accessToken = await AsyncStorage.getItem('accessToken');
+        const refreshToken = await AsyncStorage.getItem('refreshToken');
+
+        if (!accessToken && !refreshToken) {
+            throw new Error('Tokens are missing.');
+        }
     } catch (error) {
         console.error('Error checking stored items:', error);
     }
@@ -213,15 +232,15 @@ export const checkStoredItems = async () => {
 
 export const updateUserProfile = async (updatedUserData: UserProfile): Promise<ApiResponse> => {
     try {
-        const token = await getToken();
+        const { accessToken } = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
         
         const response = await instance.post('/user/update', updatedUserData, {
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${accessToken}`
             }
         });
 
@@ -235,14 +254,14 @@ export const updateUserProfile = async (updatedUserData: UserProfile): Promise<A
 export const getservicedata = async () => {
     try{
         
-        const token = await getToken();
+        const { accessToken } = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
 
         const response = await instance.get('/posts/userdata', {
             headers: {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         });
 
@@ -260,15 +279,15 @@ export const getservicedata = async () => {
 
 export const getUserdata = async (username: string) => {
     try {
-        const token = await getToken();
 
-        if (!token)
+        const { accessToken } = await getToken();
+
+        if (!accessToken)
             throw new Error('No token found');
-
 
         const response = await instance.post('/user/getuserdata', {username}, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             }
         });
 
@@ -284,16 +303,17 @@ export const getUserdata = async (username: string) => {
 
 export const makeUserAdmin = async (userId: string) => {
     try {
-      const token = await getToken();
+        
+        const { accessToken } = await getToken();
   
-      if (!token) throw new Error('No token found');
+        if (!accessToken) throw new Error('No token found');
   
       const response = await instance.post(
         '/user/changetoadmin',
         { userId },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
@@ -306,13 +326,13 @@ export const makeUserAdmin = async (userId: string) => {
 
 export const banUser = async (postId: string) => {
     try {
-        const token = await getToken();
+        const { accessToken } = await getToken();
   
-        if (!token) throw new Error('No token found');
+        if (!accessToken) throw new Error('No token found');
 
         const response = await instance.post('/posts/ban', {postId}, {
             headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
 
@@ -321,6 +341,26 @@ export const banUser = async (postId: string) => {
         return false;
     }
 };
+
+
+export const removeUser = async (userId: string) => {
+    try {
+        const { accessToken } = await getToken();
+
+        if (!accessToken) throw new Error('No token found');
+
+        const response = await instance.post('/user/removeuser', { id: userId }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        await removeToken();
+        return response.data;
+    } catch (error) {
+        console.error('Error removing user:', error);
+        throw error;
+    }
+}
 
 export const Logout = async () => {
     try {
@@ -331,5 +371,3 @@ export const Logout = async () => {
         return { success: false, message: 'Logout failed. Please try again.' };
     }
 };
-
-

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Request, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from 'src/dto/login.dto';
 import { JwtAuthGuard } from './JwtAuthGuard';
@@ -23,5 +23,17 @@ export class AuthController {
     @UseGuards(JwtAuthGuard)
     getProfile(@Request() req){
         return req.user
+    }
+
+    @Post('refresh')
+    @HttpCode(HttpStatus.OK)
+    async refresh(@Body() body: { refreshToken: string }) {
+        const { refreshToken } = body;
+        const tokens = await this.authService.refreshAccessToken(refreshToken);
+        console.log('token : ', tokens);
+        if (!tokens) {
+            throw new UnauthorizedException('Invalid refresh token');
+        }
+        return tokens;
     }
 }

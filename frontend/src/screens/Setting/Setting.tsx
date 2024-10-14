@@ -21,7 +21,7 @@ export default function Setting() {
     const [department, setdepartment] = useState('');
     const [password, setpassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { profile } = useUserProfile();
+    const { profile, setRefresh } = useUserProfile();
 
     const navigation = useNavigation();
 
@@ -105,7 +105,7 @@ export default function Setting() {
                         text1: 'Profile Updated',
                         text2: 'Your profile has been successfully updated.',
                     });
-    
+                    setRefresh(true);
                     navigation.navigate('ProfileScreen');
                     // navigation.goBack(); 
                 } else {

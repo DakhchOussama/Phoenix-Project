@@ -36,12 +36,15 @@ export default function ProfileScreen() {
     const { profile } = useUserProfile();
     const [userdata, setUserdata] = useState<Userdata>();
 
+    // console.log('profile : ', profile);
+
     useEffect(() => {
         const getdata = async () => {
 
             const useracitvitydata = await getservicedata();
             setUserdata(useracitvitydata);
         };
+        
         getdata();
     }, [userdata]);
    

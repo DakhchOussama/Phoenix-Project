@@ -10,10 +10,10 @@ const instance = axios.create({
 
 export const fetchNotificationsData = async () => {
     try {
-        const token = await getToken();
+        const { accessToken } = await getToken();
         const response = await instance.get('notification/fetchnotification', {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
             }
         });

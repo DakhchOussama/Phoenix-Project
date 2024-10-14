@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Button, StyleSheet, Image, TextInput, TouchableOpacity } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
-import { auth, getToken, isTokenValid, storeToken } from '../services/authService';
+import { auth, storeToken } from '../services/authService';
 import Toast from 'react-native-toast-message';
 import Loading from '../components/Loading';
 
@@ -21,8 +21,8 @@ const LoginScreen = ({ navigation }: { navigation: any}) => {
             if (emailorphone && password){
                 setIsLoading(true);
                 const login = await auth(emailorphone, password);
-                if (login.success){
-                        await storeToken(login.token, isSelected);
+                if (login.success && login.token.refreshToken && login.token.accessToken){
+                        await storeToken(login.token.accessToken, login.token.refreshToken, isSelected);
                         navigation.replace('Homepage');
                 } else if (login.banned) {
                     setIsLoading(false);

@@ -119,8 +119,6 @@ export class UserService {
         Department: userDto.department || user.Department,
         AvatarURL: userDto.imageUri || user.AvatarURL,
       };
-
-      console.log('up : ', updatedData);
   
       // Update the user's email only if a new email is provided
       if (userDto.email && userDto.email !== user.Email) {
@@ -207,6 +205,21 @@ export class UserService {
         return { success: false, message: 'An error occurred while checking ban status.' };
     }
 }
+
+  async removeUser(userId: string){
+    try {
+        await this.prisma.user.delete({
+          where: {
+              UserID: userId
+          }
+        })
+
+        return true;
+    } catch (error) {
+        console.error('Error removing user:', error);
+        return false;
+    }
+  }
 
 
 

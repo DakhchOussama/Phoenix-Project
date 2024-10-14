@@ -55,11 +55,7 @@ export default function HomeScreen(){
     const [servicesdata, setServicesdata] = useState<PostData[]>([]);
     const { profile } = useUserProfile();
 
-
     const navigation = useNavigation();
-
-
- 
 
     const fetchPosts = async () => {
         try {
@@ -247,7 +243,25 @@ export default function HomeScreen(){
                 </View>
             </View>
         )
-    }
+    };
+
+    const renderContent = () => {
+        if (servicesdata.length === 0) {
+            return (
+                <View style={{flex: 1, alignItems: 'center'}}>
+                    <Text style={styles.emptyText}>no services discover now</Text>
+                </View>
+            );
+        }
+    
+        return (
+            <FlatList
+                data={servicesdata}
+                renderItem={renderService}
+                keyExtractor={(item) => item.PostID}
+            />
+        );
+    };
 
     const content = 
         (
@@ -338,12 +352,9 @@ export default function HomeScreen(){
                     </View>
 
                     <View style={{padding: 10, flex: 1}}>
-                        <FlatList 
-                            data={servicesdata}
-                            renderItem={renderService}
-                            keyExtractor={(item) => item.PostID}
-                        />
+                            {renderContent()}
                     </View>
+
                 </View>
                 <Toast />
             </View>
@@ -664,5 +675,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Raleway-SemiBold',
         fontSize: 13,
         color: '#FFFFFF',
+    },
+    emptyText: {
+        textAlign: 'center',
+        fontFamily: 'Poppins-Regular',
+        color: '#979797',
+        fontSize: 15,
+        marginTop: 10
     },
 })

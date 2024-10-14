@@ -46,10 +46,10 @@ export const uploadImage = async (uri: string) => {
 
 
     try{
-        const token = await getToken();
+        const { accessToken } = await getToken();
         const response = await instance.post('/posts/image', formData, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'multipart/form-data',
             }
         });
@@ -67,10 +67,10 @@ export const uploadImage = async (uri: string) => {
 
 export const createPost = async (PostData: any) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
         const response = await instance.post('/posts/create', PostData, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             }
         }
             
@@ -84,10 +84,10 @@ export const createPost = async (PostData: any) => {
 
 export const getPosts = async () => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
         const response = await instance.get('/posts/postuser', {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             }
         });
         
@@ -103,10 +103,10 @@ export const getPosts = async () => {
 
 export const likePost = async (postId: string, userId: string) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
         const response = await instance.get(`/posts/${postId}/like`, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             },
             params: { userId },
         });
@@ -118,10 +118,10 @@ export const likePost = async (postId: string, userId: string) => {
 
 export const CheckPost = async (postId: string, userId: string) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
         const response = await instance.get(`/posts/${postId}/like/check`, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             },
             params: { userId },
         });
@@ -133,10 +133,10 @@ export const CheckPost = async (postId: string, userId: string) => {
 
 export const removePost = async (postId: string) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
         const response = await instance.delete(`/posts/${postId}/removepost`, {
             headers: {
-                'Authorization': `Bearer ${token}`,
+                'Authorization': `Bearer ${accessToken}`,
             },
         });
         
@@ -153,15 +153,15 @@ export const removePost = async (postId: string) => {
 
 export const sendComments = async (data: Comment) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
 
         const response = await instance.post('/posts/addcomment', data, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         });
 
@@ -174,14 +174,14 @@ export const sendComments = async (data: Comment) => {
 
 export const getComments = async (postId: string) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
 
-        if (!token) throw new Error('No token found');
+        if (!accessToken) throw new Error('No token found');
 
         const response = await instance.post('/posts/getcomments', { postId }, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             }
         });
 
@@ -194,15 +194,15 @@ export const getComments = async (postId: string) => {
 
 export const editDescription = async (title: string, postId: string) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
 
         await instance.patch('/posts/edit', { title, postId }, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
 
@@ -215,15 +215,15 @@ export const editDescription = async (title: string, postId: string) => {
 
 export const uploadTraduction = async (title: string, postId: string) => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
 
         await instance.post('/posts/Traduction', { title, postId }, {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
 
@@ -236,14 +236,14 @@ export const uploadTraduction = async (title: string, postId: string) => {
 
 export const getPostsadmin = async () => {
     try {
-        const token = await getToken();
+        const {accessToken} = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
         const response = await instance.get('/posts/postsadmin', {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
         const data = response.data.data;
@@ -255,14 +255,14 @@ export const getPostsadmin = async () => {
 
 export const getCollaboPosts = async () => {
     try {
-        const token  = await getToken();
+        const {accessToken}  = await getToken();
 
-        if (!token)
+        if (!accessToken)
             throw new Error('No token found');
         const response = await instance.get('/posts/getadminposts', {
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${accessToken}`,
             },
         });
 

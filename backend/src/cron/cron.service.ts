@@ -8,7 +8,6 @@ export class CronService implements OnModuleInit {
 
     onModuleInit() {
         cron.schedule('* * * * *', async () => {
-            console.log('Cron Job Triggered');
             await this.unbanUsers();
         });
     }

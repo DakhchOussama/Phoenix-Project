@@ -43,8 +43,8 @@ model Notification {
   UserID           String
   createdAt        DateTime @default(now())
 
-  user   User @relation("UserNotifications", fields: [UserID], references: [UserID])
-  friend User @relation("FriendNotifications", fields: [FriendID], references: [UserID])
+  user   User @relation("UserNotifications", fields: [UserID], references: [UserID], onDelete: Cascade)
+  friend User @relation("FriendNotifications", fields: [FriendID], references: [UserID], onDelete: Cascade)
 }
 
 model Post {
@@ -59,7 +59,7 @@ model Post {
   updatedAt  DateTime @updatedAt
 
   userId     String
-  user       User      @relation(fields: [userId], references: [UserID])
+  user       User      @relation(fields: [userId], references: [UserID], onDelete: Cascade)
   translates String?
   comments   Comment[]
   likes      Like[] // Relation to Like model
@@ -72,7 +72,7 @@ model Like {
   createdAt DateTime @default(now())
 
   post Post @relation(fields: [postId], references: [PostID])
-  user User @relation(fields: [userId], references: [UserID])
+  user User @relation(fields: [userId], references: [UserID], onDelete: Cascade)
 
   @@unique([postId, userId]) // Ensure that a user can only like a post once
 }
@@ -82,8 +82,8 @@ model Friends {
   UserId   String
   FriendId String
 
-  user   User @relation(name: "UserFriends", fields: [UserId], references: [UserID])
-  friend User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID])
+  user   User @relation(name: "UserFriends", fields: [UserId], references: [UserID], onDelete: Cascade)
+  friend User @relation(name: "FriendFriends", fields: [FriendId], references: [UserID], onDelete: Cascade)
 
   @@unique([UserId, FriendId])
 }
@@ -97,5 +97,5 @@ model Comment {
   postId String
   userId String
   post   Post   @relation(fields: [postId], references: [PostID])
-  user   User   @relation(fields: [userId], references: [UserID])
+  user   User   @relation(fields: [userId], references: [UserID], onDelete: Cascade)
 }

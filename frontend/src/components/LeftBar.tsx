@@ -52,13 +52,18 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
 
 
     const handleLogout = async () => {
-        const response = await Logout();
-    if (response.success) {
-        navigation.navigate('Home');
-    } else {
-        // other
-        // console.log(response.message);
-    }
+
+        try {
+            const response = await Logout();
+            if (response.success) {
+                navigation.navigate('Home');
+            } else {
+                // other
+                // console.log(response.message);
+            }
+        } catch (error) {
+            console.log('error : ', error);
+        }
     };
 
     const imageUri = profile && profile.AvatarURL ? `${BASE_URL}/posts/image/${profile.AvatarURL}` : null;

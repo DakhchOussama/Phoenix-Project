@@ -133,7 +133,26 @@ export class UserController {
     }
   }
 
- 
+  @Post('removeuser')
+  @UseGuards(JwtAuthGuard)
+  async removeuser(@Body() userId: { id: string }) {
+      try {
+          if (userId && userId.id) {
+              const removeUser = await this.userService.removeUser(userId.id);
+              if (removeUser) {
+                  return { success: true, message: 'User removed successfully.' };
+              } else {
+                  return { success: false, message: 'User not found or could not be removed.' };
+              }
+          } else {
+              return {success: false, message: 'Invalid user ID provided.' };
+          }
+      } catch (error) {
+          console.error(error);
+          return { success: false, message: 'An error occurred while removing the user.' };
+      }
+  }
+
 
 
     // @UseGuards(JwtAuthGuard)
