@@ -75,7 +75,7 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
         description: post.Title,
         avatar: post.avatar,
         image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
-        username: `${post.fname} ${post.sname}`,
+        username: post.sname ? `${post.fname} ${post.sname}` : `${post.fname}`,
         time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         likes: post.Likes,
         translate: post.translates,

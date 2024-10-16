@@ -65,7 +65,10 @@ export class AuthService {
             if (!user) throw new UnauthorizedException();
 
             // Generate a new access token
-            const newAccessToken = jwtService.sign({ userId: user.UserID, email: user.Email }, { secret: this.jwtSecret, expiresIn: '60m' });
+            const newAccessToken = jwtService.sign(
+                { userId: user.UserID, email: user.Email },
+                { secret: this.jwtSecret, expiresIn: '60m' }
+            );
             return { accessToken: newAccessToken };
         } catch (error) {
             throw new UnauthorizedException('Invalid refresh token');

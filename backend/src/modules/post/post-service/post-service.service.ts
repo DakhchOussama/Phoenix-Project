@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 import { Repository } from 'typeorm';
@@ -14,26 +14,38 @@ export class PostServiceService {
 
     async getPost(userId: string) {
         const posts = await this.prisma.post.findMany({
+            where: {
+                Type: {
+                    not: 'Collaborations & Partnerships'
+                }
+            },
             include: {
                 user: {
                     select: {
+                        UserID: true,
                         Fname: true,
                         Sname: true,
                         AvatarURL: true,
-                        isAdmin: true,
                     },
                 },
-                
             },
             orderBy: {
                 createdAt: 'desc',
             },
         });
+
+       const users = await this.prisma.user.findMany({
+            select: {
+                UserID: true,
+                isAdmin: true
+            }
+       });
+
+
+       const usersAdminMap = new Map(users.map(user => [user.UserID, user.isAdmin]))
+
     
-        // Filter out posts from admins
-        const normalUserPosts = posts.filter(post => !post.user.isAdmin);
-    
-        const formattedPosts = normalUserPosts.map(post => ({
+        const formattedPosts = posts.map(post => ({
             PostID: post.PostID,
             userId: post.userId,
             ImgURL: post.ImgURL,
@@ -44,13 +56,13 @@ export class PostServiceService {
             Likes: post.Likes,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
-            fname: post.user.Fname,
-            sname: post.user.Sname,
+            fname: usersAdminMap.get(post.userId) ? "Admin" : post.user.Fname,
+            sname: usersAdminMap.get(post.userId) ? null : post.user.Sname,
             avatar: post.user.AvatarURL,
             translates: post.translates,
             isOwnPost: post.userId === userId,
         }));
-    
+        
         return formattedPosts;
     }
     
@@ -153,22 +165,26 @@ export class PostServiceService {
         return { post: updatedPost, message: 'Post liked successfully' };
     }
 
-    async removepost(postId: string){
-        const post = await this.prisma.post.findUnique({
-            where: { PostID: postId },
-        });
-    
-        if (!post) {
-            throw new NotFoundException('Post not found');
-        }
-
-        await this.prisma.post.delete({
-            where: {PostID: postId},
-        });
-
-        return true;
+    async removepost(postId: string) {
+        try {
+            const post = await this.prisma.post.findUnique({
+                where: { PostID: postId },
+            });
         
-    }
+            if (!post) {
+                throw new NotFoundException('Post not found');
+            }
+    
+            await this.prisma.post.delete({
+                where: { PostID: postId },
+            });
+    
+            return true;
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            throw new InternalServerErrorException('Error removing post');
+        }
+    }    
 
     async getUserPostsStatistics(userId: string) {
         // Fetch all posts uploaded by the user

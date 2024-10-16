@@ -27,7 +27,7 @@ export default function Newpost() {
     
     let type;
 
-    if (profile.isAdmin){
+    if (profile?.isAdmin){
         type = ["Demand", "Offer", "Collaborations & Partnerships"];
         } else {
         type = ["Demand", "Offer"];
@@ -225,7 +225,7 @@ export default function Newpost() {
 
                         <View style={styles.typeSection}>
                             <Text style={styles.sectionTitle}>Type :</Text>
-                            <View style={[styles.selectionContainer, {zIndex: 997}]}>
+                            <View style={styles.selectionContainer}>
                                 <SelectionTextInput placeholder={"Demand"} data={type} icon={true} setCategorie={setCategorie} setType={setType} />
                             </View>
                         </View>
@@ -393,6 +393,8 @@ const styles = StyleSheet.create({
     categorySection: {
         flex: 1,
         justifyContent: 'center',
+        paddingLeft: 5,
+        paddingRight: 5
     },
     sectionTitle: {
         color: '#434752',
@@ -406,13 +408,17 @@ const styles = StyleSheet.create({
         zIndex: 999
     },
     typeSection: {
-        flex: 1
+        flex: 1,
+        paddingLeft: 5,
+        paddingRight: 5
     },
     switchContainer: {
         flexDirection: 'row-reverse',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        marginBottom: 15
+        marginBottom: 15,
+        paddingLeft: 5,
+        paddingRight: 5
     },
     switchLabel: {
         color: '#434752',

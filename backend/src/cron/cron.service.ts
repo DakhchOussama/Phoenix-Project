@@ -17,7 +17,7 @@ export class CronService implements OnModuleInit {
         fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
         try {
-            const usersToUnban = await this.prisma.user.updateMany({
+            await this.prisma.user.updateMany({
                 where: {
                     Ban: true,
                     BanDate: { lte: fifteenDaysAgo },

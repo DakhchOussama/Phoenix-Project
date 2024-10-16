@@ -138,6 +138,14 @@ export const checkToken = async (): Promise<boolean> => {
         }
     } catch (error) {
         if (axios.isAxiosError(error)) {
+            if (error.response?.status === 401) {
+                console.error('Access token expired, attempting to refresh token');
+                const newAccessToken = await refreshAccessToken(refreshToken);
+                console.log('newAccessToken : ', newAccessToken);
+                if (newAccessToken) {
+                    return true; // New token generated successfully
+                }
+            }
             console.error('Error status:', error.response?.status);
             console.error('Error data:', error.response?.data);
         }
@@ -151,6 +159,8 @@ export const checkToken = async (): Promise<boolean> => {
 export const refreshAccessToken = async (refreshToken: string): Promise<string | null> => {
     try {
         const response = await instance.post('/auth/refresh', { refreshToken });
+
+        console.log('response.data : ', response.data);
 
         if (response.data && response.data.accessToken) {
             await AsyncStorage.setItem('accessToken', response.data.accessToken);
@@ -261,7 +271,7 @@ export const getservicedata = async () => {
 
         const response = await instance.get('/posts/userdata', {
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`
             }
         });
 
@@ -313,7 +323,7 @@ export const makeUserAdmin = async (userId: string) => {
         { userId },
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            'Authorization': `Bearer ${accessToken}`,
           },
         }
       );
@@ -332,7 +342,7 @@ export const banUser = async (postId: string) => {
 
         const response = await instance.post('/posts/ban', {postId}, {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
             },
         });
 
@@ -351,7 +361,7 @@ export const removeUser = async (userId: string) => {
 
         const response = await instance.post('/user/removeuser', { id: userId }, {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
             },
         });
         await removeToken();
@@ -359,6 +369,24 @@ export const removeUser = async (userId: string) => {
     } catch (error) {
         console.error('Error removing user:', error);
         throw error;
+    }
+}
+
+export const checkUserisBan = async () => {
+    try {
+        const { accessToken } = await getToken();
+
+        if (!accessToken) throw new Error('No token found');
+        
+        const response = await instance.get('/user/checkban', {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            }
+        });
+
+        return response.data;
+    } catch (error) {
+        console.log('error : ', error);
     }
 }
 
@@ -371,3 +399,4 @@ export const Logout = async () => {
         return { success: false, message: 'Logout failed. Please try again.' };
     }
 };
+

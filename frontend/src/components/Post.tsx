@@ -14,6 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import Toast from 'react-native-toast-message';
 import { useUserProfile } from '../store/UserProfileProvider';
 import RemoveUserComponent from './RemoveUserComponent';
+import { StackNavigationProp } from '@react-navigation/stack';
 
 
 interface Post {
@@ -37,6 +38,12 @@ interface PostItemProps {
     comment: boolean
 }
 
+type RootStackParamList = {
+    Traduction: { post: Post };
+    Edit: { post: Post };
+    // other screens can be added here
+  };
+
 const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
 
     const [like, setlike] = useState(false);
@@ -44,9 +51,10 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const scaleValue = useRef(new Animated.Value(1)).current;
     const [translate, settranslate] = useState(false);
     const [removePostVisible, setRemovePostVisible] = useState(false);
-    const [removeUserVisible, setRemoveUserVisible] = useState(false); 
-    const navigation = useNavigation();
+    const [removeUserVisible, setRemoveUserVisible] = useState(false);
     const { profile } = useUserProfile();
+    type NavigationProp = StackNavigationProp<RootStackParamList>;
+    const navigation = useNavigation<NavigationProp>();
 
 
 
@@ -83,9 +91,11 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                 // Fetch user data
     
                 // // Check the like status
-                const check = await CheckPost(post.id, profile.UserID);
-                if (check)
-                    setlike(true);
+                if (profile){
+                    const check = await CheckPost(post.id, profile.UserID);
+                    if (check)
+                        setlike(true);
+                }
             } catch (error) {
                 console.error('Error in useEffect:', error);
             }
@@ -149,7 +159,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         onLikeToggle(post.id, !like);
     };
 
-    const handleRemovePostClick = async () => {
+    const handleRemoveUserClick = async () => {
         try {
             const response = await removeUser(post.userId);
 
@@ -364,7 +374,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                                 </TouchableOpacity>
                             
                             </>)}
-                        <TouchableOpacity style={[styles.modalButton, styles.removeButton]} onPress={handleRemovePostClick}>
+                        <TouchableOpacity style={[styles.modalButton, styles.removeButton]} onPress={() => setRemovePostVisible(true)}>
                             <Iconfeather name='trash' size={23} color="#DC3545" style={{marginLeft: 3.5}} />
                             <Text style={styles.modalButtonText}>Remove post</Text>
                         </TouchableOpacity>
@@ -380,7 +390,7 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
             <Modal visible={removeUserVisible} animationType="slide">
                 <RemoveUserComponent 
                     userId={post.userId} // Pass the userId to the RemoveUserComponent
-                    onRemove={handleRemovePostClick}
+                    onRemove={handleRemoveUserClick}
                     closeModal={() => setRemoveUserVisible(false)} 
                 />
             </Modal>

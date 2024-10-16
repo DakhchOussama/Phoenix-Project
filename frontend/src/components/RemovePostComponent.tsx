@@ -56,9 +56,7 @@ const RemovePostComponent: React.FC<RemovePostComponentProps> = ({ visible, onCl
         const { success, message } = await removePost(postId);
         
         if (success) {
-            onClose(); // Close the modal after operation
-            // Optionally show a success message to the user
-            console.log(message);
+            onClose();
         } else {
             // Show an error message to the user
             console.error('Error removing post:', message);

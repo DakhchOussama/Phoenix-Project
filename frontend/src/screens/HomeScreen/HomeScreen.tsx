@@ -348,7 +348,7 @@ export default function HomeScreen(){
 
                 <View style={styles.services}>
                     <View style={styles.newservicestitle}>
-                        <Text style={[styles.categorieword, {fontSize: 16, marginLeft: 7}]}>Discover New Services</Text>
+                        <Text style={[styles.categorieword, {fontSize: 16, marginLeft: 7,}]}>Discover New Services</Text>
                     </View>
 
                     <View style={{padding: 10, flex: 1}}>
@@ -523,7 +523,8 @@ const styles = StyleSheet.create({
     newservicestitle: {
         // backgroundColor: 'yellow',
         marginBottom: 10,
-        paddingLeft: 5
+        paddingLeft: 5,
+        paddingTop: 5
     },
     services: {
         flex: 1,

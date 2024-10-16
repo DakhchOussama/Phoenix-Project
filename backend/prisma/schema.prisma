@@ -71,7 +71,7 @@ model Like {
   userId    String
   createdAt DateTime @default(now())
 
-  post Post @relation(fields: [postId], references: [PostID])
+  post Post @relation(fields: [postId], references: [PostID], onDelete: Cascade)
   user User @relation(fields: [userId], references: [UserID], onDelete: Cascade)
 
   @@unique([postId, userId]) // Ensure that a user can only like a post once
@@ -96,6 +96,6 @@ model Comment {
 
   postId String
   userId String
-  post   Post   @relation(fields: [postId], references: [PostID])
+  post   Post   @relation(fields: [postId], references: [PostID], onDelete: Cascade)
   user   User   @relation(fields: [userId], references: [UserID], onDelete: Cascade)
 }

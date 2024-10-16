@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { Alert, StyleSheet, View } from "react-native";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from "./HomeScreen/HomeScreen";
 import Newpost from "./Newpost/Newpost";
@@ -14,6 +14,10 @@ import { getSocket } from "../services/socketService";
 import EditComponent from "../components/EditComponent";
 import TraductionComponent from "../components/TraductionComponent";
 import { UserProfileProvider } from "../store/UserProfileProvider";
+import PushNotification from "react-native-push-notification";
+import { checkUserisBan, removeToken } from "../services/authService";
+import { useNavigation } from '@react-navigation/native';
+
 
 // Define a type for the route names
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
@@ -23,18 +27,64 @@ const Tab = createBottomTabNavigator();
 
 export default function HomePage() {
 
-    const [badgeVisible, setBadgeVisible] = useState(false); // State to control badge visibility
+    const [badgeVisible, setBadgeVisible] = useState(false);
+    const navigation = useNavigation();
+
+    const checkUserBan = async () => {
+        try {
+            const response = await checkUserisBan();
+
+            if (response){
+                await removeToken();
+                Alert.alert(
+                    "Account Banned",
+                    "Your account has been banned for 15 days.",
+                    [
+                        { text: "OK", onPress: () => navigation.replace('Home') }
+                    ]
+                );
+            }
+        } catch (error) {
+            console.log('error : ', error);
+        }
+    }
 
     useEffect(() => {
-        const socket = getSocket();
 
+        checkUserBan();
+
+        PushNotification.createChannel(
+            {
+                channelId: "default-channel-id",
+                channelName: "Default Channel",
+                channelDescription: "A default channel for notifications",
+                importance: 4,
+                vibrate: true,
+            },
+            (created) => console.log(`createChannel returned '${created}'`)
+        );
+    
+        const socket = getSocket();
+    
         if (socket) {
-            // Listen for the notification event
             socket.on('notification', () => {
                 setBadgeVisible(true);
+    
+                PushNotification.localNotification({
+                    title: "New Notification", // Notification title
+                    message: "You have received a new message!", // Notification message
+                    playSound: true, // Play notification sound
+                    soundName: 'default', // Custom sound
+                    importance: 'high', // For Android
+                    priority: 'high',  // For Android
+                    channelId: "default-channel-id", // The channelId that you just created
+                });
+    
+                // Set badge count
+                PushNotification.setApplicationIconBadgeNumber(1);
             });
         }
-
+    
         return () => {
             if (socket) {
                 socket.off('notification');

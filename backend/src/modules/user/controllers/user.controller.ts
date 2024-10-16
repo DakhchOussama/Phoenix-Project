@@ -107,20 +107,13 @@ export class UserController {
   async changeUserAdmin(@Request() req, @Body() body, @Res() res) {
     const userId = req.user?.UserID;
 
-    // Check if the authenticated user is valid
-    if (!userId) {
-      return res.status(401).json({ message: 'User not authenticated' });
-    }
-
     // Retrieve the authenticated user's data
     const user = await this.userService.findById(userId);
 
-    // Check if the user is already an admin
     if (!user.isAdmin) {
       return res.status(403).json({ message: 'Only admins can change user roles' });
     }
 
-    // Call the service method to promote the target user to admin
     try {
       const admin = await this.userService.makeadmin(body.userId);
       if (admin) {
@@ -131,6 +124,16 @@ export class UserController {
     } catch (error) {
       return res.status(500).json({ message: `Error: ${error.message}` });
     }
+  }
+
+  @Get('checkban')
+  @UseGuards(JwtAuthGuard)
+  async checkUserban(@Request() req)
+  {
+      const userId = req.user?.UserID;
+      const isBanned = this.userService.checkBanStatus(userId);
+
+      return isBanned;
   }
 
   @Post('removeuser')

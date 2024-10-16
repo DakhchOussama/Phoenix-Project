@@ -161,7 +161,7 @@ export class UserService {
 
   async banUser(userId: string){
     try {
-        const user = await this.prisma.user.update({
+        await this.prisma.user.update({
           where: {
               UserID: userId
           },
@@ -177,33 +177,18 @@ export class UserService {
     }
   }
 
-  async checkBanStatus(userId: string) {
-    try {
+  async checkBanStatus(userId: string): Promise<boolean> {
+      const user = await this.prisma.user.findUnique({
+          where: {
+            UserID: userId
+          }
+      })
 
-        const user = await this.prisma.user.findUnique({
-            where: { UserID: userId },
-            select: { Ban: true, BanDate: true },
-        });
-
-        if (user && user.Ban && user.BanDate) {
-          const banEndDate = new Date(user.BanDate);
-          banEndDate.setMinutes(banEndDate.getDate() + 15);
-
-            const currentDate = new Date();
-
-            if (currentDate >= banEndDate) {
-                await this.prisma.user.update({
-                    where: { UserID: userId },
-                    data: { Ban: false, BanDate: null },
-                });
-                return { success: true, message: 'User unbanned after 15 days.' };
-            }
-        }
-
-        return { success: false, message: 'User is not banned or 15 days have not passed yet.' };
-    } catch (error) {
-        return { success: false, message: 'An error occurred while checking ban status.' };
-    }
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      return user.Ban;
 }
 
   async removeUser(userId: string){
