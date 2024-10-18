@@ -22,7 +22,7 @@ interface Post {
     userId: string;
     title: "DEMAND" | "Offer";
     description: string;
-    avatar: any; // Update this based on the type you use for avatars
+    avatar: string;
     image: { uri: string } | null;
     username: string;
     time: string;
@@ -55,8 +55,6 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const { profile } = useUserProfile();
     type NavigationProp = StackNavigationProp<RootStackParamList>;
     const navigation = useNavigation<NavigationProp>();
-
-
 
     useEffect(() => {
         Animated.spring(scaleValue, {
@@ -183,8 +181,6 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         setRemoveUserVisible(false);
     };
 
-    
-
     const handleBanUser = async () => {
         try {
             const banuser = await banUser(post.id);
@@ -228,6 +224,9 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                         <View>
                             <Text style={styles.username}>
                                 {post.username}
+                                {post.username == 'admin' && (
+                                    <Image source={require('../assets/admin-panel.png')} style={styles.adminIcon} />
+                                )}
                                 {post.daysAgo ? (
                                     <Text style={styles.time}>. {post.daysAgo} day{post.daysAgo > 1 ? 's' : ''} ago</Text>
                                 ) : (
@@ -650,6 +649,12 @@ const styles = StyleSheet.create({
         fontFamily: 'Urbanist-Regular',
         width: '90%',
         paddingVertical: 4,
+    },
+    adminIcon: {
+        width: 18,
+        height: 18,
+        marginLeft: 5,
+        marginTop: 2
     }
 
 });

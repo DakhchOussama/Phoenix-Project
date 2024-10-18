@@ -10,6 +10,12 @@ interface CategoryItemProps {
     handlePress: (category: string) => void;
   }
 
+const { width, height } = Dimensions.get('window');
+
+const aspectRatio = height / width;
+
+const smallScreen = (width <= 1080 && aspectRatio <= 1.8);
+
 const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePress }) => {
     const categories = [
         { name: 'Transport', color: '#3DC8B4', image: require('../assets/Carpooling.png'), description: 'Share rides or send packages efficiently with our Carpooling & Courier services, saving you time and money.', categoryname: 'Carpooling & Courier' },
@@ -27,8 +33,8 @@ const CategoryItem: React.FC<CategoryItemProps> = ({ selectedCategory, handlePre
     
 
     return (
-        <View style={{ flex: 1, flexDirection: 'column' }}>
-            <View style={{ flex: 1, justifyContent: 'flex-end',}}>
+        <View style={{ flex: smallScreen ? 1.2 : 1, flexDirection: 'column',}}>
+            <View style={{ flex: 1, justifyContent: 'flex-end'}}>
                 <View style={{marginLeft: 6}}>
                     <Text style={{ fontFamily: 'Raleway-Bold', fontSize: 40, marginLeft: 8, color: '#434752' }}>Services</Text>
                     <View style={{ backgroundColor: 'blue', borderWidth: 1.5, width: 100, marginLeft: 11, borderRadius: 15, marginTop: 4, borderColor: '#DD644A' }} />

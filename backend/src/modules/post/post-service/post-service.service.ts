@@ -56,7 +56,7 @@ export class PostServiceService {
             Likes: post.Likes,
             createdAt: post.createdAt,
             updatedAt: post.updatedAt,
-            fname: usersAdminMap.get(post.userId) ? "Admin" : post.user.Fname,
+            fname: usersAdminMap.get(post.userId) ? "admin" : post.user.Fname,
             sname: usersAdminMap.get(post.userId) ? null : post.user.Sname,
             avatar: post.user.AvatarURL,
             translates: post.translates,

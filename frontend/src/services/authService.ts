@@ -160,8 +160,6 @@ export const refreshAccessToken = async (refreshToken: string): Promise<string |
     try {
         const response = await instance.post('/auth/refresh', { refreshToken });
 
-        console.log('response.data : ', response.data);
-
         if (response.data && response.data.accessToken) {
             await AsyncStorage.setItem('accessToken', response.data.accessToken);
             return response.data.accessToken;

@@ -29,7 +29,7 @@ const UserProfileContext = createContext<UserProfileContextType>({
 
 export const UserProfileProvider = ({ children }: { children: any }) => {
     const [profile, setProfile] = useState<User | null>(null);
-    const [refresh, setRefresh] = useState<boolean>(false); // Control refresh state
+    const [refresh, setRefresh] = useState<boolean>(false);
 
     // Fetch user profile from the backend
     const fetchUserProfile = async () => {

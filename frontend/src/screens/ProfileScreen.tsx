@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 import LeftBar from "../components/LeftBar";
 import { ScrollView } from "react-native-gesture-handler";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { getservicedata } from "../services/authService";
+import { getservicedata, Logout } from "../services/authService";
 import { BASE_URL } from "@env";
 import { useUserProfile } from "../store/UserProfileProvider";
 
@@ -19,6 +19,7 @@ type RootStackParamList = {
   Newpost: undefined;
   SettingsScreen: undefined;
   ContactScreen: undefined;
+  Home: undefined;
 };
 
 
@@ -68,14 +69,26 @@ export default function ProfileScreen() {
         },
     });
 
+    const handleLogout = async () => {
+
+        try {
+            const response = await Logout();
+            if (response.success) {
+                navigation.navigate('Home');
+            }
+        } catch (error) {
+            console.log('error : ', error);
+        }
+    };
+
     const handlepress = (item: string) => {
         switch (item){
             case 'Setting':
                 navigation.navigate('SettingsScreen');
                 break ;
-            // case 'Share':
-                
-            //     break ;
+            case 'logout':
+                handleLogout();
+                break ;
         }
 
     };
@@ -91,7 +104,7 @@ export default function ProfileScreen() {
             <View style={styles.flexContainer}>
                 
 
-                <View style={styles.flexContainer}>
+                <View style={{flex: 2}} >
                     <View style={styles.header}>
                         <View style={styles.headerContent}>
                             <Text style={styles.headerText}>Your Profile</Text>
@@ -104,7 +117,6 @@ export default function ProfileScreen() {
                     <View style={{flex: 1, justifyContent: 'flex-start'}}>
                     <View style={{position: 'relative', bottom: 53}}>
                         <View style={{marginLeft: 40}}>
-                            {/* <Image source={require('../assets/profile.png')} style={{width: 90, height: 90, borderRadius: 50}} /> */}
                             {!imageUri ? (
                                 <Image source={require('../assets/profile.png')} style={{width: 88, height: 88, borderRadius: 50}} />
                             ): (
@@ -134,9 +146,7 @@ export default function ProfileScreen() {
                             <Icon name="setting" size={24} color={'#434752'} onPress={() => handlepress('Setting')} />
                         </View>
                         <View style={[styles.iconWrapper, styles.shareIcon]}>
-                            <View style={{marginRight: 3}}>
-                                <Icon name="sharealt" size={22} color={'#FFFFFF'} onPress={() => handlepress('Share')}/>
-                            </View>
+                            <Icon name="logout" size={20} color={'#FFFFFF'} onPress={() => handlepress('logout')}/>
                         </View>
                     </View>
 
@@ -162,35 +172,37 @@ export default function ProfileScreen() {
 
                 <View style={{flex: 1}} {...panResponder.panHandlers}>
                     {showDetails ? (
-                        <View style={styles.detailsContent}>
-                                 <View style={styles.detailItem}>
-                                     <Text style={styles.detailLabel}>Username</Text>
-                                     <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{profile?.Fname} {profile?.Sname}</Text>
-                                     </View>
-                                 </View>
-             
-                                 <View style={styles.detailItem}>
-                                     <Text style={styles.detailLabel}>Phone number</Text>
-                                     <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{profile?.Phone}</Text>
-                                     </View>
-                                 </View>
-             
-                                 <View style={styles.detailItem}>
-                                     <Text style={styles.detailLabel}>Email</Text>
-                                     <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{profile?.Email}</Text>
-                                     </View>
-                                 </View>
-             
-                                 <View style={styles.detailItem}>
-                                     <Text style={styles.detailLabel}>Department</Text>
-                                     <View style={styles.detailValueWrapper}>
-                                         <Text style={styles.detailValue}>{profile?.Department}</Text>
-                                     </View>
-                                 </View>
-                             </View>
+                            <ScrollView>
+                                <View style={styles.detailsContent}>
+                                    <View style={styles.detailItem}>
+                                        <Text style={styles.detailLabel}>Username</Text>
+                                        <View style={styles.detailValueWrapper}>
+                                            <Text style={styles.detailValue}>{profile?.Fname} {profile?.Sname}</Text>
+                                        </View>
+                                    </View>
+                
+                                    <View style={styles.detailItem}>
+                                        <Text style={styles.detailLabel}>Phone number</Text>
+                                        <View style={styles.detailValueWrapper}>
+                                            <Text style={styles.detailValue}>{profile?.Phone}</Text>
+                                        </View>
+                                    </View>
+                
+                                    <View style={styles.detailItem}>
+                                        <Text style={styles.detailLabel}>Email</Text>
+                                        <View style={styles.detailValueWrapper}>
+                                            <Text style={styles.detailValue}>{profile?.Email}</Text>
+                                        </View>
+                                    </View>
+                
+                                    <View style={styles.detailItem}>
+                                        <Text style={styles.detailLabel}>Department</Text>
+                                        <View style={styles.detailValueWrapper}>
+                                            <Text style={styles.detailValue}>{profile?.Department}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                             </ScrollView>
                     ) : (
                       <>
                           {/* User Activity */}
@@ -248,12 +260,11 @@ const styles = StyleSheet.create({
     },
     header: {
         backgroundColor: '#434752',
-        height: '60%',
-        justifyContent: 'flex-start',
+        flex: 1,
     },
     headerContent: {
+        flex: 1,
         alignItems: 'center',
-        marginTop: 50,
         justifyContent: 'center',
     },
     headerText: {
@@ -299,11 +310,12 @@ const styles = StyleSheet.create({
         color: '#444854',
     },
     footer: {
-        height: 120,
+        flex: 1,
     },
     iconRow: {
         flex: 1,
         flexDirection: 'row',
+        alignItems: 'center',
         paddingLeft: 15,
     },
     iconWrapper: {
@@ -371,6 +383,7 @@ const styles = StyleSheet.create({
     detailItem: {
         flex: 1,
         flexDirection: 'column',
+        marginBottom: 8
     },
     detailLabel: {
         fontFamily: 'Raleway-Bold',

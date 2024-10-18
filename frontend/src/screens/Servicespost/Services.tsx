@@ -1,5 +1,5 @@
 import React, { useState, forwardRef, useEffect  } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Icon from 'react-native-vector-icons/Entypo';
 import PostItem from "../../components/Post";
 import CategoryItem from "../../components/Categories";
@@ -54,6 +54,11 @@ interface ServicesProps {
   setSelectedCategory: (category: string | null) => void;
 }
 
+const { width, height } = Dimensions.get('window');
+
+const aspectRatio = height / width;
+
+const smallScreen = (width <= 1080 && aspectRatio <= 1.8);
 
 const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCategory }) => {
   const [listType, setListType] = useState<string | null>(null);
@@ -303,8 +308,8 @@ export default Services;
 const styles = StyleSheet.create({
     arrowbottom: {
         position: 'absolute',
-        left: 10,
-        top: 35
+        left: smallScreen ? 8 : 15,
+        top: smallScreen ? 6 : 18
     },
     container: {
       flex: 1,

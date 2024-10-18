@@ -21,6 +21,12 @@ interface LikeSocket {
     createdAt: string;
 }
 
+const { width, height } = Dimensions.get('window');
+
+const aspectRatio = height / width;
+
+const smallScreen = (width <= 1080 && aspectRatio <= 1.8);
+
 export default function NotificationsScreen() {
     const { width } = Dimensions.get("window");
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -140,7 +146,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     headerContainer: {
-        justifyContent: 'flex-end',
+        justifyContent: smallScreen ? 'center' : 'flex-end',
         paddingHorizontal: 15,
         height: 140,
     },

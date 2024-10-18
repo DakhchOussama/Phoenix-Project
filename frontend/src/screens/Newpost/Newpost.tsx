@@ -13,6 +13,10 @@ import { createPost, uploadImage } from "../../services/postService";
 import Loading from "../../components/Loading";
 import { useUserProfile } from "../../store/UserProfileProvider";
 
+const { height, width } = Dimensions.get('window');
+
+const bigScreenThreshold = 800;
+const bigScreen = width > bigScreenThreshold;
 
 
 export default function Newpost() {
@@ -170,17 +174,19 @@ export default function Newpost() {
                                 <Text style={styles.description}>Upload a clear photo showcasing the details of your demand or offer post, ensuring all information is visible and easy to read</Text>
                             </View>
 
-                            <View style={styles.imageUploadContainer}>
-                                <TouchableOpacity style={styles.imageUploadBox} onPress={openImagePicker}>
-                                     {imgUri ? (
-                                        <Image source={{ uri: imgUri }} style={styles.imagePreview}  />
-                                    ) : (
-                                        <>
-                                            <Text style={styles.imageUploadText}>Select file</Text>
-                                            <Iconfeather name="image" size={30} color={'#9E9E9E'} />
-                                        </>
-                                    )}
-                                </TouchableOpacity>
+                            <View style={[styles.imageUploadContainer, ]}>
+                                <View style={styles.selectedimage}>
+                                    <TouchableOpacity style={styles.imageUploadBox} onPress={openImagePicker}>
+                                        {imgUri ? (
+                                            <Image source={{ uri: imgUri }} style={styles.imagePreview}  />
+                                        ) : (
+                                            <>
+                                                <Text style={styles.imageUploadText}>Select file</Text>
+                                                <Iconfeather name="image" size={30} color={'#9E9E9E'} />
+                                            </>
+                                        )}
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
 
@@ -236,19 +242,23 @@ export default function Newpost() {
                         </View>
 
                         <View style={styles.titleSection}>
-                            <Text style={styles.sectionTitle}>Title :</Text>
-                            <View style={styles.titleInputContainer}>
-                                <TextInput style={styles.titleInput}
-                                    onChangeText={(text) => settitle(text)}
-                                ></TextInput>
+                            <View style={{flex: 1, paddingLeft: 8, paddingRight: 8}}>
+                                <Text style={styles.sectionTitle}>Title :</Text>
+                                <View style={styles.titleInputContainer}>
+                                    <TextInput style={styles.titleInput}
+                                        onChangeText={(text) => settitle(text)}
+                                    ></TextInput>
+                                </View>
                             </View>
                         </View>
 
-                        <View style={styles.uploadButtonContainer}>
-                            <TouchableOpacity style={styles.uploadButton} onPress={handleuploadpost}>
-                                <Text style={styles.uploadButtonText}>Upload</Text>
-                                <Icon name="upload" size={18} style={styles.uploadButtonIcon}/>
-                            </TouchableOpacity>
+                        <View style={[styles.uploadButtonContainer, {alignItems: 'center'}]}>
+                            <View style={{padding: 5, width: '50%', height: '100%'}}>
+                                <TouchableOpacity style={styles.uploadButton} onPress={handleuploadpost}>
+                                    <Text style={styles.uploadButtonText}>Upload</Text>
+                                    <Icon name="upload" size={18} style={styles.uploadButtonIcon}/>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         </View>
                     </View>
@@ -274,14 +284,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#EEEEEE',
         height: 13,
         borderRadius: 10,
-        width: 250,
+        width: bigScreen ? 400 : 250,
         marginBottom: 10,
     },
     progressBarFilled: {
         backgroundColor: '#E17861',
         height: 13,
         borderRadius: 10,
-        width: 134,
+        width: bigScreen ? 200 :134,
     },
     progressBarCompleted: {
         alignItems: 'flex-end',
@@ -297,25 +307,27 @@ const styles = StyleSheet.create({
     },
     title: {
         fontFamily: 'Raleway-Bold',
-        fontSize: 27,
+        fontSize: width > 600 ? 27 : 24,
         color: "#434752",
         marginBottom: 10
     },
     description: {
         fontFamily: 'Rubik-Regular',
-        fontSize: 13,
+        fontSize: width > 600 ? 16 : 14,
         color: "#434752",
         marginLeft: 7
     },
     imageUploadContainer: {
-        justifyContent: 'flex-start',
-        alignItems: 'center',
         flex: 2
+    },
+    selectedimage: {
+        flex: 1,
+        justifyContent: 'center',
+        padding: 10,
+        ...(bigScreen ? { alignItems: 'center' } : {}),
     },
     imageUploadBox: {
         backgroundColor: '#FAFAFA',
-        height: '100%',
-        width: 400,
         flexDirection: 'column-reverse',
         justifyContent: 'center',
         alignItems: 'center',
@@ -325,6 +337,8 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 40,
         borderTopRightRadius: 30,
         borderBottomRightRadius: 30,
+        height: '100%',
+        width: bigScreen ? 700 : 'auto',
     },
     imageUploadText: {
         fontFamily: 'Lato-Bold',
@@ -372,6 +386,7 @@ const styles = StyleSheet.create({
         borderRadius: 30
     },
     cameraButtonText: {
+        fontSize: width > 600 ? 16 : 14,
         fontFamily: 'Raleway-Bold',
         color: "#E17861"
     },
@@ -386,15 +401,14 @@ const styles = StyleSheet.create({
     },
     formContainer: {
         flex: 1,
-        padding: 20,
         justifyContent: 'center',
         alignItems: 'center'
     },
     categorySection: {
-        flex: 1,
-        justifyContent: 'center',
-        paddingLeft: 5,
-        paddingRight: 5
+        flex: 2,
+        justifyContent: 'flex-end',
+        paddingLeft: 8,
+        paddingRight: 8,
     },
     sectionTitle: {
         color: '#434752',
@@ -408,17 +422,18 @@ const styles = StyleSheet.create({
         zIndex: 999
     },
     typeSection: {
-        flex: 1,
-        paddingLeft: 5,
-        paddingRight: 5
+        flex: 2,
+        paddingLeft: 8,
+        paddingRight: 8,
+        justifyContent: 'center'
     },
     switchContainer: {
+        flex: 1,
         flexDirection: 'row-reverse',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        marginBottom: 15,
-        paddingLeft: 5,
-        paddingRight: 5
+        paddingLeft: 8,
+        paddingRight: 8,
     },
     switchLabel: {
         color: '#434752',
@@ -426,42 +441,35 @@ const styles = StyleSheet.create({
         fontSize: 17
     },
     titleSection: {
-        flex: 2,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        flex: 3,
     },
     titleInputContainer: {
-        flex: 1,
-        padding: 5,
+        
     },
     titleInput: {
-        flex: 1,
         borderRadius: 15,
         borderColor: '#E17861',
         borderWidth: 1.5,
         backgroundColor: '#fcfcfc',
-        width: 400,
         textAlignVertical: 'top', 
-        padding: 10
+        height: '90%',
+        fontSize: width > 600 ? 16 : 14,
     },
     uploadButtonContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center'
+        flex: 1
     },
     uploadButton: {
         backgroundColor: '#434752',
-        width: 200,
-        height: 60,
-        justifyContent: 'center',
-        alignItems: 'center',
         flexDirection: 'row',
-        borderRadius: 15
+        borderRadius: 15,
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     uploadButtonText: {
         color: "#FFFFFF",
         fontFamily: 'Raleway-Bold',
-        fontSize: 17,
+        fontSize: width > 600 ? 16 : 14,
         marginRight: 10
     },
     uploadButtonIcon: {
@@ -472,4 +480,5 @@ const styles = StyleSheet.create({
         height: '90%',
         borderRadius: 30,
     },
+    
 });
