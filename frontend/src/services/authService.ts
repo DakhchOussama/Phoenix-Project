@@ -137,19 +137,6 @@ export const checkToken = async (): Promise<boolean> => {
             return newAccessToken !== null;
         }
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            if (error.response?.status === 401) {
-                console.error('Access token expired, attempting to refresh token');
-                const newAccessToken = await refreshAccessToken(refreshToken);
-                console.log('newAccessToken : ', newAccessToken);
-                if (newAccessToken) {
-                    return true; // New token generated successfully
-                }
-            }
-            console.error('Error status:', error.response?.status);
-            console.error('Error data:', error.response?.data);
-        }
-        console.error('Error validating token', error);
         await removeToken();
         return false;
     }

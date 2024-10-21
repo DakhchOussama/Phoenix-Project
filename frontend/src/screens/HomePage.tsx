@@ -23,6 +23,15 @@ import { useNavigation } from '@react-navigation/native';
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
 
 
+interface NotificationData {
+    notificationId: string;
+    notificationType: string;
+    username: string;
+    avatar: string;
+    createdAt: string;
+}
+
+
 const Tab = createBottomTabNavigator();
 
 export default function HomePage() {
@@ -61,28 +70,33 @@ export default function HomePage() {
                 importance: 4,
                 vibrate: true,
             },
-            (created) => console.log(`createChannel returned '${created}'`)
+            (created) => {}
         );
     
         const socket = getSocket();
     
         if (socket) {
-            socket.on('notification', () => {
+            socket.on('notification', (data: NotificationData) => {
                 setBadgeVisible(true);
     
                 PushNotification.localNotification({
-                    title: "New Notification", // Notification title
-                    message: "You have received a new message!", // Notification message
+                    channelId: "default-channel-id", // The channelId that you just created
+                    title: `Phenx`, // Use notification type in title
+                    message: `${data.username} sent you a message`, // Include username in message
                     playSound: true, // Play notification sound
                     soundName: 'default', // Custom sound
                     importance: 'high', // For Android
-                    priority: 'high',  // For Android
-                    channelId: "default-channel-id", // The channelId that you just created
+                    priority: 'high', // For Android
+                    smallIcon: "ic_notification", // Custom small icon (make sure to add it to your resources)
+                    largeIcon: "ic_launcher", // Custom large icon (make sure to add it to your resources)
+                    bigText: `Message from ${data.username}: Your notification was created at ${data.createdAt}`, // Expanded text with more details
+                    userInfo: { notificationId: data.notificationId }, // Attach additional data if needed
                 });
     
                 // Set badge count
                 PushNotification.setApplicationIconBadgeNumber(1);
             });
+
         }
     
         return () => {

@@ -40,12 +40,9 @@ interface PostData {
     createdAt: string;
 }
 
-const { height, width } = Dimensions.get('window');
-const isSmallPhone = height < 600;
-const headerHeight = isSmallPhone ? height * 0.35 : height * 0.25;
-
 export default function HomeScreen(){
 
+    const { height } = Dimensions.get('window');
     const isSmallPhone = height < 600;
     const headerHeight = isSmallPhone ? height * 0.4 : height * 0.3;
     const [services, setServices] = useState<boolean>(false);

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Image, Text, View, StyleSheet, PanResponder, GestureResponderEvent, PanResponderGestureState } from "react-native";
+import { Image, Text, View, StyleSheet, PanResponder, GestureResponderEvent, PanResponderGestureState, Dimensions } from "react-native";
 import Iconfont from 'react-native-vector-icons/Fontisto';
 import Icon from 'react-native-vector-icons/AntDesign';
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -28,6 +28,12 @@ interface Userdata {
     demandsUpload: number;
     offersUpload: number;
 }
+
+const { width, height } = Dimensions.get('window');
+
+const aspectRatio = height / width;
+
+const smallScreen = (width <= 1080 && aspectRatio <= 1.8);
 
 export default function ProfileScreen() {
     const [leftbar, setLeftbar] = useState<boolean>(false);
@@ -102,9 +108,7 @@ export default function ProfileScreen() {
                 navigation={navigation} 
             />}
             <View style={styles.flexContainer}>
-                
-
-                <View style={{flex: 2}} >
+                <View style={{flex: 2,backgroundColor: '#434752'}} >
                     <View style={styles.header}>
                         <View style={styles.headerContent}>
                             <Text style={styles.headerText}>Your Profile</Text>
@@ -114,25 +118,27 @@ export default function ProfileScreen() {
                         </View>
                     </View>
 
-                    <View style={{flex: 1, justifyContent: 'flex-start'}}>
-                    <View style={{position: 'relative', bottom: 53}}>
-                        <View style={{marginLeft: 40}}>
-                            {!imageUri ? (
-                                <Image source={require('../assets/profile.png')} style={{width: 88, height: 88, borderRadius: 50}} />
-                            ): (
-                                <Image source={{ uri: imageUri }} style={{width: 88, height: 88, borderRadius: 50}} />
-                            )}
+                    <View style={{flex: 2, justifyContent: 'flex-end'}}>
+                    <View style={{marginLeft: 20, marginBottom: 10}}>
+                        <View style={{justifyContent: 'center'}}>
+                            <View style={{marginLeft: 5}}>
+                                {!imageUri ? (
+                                    <Image source={require('../assets/profile.png')} style={{width: smallScreen ? 70 : 88, height: smallScreen ? 70 : 88, borderRadius: 50}} />
+                                ): (
+                                    <Image source={{ uri: imageUri }} style={{width: smallScreen ? 70 : 88, height: smallScreen ? 70 : 88, borderRadius: 50}} />
+                                )}
+                            </View>
                         </View>
-                        <View style={{marginLeft: 25, marginTop: 8}}>
+                        <View style={{}}>
                             <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 2}}>
-                                <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#434752'}}>{profile?.Fname} {profile?.Sname}</Text>
+                                <Text style={{fontFamily: 'Raleway-SemiBold', fontSize: 24, color: '#FFFFFF'}}>{profile?.Fname} {profile?.Sname}</Text>
                                 {profile?.isAdmin && <Image source={require('../assets/admin-panel.png')} style={{width: 25, height: 25, marginLeft: 5, marginTop: 2}} />}
                                 {/* iCON */}
                             </View>
 
                             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                                <Iconfont name="email" size={16} color={'#434752'} />
-                                <Text style={{fontFamily: 'Sora-Medium', marginLeft: 5, marginBottom: 2, color: '#444854'}}>{profile?.Email}</Text>
+                                <Iconfont name="email" size={16} color={'#FFFFFF'} />
+                                <Text style={{fontFamily: 'Sora-Medium', marginLeft: 5, marginBottom: 2, color: '#FFFFFF'}}>{profile?.Email}</Text>
                             </View>
                         </View>
                     </View>
@@ -259,13 +265,12 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        backgroundColor: '#434752',
         flex: 1,
     },
     headerContent: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: smallScreen ? 'center' : 'flex-end',
     },
     headerText: {
         color: '#FFFFFF',

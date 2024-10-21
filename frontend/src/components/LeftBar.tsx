@@ -139,7 +139,6 @@ const LeftBar: React.FC<LeftBarProps> = ({ onPress, navigation }) => {
 
 const styles = StyleSheet.create({
     sidebar: {
-        width: 270,
         backgroundColor: '#d36249',
         position: 'absolute',
         left: 0,
@@ -148,7 +147,8 @@ const styles = StyleSheet.create({
         zIndex: 1000,
     },
     profileSection: {
-        height: 200,
+        // height: 200,
+        flex: 0.7,
         flexDirection: 'column',
         marginTop: 25,
     },
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        marginLeft: 15
+        marginLeft: 15,
     },
     imageContainer: {
         marginRight: 10,

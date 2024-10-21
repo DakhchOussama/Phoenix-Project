@@ -146,9 +146,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
     },
     headerContainer: {
-        justifyContent: smallScreen ? 'center' : 'flex-end',
+        justifyContent:  'flex-end',
         paddingHorizontal: 15,
-        height: 140,
+        height: smallScreen ? 100 : 140,
     },
     headerText: {
         fontFamily: 'Raleway-Bold',
