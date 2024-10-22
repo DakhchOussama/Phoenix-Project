@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import CategoryItem from "../../components/Categories";
-import { getCollaboPosts } from "../../services/postService";
 import { BASE_URL } from "@env";
 import Loading from "../../components/Loading";
+import { usePostContext } from "../../store/PostProvider";
 
 
 export default function ShopScreen() {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [adminposts, setAdminposts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const { posts } = usePostContext();
 
-  const getPostAdmin = async () => {
-    try {
-        setLoading(true);
-        const data = await getCollaboPosts();
-        setPosts(data);
-        setLoading(false);
-    } catch (error) {
-        console.error("Error fetching posts:", error);
-    }
-};
-
-useEffect(() => {
-    getPostAdmin(); // Fetch posts on component mount
-}, []);
+  
+  useEffect(() => {
+    const getPostAdmin = async () => {
+        try {
+            if (posts){
+                const filteredPosts = posts.filter((post) => post.Type == 'Collaborations & Partnerships');
+                setAdminposts(filteredPosts);
+            }
+        } catch (error) {
+            console.error("Error fetching posts:", error);
+        }
+        };
+        getPostAdmin(); // Fetch posts on component mount
+    }, []);
 
   const handlePress = (index: number) => {
     setSelectedCategory(selectedCategory === index ? null : index);
@@ -35,11 +36,11 @@ useEffect(() => {
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <CategoryItem selectedCategory={selectedCategory} handlePress={handlePress} />
+    <CategoryItem selectedCategory={selectedCategory?.toString() || null} handlePress={handlePress} />
       <View style={{ flex: 2 }}>
         <ScrollView horizontal={false} style={{ marginTop: 10 }}>
           <View style={{ margin: 21, marginTop: 20 }}>
-            {posts.map((post) => (
+            {adminposts.map((post) => (
               <View key={post.PostID}>
                 <View style={styles.postContainer}>
                   {/* name & like */}

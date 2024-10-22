@@ -11,8 +11,8 @@ import LeftBar from "../../components/LeftBar";
 import { useNavigation } from '@react-navigation/native';
 import Toast from "react-native-toast-message";
 import { BASE_URL } from "@env";
-import { getPostsadmin } from "../../services/postService";
 import { useUserProfile } from "../../store/UserProfileProvider";
+import { usePostContext } from "../../store/PostProvider";
 
 
 interface User {
@@ -37,7 +37,7 @@ interface Category {
 interface PostData {
     PostID: string;
     Title: string;
-    createdAt: string;
+    createdAt: Date;
 }
 
 export default function HomeScreen(){
@@ -54,21 +54,33 @@ export default function HomeScreen(){
     const [dropcontainer, setDropcontainer ] = useState<boolean>(false);
     const [servicesdata, setServicesdata] = useState<PostData[]>([]);
     const { profile } = useUserProfile();
+    const { posts } = usePostContext();
 
     const navigation = useNavigation();
 
-    const fetchPosts = async () => {
-        try {
-            const response = await getPostsadmin();
-            if (response) {
-                setServicesdata(response);
+    useEffect(() => {
+        const fetchPosts = async () => {
+            const twentyFourHoursAgo = Date.now() - 24 * 60 * 60 * 1000;
+            if (posts) {
+                const filteredPosts = posts
+                    .filter(post => {
+                        const postCreatedAt = new Date(post.createdAt).getTime();
+                        return post.fname === "admin" && postCreatedAt >= twentyFourHoursAgo;
+                    })
+                    .map(post => ({
+                        PostID: post.PostID,
+                        Title: post.Title,
+                        createdAt: new Date(post.createdAt)
+                    }));
+    
+                setServicesdata(filteredPosts);
             }
-        } catch (error) {
-            console.error('Error fetching posts:', error);
-        }
-    };
-
-    fetchPosts();
+        };
+    
+        fetchPosts();
+    }, [posts]);
+    
+    
 
     const handleSwipeGesture = (event: any) => {
         if (event.nativeEvent.translationX < 10) {

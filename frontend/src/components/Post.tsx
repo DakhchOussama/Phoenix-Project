@@ -20,7 +20,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 interface Post {
     id: string;
     userId: string;
-    title: "DEMAND" | "Offer";
+    title: string;
     description: string;
     avatar: string;
     image: { uri: string } | null;

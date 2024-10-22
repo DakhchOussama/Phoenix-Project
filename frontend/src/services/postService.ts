@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASE_URL } from '@env';
 import { getToken } from "./authService";
 import { io } from "socket.io-client";
+import { usePostContext } from "../store/PostProvider";
 
 const instance = axios.create({
     baseURL: BASE_URL,
@@ -70,6 +71,7 @@ export const createPost = async (PostData: any) => {
         const {accessToken} = await getToken();
         const response = await instance.post('/posts/create', PostData, {
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             }
         }
@@ -87,6 +89,7 @@ export const getPosts = async () => {
         const {accessToken} = await getToken();
         const response = await instance.get('/posts/postuser', {
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             }
         });
@@ -106,6 +109,7 @@ export const likePost = async (postId: string, userId: string) => {
         const {accessToken} = await getToken();
         const response = await instance.get(`/posts/${postId}/like`, {
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
             params: { userId },
@@ -121,6 +125,7 @@ export const CheckPost = async (postId: string, userId: string) => {
         const {accessToken} = await getToken();
         const response = await instance.get(`/posts/${postId}/like/check`, {
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
             params: { userId },
@@ -136,6 +141,7 @@ export const removePost = async (postId: string) => {
         const {accessToken} = await getToken();
         const response = await instance.delete(`/posts/${postId}/removepost`, {
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
             },
         });
@@ -233,43 +239,3 @@ export const uploadTraduction = async (title: string, postId: string) => {
         return false;
     }
 };
-
-export const getPostsadmin = async () => {
-    try {
-        const {accessToken} = await getToken();
-
-        if (!accessToken)
-            throw new Error('No token found');
-        const response = await instance.get('/posts/postsadmin', {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-        const data = response.data.data;
-        return data;
-    } catch (error) {
-        return null;
-    }
-}
-
-export const getCollaboPosts = async () => {
-    try {
-        const {accessToken}  = await getToken();
-
-        if (!accessToken)
-            throw new Error('No token found');
-        const response = await instance.get('/posts/getadminposts', {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-        });
-
-        const data = response.data;
-        
-        return data;
-    } catch (error) {
-        
-    }
-}

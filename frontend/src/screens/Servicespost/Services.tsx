@@ -10,31 +10,13 @@ import Loading from "../../components/Loading";
 import PostDetails from "./PostDetails";
 import Toast from "react-native-toast-message";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { usePostContext } from "../../store/PostProvider";
 
-
-interface PostFromApi {
-  PostID: string;
-  userId: string;
-  ImgURL?: string;
-  Title: string;
-  Categories: string;
-  Type: "DEMAND" | "Offer";
-  isEnabled: boolean;
-  Likes: number;
-  createdAt: string;
-  updatedAt: string;
-  fname: string;
-  sname: string;
-  avatar: string;
-  translates?: string;
-  userHasLiked: boolean;
-  isOwnPost: boolean;
-}
 
 interface MappedPost {
   id: string;
   userId: string;
-  title: "DEMAND" | "Offer";
+  title: string;
   description: string;
   avatar: any;
   image: { uri: string } | null;
@@ -67,56 +49,63 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   const [isLoading, setIsLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  // const { posts } = usePostContext();
+  const { posts: contextPosts, setRefresh } = usePostContext();
   
   
   const fetchPosts = async () => {
-    try {
-      setIsLoading(true);
-      const fetchedPosts: PostFromApi[] = await getPosts();
-      const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
-        id: post.PostID,
-        userId: post.userId,
-        title: post.Type,
-        description: post.Title,
-        avatar: post.avatar,
-        image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
-        username: post.sname ? `${post.fname} ${post.sname}` : `${post.fname}`,
-        time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        likes: post.Likes,
-        translate: post.translates,
-        userHasLiked: post.userHasLiked || false,
-        Categories: post.Categories,
-        isEnabled: post.isEnabled,
-        isOwnPost: post.isOwnPost,
-        daysAgo: Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / (1000 * 3600 * 24))
-      }));
-      setPosts(mappedPosts);
-    } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'An error occurred',
-        text2: 'Failed to fetch posts , please try again.',
+   
+    if (contextPosts){
+      // console.log('posts : ', posts)
+      // console.log('contextPosts : ', contextPosts);
+      const fetchedPosts = contextPosts.filter((post) => {
+        return post.Type == 'Offer' || post.Type == 'Demand';
       });
-    } finally {
-      setIsLoading(false);
+      
+      if (fetchedPosts){
+        const mappedPosts: MappedPost[] = fetchedPosts.map(post => ({
+          id: post.PostID,
+          userId: post.userId,
+          title: post.Type,
+          description: post.Title,
+          avatar: post.avatar,
+          image: post.ImgURL ? { uri: `${BASE_URL}/posts/image/${post.ImgURL}` } : null,
+          username: post.sname ? `${post.fname} ${post.sname}` : `${post.fname}`,
+          time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          likes: post.Likes,
+          translate: post.translates,
+          userHasLiked: false,
+          Categories: post.Categories,
+          isEnabled: post.isEnabled,
+          isOwnPost: post.isOwnPost,
+          daysAgo: Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / (1000 * 3600 * 24))
+        }));
+        setPosts(mappedPosts);
+
+        // console.log('posts : ', posts);
+        
+      }
     }
+    
   };
-
-
-
+  
+  
   useEffect(() => {
-    fetchPosts();
+      setIsLoading(true);
+      fetchPosts();
+      setIsLoading(false);
   }, []);
 
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await fetchPosts();
+    setRefresh(true);
+    fetchPosts();
     setRefreshing(false);
   };
   
     
-  if (isLoading && !refreshing) {
+  if (isLoading) {
     return <Loading />;
   }
 

@@ -17,6 +17,7 @@ import { UserProfileProvider } from "../store/UserProfileProvider";
 import PushNotification from "react-native-push-notification";
 import { checkUserisBan, removeToken } from "../services/authService";
 import { useNavigation } from '@react-navigation/native';
+import { PostProvider } from "../store/PostProvider";
 
 
 // Define a type for the route names
@@ -120,6 +121,7 @@ export default function HomePage() {
 
     return (
         <UserProfileProvider>
+            <PostProvider>
             <Tab.Navigator
                 screenOptions={({ route }) => ({
                     tabBarIcon: ({ color }) => {
@@ -173,7 +175,7 @@ export default function HomePage() {
                 <Tab.Screen name="Edit" component={EditComponent} options={{ tabBarButton: () => null, headerShown: false }} />
                 <Tab.Screen name="Traduction" component={TraductionComponent} options={{ tabBarButton: () => null, headerShown: false }} />
             </Tab.Navigator>
-
+            </PostProvider>
         </UserProfileProvider>
     );
 };

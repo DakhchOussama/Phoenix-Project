@@ -154,7 +154,6 @@ export const refreshAccessToken = async (refreshToken: string): Promise<string |
             return null;
         }
     } catch (error) {
-        console.error('Failed to refresh access token', error);
         await removeToken();
         return null;
     }

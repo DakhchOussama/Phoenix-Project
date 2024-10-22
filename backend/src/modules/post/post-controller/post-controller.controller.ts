@@ -35,19 +35,6 @@ export class PostControllerController {
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
-    
-    @Get('getadminposts')
-    @UseGuards(JwtAuthGuard)
-    async getAdminPosts() {
-        try {
-            const posts = await this.PostService.getCollaboPosts();
-            return posts; // Ensure you return the posts to the client
-        } catch (error) {
-            console.error("Error fetching admin posts:", error);
-            throw new Error('Failed to get admin posts');
-        }
-    }
-
 
     @Post('create')
     @UseGuards(JwtAuthGuard)
@@ -196,17 +183,6 @@ export class PostControllerController {
         } catch (error){
             console.error('Error creating post:', error);
             throw new Error('Error creating post');
-        }
-    }
-
-    @Get('postsadmin')
-    @UseGuards(JwtAuthGuard)
-    async getPostsadmin(){
-        try {
-            const data = await this.PostService.getPostsAdmin();
-            return { success: true, data }; 
-        } catch (error) {
-            return { success: false, message: 'Failed to fetch admin posts' };
         }
     }
 

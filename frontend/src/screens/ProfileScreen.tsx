@@ -123,9 +123,9 @@ export default function ProfileScreen() {
                         <View style={{justifyContent: 'center'}}>
                             <View style={{marginLeft: 5}}>
                                 {!imageUri ? (
-                                    <Image source={require('../assets/profile.png')} style={{width: smallScreen ? 70 : 88, height: smallScreen ? 70 : 88, borderRadius: 50}} />
+                                    <Image source={require('../assets/profile.png')} style={{width: smallScreen ? 70 : 85, height: smallScreen ? 70 : 85, borderRadius: 50}} />
                                 ): (
-                                    <Image source={{ uri: imageUri }} style={{width: smallScreen ? 70 : 88, height: smallScreen ? 70 : 88, borderRadius: 50}} />
+                                    <Image source={{ uri: imageUri }} style={{width: smallScreen ? 70 : 85, height: smallScreen ? 70 : 85, borderRadius: 50}} />
                                 )}
                             </View>
                         </View>
