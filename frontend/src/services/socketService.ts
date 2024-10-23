@@ -5,7 +5,16 @@ import { getprofileuser } from "./authService";
 
 let socket: any;
 
+const createRoom = async () => {
+    const data = await getprofileuser();
+    if (data && data.UserID) {
+        // Join the user's specific room
+        socket.emit('joinRoom', data.UserID);
+    }
+};
+
 export const connectSocket = () => {
+    disconnectSocket(); 
     if (!socket) {
         socket = io(BASE_URL, {
             transports: ['websocket'],
@@ -19,14 +28,6 @@ export const connectSocket = () => {
         socket.on('disconnect', () => {
             console.log('Disconnected from WebSocket server');
         });
-
-        const createRoom = async () => {
-            const data = await getprofileuser();
-            if (data && data.UserID) {
-                // Join the user's specific room
-                socket.emit('joinRoom', data.UserID);
-            }
-        };
 
     }
 

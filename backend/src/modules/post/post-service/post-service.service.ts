@@ -38,7 +38,6 @@ export class PostServiceService {
 
 
        const usersAdminMap = new Map(users.map(user => [user.UserID, user.isAdmin]))
-
     
         const formattedPosts = posts.map(post => ({
             PostID: post.PostID,

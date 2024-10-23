@@ -1,44 +1,60 @@
 import React, { useState, useEffect } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View, RefreshControl } from "react-native";
 import CategoryItem from "../../components/Categories";
 import { BASE_URL } from "@env";
-import Loading from "../../components/Loading";
 import { usePostContext } from "../../store/PostProvider";
 
-
 export default function ShopScreen() {
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [adminposts, setAdminposts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const { posts } = usePostContext();
+  const [refreshing, setRefreshing] = useState(false);
+  const { posts, setRefresh } = usePostContext();
 
-  
-  useEffect(() => {
-    const getPostAdmin = async () => {
-        try {
-            if (posts){
-                const filteredPosts = posts.filter((post) => post.Type == 'Collaborations & Partnerships');
-                setAdminposts(filteredPosts);
-            }
-        } catch (error) {
-            console.error("Error fetching posts:", error);
-        }
-        };
-        getPostAdmin(); // Fetch posts on component mount
-    }, []);
-
-  const handlePress = (index: number) => {
-    setSelectedCategory(selectedCategory === index ? null : index);
+  const getPostAdmin = async () => {
+    try {
+      if (posts) {
+        const filteredPosts = posts.filter(
+          (post) => post.Type === "Collaborations & Partnerships"
+        );
+        setAdminposts(filteredPosts);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
 
-  if (loading)
-    return <Loading />
+  useEffect(() => {
+    getPostAdmin();
+  }, [posts]);
+
+  const handlePress = (category: string) => {
+    setSelectedCategory(selectedCategory === category ? null : category);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setRefresh(true);
+    await getPostAdmin();
+    setRefreshing(false);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: 'white' }}>
-    <CategoryItem selectedCategory={selectedCategory?.toString() || null} handlePress={handlePress} />
+      <CategoryItem
+        selectedCategory={selectedCategory?.toString() || null}
+        handlePress={handlePress}
+      />
       <View style={{ flex: 2 }}>
-        <ScrollView horizontal={false} style={{ marginTop: 10 }}>
+        <ScrollView
+          horizontal={false}
+          style={{ marginTop: 10 }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#D84B2C']}
+            tintColor={'#D84B2C'} />
+          }
+        >
           <View style={{ margin: 21, marginTop: 20 }}>
             {adminposts.map((post) => (
               <View key={post.PostID}>
@@ -48,16 +64,28 @@ export default function ShopScreen() {
                     {/* name and img */}
                     <View style={styles.nameImgContainer}>
                       <View style={styles.avatarContainer}>
-                        <Image source={require('../../assets/bot.png')} style={styles.avatar} />
+                        <Image
+                          source={require("../../assets/bot.png")}
+                          style={styles.avatar}
+                        />
                       </View>
                       <View style={styles.nameTextContainer}>
                         {/* name and min */}
                         <View>
-                          <Text style={styles.username}>Admin
-                            <Text style={styles.time}> .{`${new Date(post.createdAt).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false })}`}</Text>
+                          <Text style={styles.username}>
+                            Admin
+                            <Text style={styles.time}>
+                              .{`${new Date(post.createdAt).toLocaleTimeString("en-GB", {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                                hour12: false,
+                              })}`}
+                            </Text>
                           </Text>
                         </View>
-                        <Text style={styles.title}>Collaborations & Partnerships</Text>
+                        <Text style={styles.title}>
+                          Collaborations & Partnerships
+                        </Text>
                       </View>
                     </View>
                   </View>
@@ -68,12 +96,12 @@ export default function ShopScreen() {
 
                   {post.ImgURL !== null && post.ImgURL !== undefined && (
                     <View style={styles.imageContainer}>
-                        <Image
-                            style={styles.postImage}
-                            source={{ uri: `${BASE_URL}/posts/image/${post.ImgURL}` }} // Corrected here
-                        />
+                      <Image
+                        style={styles.postImage}
+                        source={{ uri: `${BASE_URL}/posts/image/${post.ImgURL}` }}
+                      />
                     </View>
-                )}
+                  )}
                 </View>
               </View>
             ))}

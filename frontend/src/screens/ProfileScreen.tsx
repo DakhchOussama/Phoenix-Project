@@ -80,7 +80,7 @@ export default function ProfileScreen() {
         try {
             const response = await Logout();
             if (response.success) {
-                navigation.navigate('Home');
+                navigation.replace('Home');
             }
         } catch (error) {
             console.log('error : ', error);

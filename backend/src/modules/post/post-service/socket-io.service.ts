@@ -11,7 +11,7 @@ export class SocketIoService {
 
     public emitPosts(posts: any[]) {
         if (this.server) {
-            this.server.emit('posts', posts); // Emit the posts to all connected clients
+            this.server.emit('posts', posts);
         }
     }
 }

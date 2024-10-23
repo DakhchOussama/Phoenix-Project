@@ -15,7 +15,7 @@ import EditComponent from "../components/EditComponent";
 import TraductionComponent from "../components/TraductionComponent";
 import { UserProfileProvider } from "../store/UserProfileProvider";
 import PushNotification from "react-native-push-notification";
-import { checkUserisBan, removeToken } from "../services/authService";
+import { checkUserisBan, Logout, removeToken } from "../services/authService";
 import { useNavigation } from '@react-navigation/native';
 import { PostProvider } from "../store/PostProvider";
 
@@ -23,6 +23,10 @@ import { PostProvider } from "../store/PostProvider";
 // Define a type for the route names
 type TabRouteNames = 'HomeScreen' | 'ShopScreen' | 'NotificationsScreen' | 'ProfileScreen' | 'Newpost';
 
+type RootParms = {
+    replace(arg0: string): unknown;
+    Home: undefined
+}
 
 interface NotificationData {
     notificationId: string;
@@ -38,7 +42,7 @@ const Tab = createBottomTabNavigator();
 export default function HomePage() {
 
     const [badgeVisible, setBadgeVisible] = useState(false);
-    const navigation = useNavigation();
+    const navigation = useNavigation<RootParms>();
 
     const checkUserBan = async () => {
         try {
@@ -98,11 +102,31 @@ export default function HomePage() {
                 PushNotification.setApplicationIconBadgeNumber(1);
             });
 
+            const handleLogout = async () => {
+
+                try {
+                    const response = await Logout();
+                    if (response.success) {
+                        navigation.replace('Home');
+                    } else {
+                        // other
+                        // console.log(response.message);
+                    }
+                } catch (error) {
+                    console.log('error : ', error);
+                }
+            };
+
+            socket.on('removeUser', () => {
+                handleLogout();
+            });
+
         }
     
         return () => {
             if (socket) {
                 socket.off('notification');
+                socket.off('removeUser');
             }
         };
     }, []);

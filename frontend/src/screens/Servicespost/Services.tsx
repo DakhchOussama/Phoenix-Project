@@ -24,7 +24,6 @@ interface MappedPost {
   time: string;
   likes: number;
   translate?: string;
-  userHasLiked: boolean;
   Categories: string;
   isEnabled: boolean;
   isOwnPost: boolean;
@@ -50,11 +49,10 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   const [selectedPost, setSelectedPost] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   // const { posts } = usePostContext();
-  const { posts: contextPosts, setRefresh } = usePostContext();
-  
+  const { posts: contextPosts, setRefresh } = usePostContext();  
   
   const fetchPosts = async () => {
-   
+
     if (contextPosts){
       // console.log('posts : ', posts)
       // console.log('contextPosts : ', contextPosts);
@@ -74,16 +72,12 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
           time: new Date(post.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           likes: post.Likes,
           translate: post.translates,
-          userHasLiked: false,
           Categories: post.Categories,
           isEnabled: post.isEnabled,
           isOwnPost: post.isOwnPost,
           daysAgo: Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / (1000 * 3600 * 24))
         }));
         setPosts(mappedPosts);
-
-        // console.log('posts : ', posts);
-        
       }
     }
     
@@ -91,10 +85,21 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
   
   
   useEffect(() => {
-      setIsLoading(true);
-      fetchPosts();
-      setIsLoading(false);
-  }, []);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        await fetchPosts();
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+}, [contextPosts]);
+
+
 
 
   const onRefresh = async () => {
@@ -171,125 +176,81 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
                                 <Text style={styles.dropdownText}>Demand</Text>
                               </TouchableOpacity>
                             </View>
-                      )}
-                                <View>
-                          </View>
-                          <View>
+                          )}
 
-                          </View>
                             <View style={{ justifyContent: 'flex-end', alignItems: 'flex-end' }}>
                                 <Icon name="list" size={27} style={{ marginRight: 10, color: "#4a4f5b" }} onPress={() => setlist(!list)} />
                             </View>
                             
                             <View style={{ margin: 21, marginTop: 12 }}>
-                              {/* If both listType and selectedCategory are chosen, filter by both */}
-                              {listType !== null && selectedCategory !== null ? (
-                                posts
-                                  .filter(post => post.title === listType && post.Categories === selectedCategory)
-                                  .map(post => (
-                                    post.isEnabled ? (
-                                      <View key={post.id}>
-                                        <TouchableOpacity onPress={() => handlePostClick(post)}>
-                                          <PostItem 
-                                            post={post}
-                                            onLikeToggle={handleLikeToggle}
-                                            comment={true}
-                                          />
-                                        </TouchableOpacity>
-                                      </View>
-                                    ) : (
-                                      <View key={post.id}>
-                                        <PostItem 
-                                          post={post}
-                                          onLikeToggle={handleLikeToggle}
-                                          comment={false}
-                                        />
-                                      </View>
-                                    )
-                                  ))
-                              ) : listType !== null ? (
-                                /* If only listType is chosen */
-                                posts
-                                  .filter(post => post.title.toUpperCase() === listType.toUpperCase())
-                                  .map(post => (
-                                    post.isEnabled ? (
-                                      <View key={post.id}>
-                                        <TouchableOpacity onPress={() => handlePostClick(post)}>
-                                          <PostItem 
-                                            post={post}
-                                            onLikeToggle={handleLikeToggle}
-                                            comment={true}
-                                          />
-                                        </TouchableOpacity>
-                                      </View>
-                                    ) : (
-                                      <View key={post.id}>
-                                        <PostItem 
-                                          post={post}
-                                          onLikeToggle={handleLikeToggle}
-                                          comment={false}
-                                        />
-                                      </View>
-                                    )
-                                  ))
-                              ) : selectedCategory !== null ? (
-                                /* If only selectedCategory is chosen */
-                                posts
-                                  .filter(post => post.Categories === selectedCategory)
-                                  .map(post => (
-                                    post.isEnabled ? (
-                                      <View key={post.id}>
-                                        <TouchableOpacity onPress={() => handlePostClick(post)}>
-                                          <PostItem 
-                                            post={post}
-                                            onLikeToggle={handleLikeToggle}
-                                            comment={true}
-                                          />
-                                        </TouchableOpacity>
-                                      </View>
-                                    ) : (
-                                      <View key={post.id}>
-                                        <PostItem 
-                                          post={post}
-                                          onLikeToggle={handleLikeToggle}
-                                          comment={false}
-                                        />
-                                      </View>
-                                    )
-                                  ))
-                              ) : (
-                                posts.map(post => (
-                                  post.isEnabled ? (
-                                    <View key={post.id}>
-                                      <TouchableOpacity onPress={() => handlePostClick(post)}>
-                                        <PostItem 
-                                          post={post}
-                                          onLikeToggle={handleLikeToggle}
-                                          comment={true}
-                                        />
-                                      </TouchableOpacity>
-                                    </View>
+                                {posts.length === 0 ? (
+                                  <Text style={styles.noPostsText}>There are currently no posts to display.</Text>
+                                ) : (
+                                  (listType !== null && selectedCategory !== null ? (
+                                    posts
+                                      .filter(post => post.title === listType && post.Categories === selectedCategory)
+                                      .map(post => (
+                                        <View key={post.id}>
+                                          <TouchableOpacity onPress={() => handlePostClick(post)}>
+                                            <PostItem 
+                                              post={post}
+                                              onLikeToggle={handleLikeToggle}
+                                              comment={true}
+                                            />
+                                          </TouchableOpacity>
+                                        </View>
+                                      ))
+                                  ) : listType !== null ? (
+                                    posts
+                                      .filter(post => post.title.toUpperCase() === listType.toUpperCase())
+                                      .map(post => (
+                                        <View key={post.id}>
+                                          <TouchableOpacity onPress={() => handlePostClick(post)}>
+                                            <PostItem 
+                                              post={post}
+                                              onLikeToggle={handleLikeToggle}
+                                              comment={true}
+                                            />
+                                          </TouchableOpacity>
+                                        </View>
+                                      ))
+                                  ) : selectedCategory !== null ? (
+                                    posts
+                                      .filter(post => post.Categories === selectedCategory)
+                                      .map(post => (
+                                        <View key={post.id}>
+                                          <TouchableOpacity onPress={() => handlePostClick(post)}>
+                                            <PostItem 
+                                              post={post}
+                                              onLikeToggle={handleLikeToggle}
+                                              comment={true}
+                                            />
+                                          </TouchableOpacity>
+                                        </View>
+                                      ))
                                   ) : (
-                                    <View key={post.id}>
-                                      <PostItem 
-                                        post={post}
-                                        onLikeToggle={handleLikeToggle}
-                                        comment={false}
-                                      />
-                                    </View>
-                                  )
-                                ))
-                              )}
-                            </View>
-
-                        </ScrollView>
-                    </View>
-                </View>
-            </>
-          )}
-        </View>
-      </>
-    );
+                                    posts.map(post => (
+                                      <View key={post.id}>
+                                        <TouchableOpacity onPress={() => handlePostClick(post)}>
+                                          <PostItem 
+                                            post={post}
+                                            onLikeToggle={handleLikeToggle}
+                                            comment={true}
+                                          />
+                                        </TouchableOpacity>
+                                      </View>
+                                    ))
+                                  ))
+                                )}
+                              </View>
+                </ScrollView>
+              </View>
+            </View>
+          </>
+        )}
+      </View>
+    </>
+  );
 };
 
 export default Services;
@@ -337,5 +298,12 @@ const styles = StyleSheet.create({
       height: 1,
       backgroundColor: '#E0E0E0',
       marginHorizontal: 10,
+    },
+    noPostsText: {
+        textAlign: 'center',
+        fontFamily: 'Poppins-Regular',
+        color: '#979797',
+        fontSize: 15,
+        marginTop: 10
     },
   });

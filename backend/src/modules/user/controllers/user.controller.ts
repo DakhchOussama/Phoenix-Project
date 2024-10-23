@@ -2,11 +2,14 @@ import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Request, Re
 import { UserService } from '../services/user.service';
 import { AuthService } from 'src/auth/auth.service';
 import { JwtAuthGuard } from 'src/auth/JwtAuthGuard';
+import { AppGateway } from 'src/modules/Socket/app.gateway';
+import { Server } from 'socket.io';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService,
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly appGateway: AppGateway,
   ) {}
 
   @Post('checkinfo')
@@ -143,6 +146,8 @@ export class UserController {
           if (userId && userId.id) {
               const removeUser = await this.userService.removeUser(userId.id);
               if (removeUser) {
+                  const socket : Server = this.appGateway.server;
+                  socket.to(userId.id).emit('removeUser');
                   return { success: true, message: 'User removed successfully.' };
               } else {
                   return { success: false, message: 'User not found or could not be removed.' };

@@ -12,11 +12,17 @@ import Toast from "react-native-toast-message";
 import { createPost, uploadImage } from "../../services/postService";
 import Loading from "../../components/Loading";
 import { useUserProfile } from "../../store/UserProfileProvider";
+import { useNavigation } from "@react-navigation/native";
 
 const { height, width } = Dimensions.get('window');
 
 const bigScreenThreshold = 800;
 const bigScreen = width > bigScreenThreshold;
+
+type RootParms = {
+    replace(arg0: string): unknown;
+    Services: undefined
+}
 
 
 export default function Newpost() {
@@ -28,6 +34,7 @@ export default function Newpost() {
     const [isEnabled, setIsEnabled] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const { profile } = useUserProfile();
+    // const navigation = useNavigation<RootParms>();
     
     let type;
 
@@ -134,7 +141,7 @@ export default function Newpost() {
                     type: 'success',
                     text1: 'Post created successfully!',
                 });
-                // navigation.navigate('Services');
+                // navigation.replace('Services');
             }
             
         } catch (error) {
