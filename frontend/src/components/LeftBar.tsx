@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     profileTextContainer: {
         justifyContent: 'center',
         alignItems: 'flex-start',
+        padding: 5
     },
     profileName: {
         fontFamily: 'Raleway-SemiBold',

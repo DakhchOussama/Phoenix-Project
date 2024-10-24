@@ -21,6 +21,7 @@ export class PostServiceService {
                         Fname: true,
                         Sname: true,
                         AvatarURL: true,
+                        Phone: true
                     },
                 },
             },
@@ -54,6 +55,7 @@ export class PostServiceService {
             sname: usersAdminMap.get(post.userId) ? null : post.user.Sname,
             avatar: post.user.AvatarURL,
             translates: post.translates,
+            Phone: post.user.Phone,
             isOwnPost: post.userId === userId,
         }));
         

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, Modal, Pressable, Animated, Linking } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageSourcePropType, Modal, Pressable, Animated, Linking, AppState, Button } from 'react-native';
 import Iconfont from 'react-native-vector-icons/FontAwesome';
 import Iconant from 'react-native-vector-icons/AntDesign';
 import Iconoct from 'react-native-vector-icons/Octicons';
@@ -15,6 +15,7 @@ import Toast from 'react-native-toast-message';
 import { useUserProfile } from '../store/UserProfileProvider';
 import RemoveUserComponent from './RemoveUserComponent';
 import { StackNavigationProp } from '@react-navigation/stack';
+import ServiceConfirmation from './ServiceConfirmation';
 
 
 interface Post {
@@ -56,6 +57,8 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const { profile } = useUserProfile();
     type NavigationProp = StackNavigationProp<RootStackParamList>;
     const navigation = useNavigation<NavigationProp>();
+    const [showMessageComponent, setShowMessageComponent] = useState(false);
+    const [appState, setAppState] = useState(AppState.currentState);
 
     useEffect(() => {
         Animated.spring(scaleValue, {
@@ -81,6 +84,23 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
         } catch (error) {
             console.error('Error in useEffect:', error);
         }
+    };
+
+    useEffect(() => {
+        const subscription = AppState.addEventListener('change', handleAppStateChange);
+        return () => {
+            subscription.remove(); // Clean up the listener on unmount
+        };
+    }, []);
+
+    const handleAppStateChange = (nextAppState: any) => {
+        setAppState(nextAppState);
+        if (nextAppState === 'background') {
+            setShowMessageComponent(true);
+        } // Show component when user leaves the app
+        // } else if (nextAppState === 'active') {
+        //     setShowMessageComponent(false); // Hide component when user returns
+        // }
     };
 
     useEffect(() => {
@@ -402,11 +422,28 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                     onClose={() => setRemovePostVisible(false)} 
                 />
             </Modal>
+            
+            <Modal
+                visible={showMessageComponent}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setShowMessageComponent(false)}
+                >
+                <View style={styles.modalServiceContainer}>
+                    <ServiceConfirmation setShowMessageComponent={setShowMessageComponent} />
+                </View>
+                </Modal>
         </>
 );
 };
 
 const styles = StyleSheet.create({
+    modalServiceContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },      
     modalBackground: {
         flex: 1,
         justifyContent: 'center',

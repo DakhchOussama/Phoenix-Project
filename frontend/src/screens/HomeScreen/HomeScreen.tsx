@@ -64,6 +64,7 @@ export default function HomeScreen(){
             if (posts) {
                 const filteredPosts = posts
                     .filter(post => {
+                        // post.Likes
                         const postCreatedAt = new Date(post.createdAt).getTime();
                         return post.fname === "admin" && postCreatedAt >= twentyFourHoursAgo;
                     })
