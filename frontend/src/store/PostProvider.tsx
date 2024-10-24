@@ -23,6 +23,7 @@ interface Post {
     avatar?: string;
     translates: string;
     isOwnPost: boolean;
+    Phone: string;
 }
 
 
@@ -40,7 +41,6 @@ export const PostProvider = ({ children }: { children: any }) => {
     // Fetch posts from the backend
     const fetchPosts = async () => {
         try {
-            console.log("Fetching posts...");
             const data = await getPosts();
             if (data) {
                 setPosts(data);

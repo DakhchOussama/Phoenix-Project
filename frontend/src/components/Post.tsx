@@ -30,6 +30,7 @@ interface Post {
     translate?: string;
     isOwnPost: boolean;
     daysAgo: number;
+    Phone: string
 }
 
 interface PostItemProps {
@@ -107,13 +108,11 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
                     `📜 **Title:** ${post.title}\n` +
                     `📝 **Description:** ${post.description}\n` +
                     `👤 **Posted by:** ${post.username}\n` +
-                    `⏰ **Time:** ${post.time}\n` +
-                    `🔗 **Check it out:** [YourAppLink]`;
+                    `⏰ **Time:** ${post.time}\n`;
 
+        const formattedPhone = post.Phone.replace(/[^\d+]/g, '');
 
-        console.log('message : ', message);
-
-        const url = `whatsapp://send?text=${encodeURIComponent(message)}`;
+        const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
         
         Linking.canOpenURL(url)
             .then((supported) => {
@@ -130,15 +129,13 @@ const PostItem: React.FC<PostItemProps> = ({ post, onLikeToggle, comment }) => {
     const handleSendClick = () => {
         // Define the message or action
         const message = `Hi ${post.username},\n\n` +
-        `I saw your ${post.title} post titled "${post.title}" and I’m interested in learning more about it.\n` +
+        `I saw your ${post.title} post titled "${post.description}" and I’m interested in learning more about it.\n` +
         `Could you please provide more details?\n\n` +
         `Thanks!`;
 
+        const formattedPhone = post.Phone.replace(/[^\d+]/g, '');
+        const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
 
-        console.log('message : ', message);
-
-        // Open WhatsApp with the message (assuming WhatsApp is installed on the device)
-        const url = `whatsapp://send?text=${encodeURIComponent(message)}`;
         
         Linking.canOpenURL(url)
             .then((supported) => {

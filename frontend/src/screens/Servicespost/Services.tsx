@@ -28,6 +28,7 @@ interface MappedPost {
   isEnabled: boolean;
   isOwnPost: boolean;
   daysAgo: number;
+  Phone: string
 }
 
 interface ServicesProps {
@@ -75,7 +76,8 @@ const Services: React.FC<ServicesProps> =  ({ selectedCategory, setSelectedCateg
           Categories: post.Categories,
           isEnabled: post.isEnabled,
           isOwnPost: post.isOwnPost,
-          daysAgo: Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / (1000 * 3600 * 24))
+          daysAgo: Math.floor((new Date().getTime() - new Date(post.createdAt).getTime()) / (1000 * 3600 * 24)),
+          Phone: post.Phone
         }));
         setPosts(mappedPosts);
       }
